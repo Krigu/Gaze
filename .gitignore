@@ -10,5 +10,9 @@
 *.lai
 *.la
 *.a
+
+# hide some eclipse stuff
 .cproject
 .project
+Debug/
+Release/
