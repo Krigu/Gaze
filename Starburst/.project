@@ -24,4 +24,11 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>opencv2.4.2</name>
+			<type>2</type>
+			<location>/usr/src/opencv2.4.2/modules</location>
+		</link>
+	</linkedResources>
 </projectDescription>
