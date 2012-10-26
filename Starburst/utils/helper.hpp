@@ -1,6 +1,18 @@
 #ifndef HELPER_HPP
 #define	HELPER_HPP
 
+#include <iostream>
+
+// adds a macro "LOG_D('your message') and LOG_W('your message')"
+// the log_d is only printed if you add the __DEBUG Symbol to eclipses "Symbol and Paths"
+#define LOG_W(msg)(std::cout << __FILE__ << "(" << __LINE__  << "): "<< msg << std::endl)
+#ifdef __DEBUG
+#define LOG_D(msg) LOG_W(msg)
+#else
+#define LOG_D(msg) // DO NOTHING
+#endif
+
+
 #include "opencv2/core/core.hpp"
 
 //TODO: refactor this!
