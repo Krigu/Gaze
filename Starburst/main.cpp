@@ -21,7 +21,7 @@ int main() {
 	Mat frame;
 
 	VideoCapture capture(
-			"/Users/fri/Dropbox/gaze/videos/osx/krigu.mov");
+			"/Users/fri/Dropbox/gaze/videos/osx/fri.mov");
 	//VideoCapture capture(0);
 
 	// Get the frame rate
@@ -39,6 +39,7 @@ int main() {
 	starburst.setUp(capture);
 
 	long i = 0;
+	bool waiting = false;
 
 	// the main loop
 	while (capture.read(frame)) {
@@ -70,10 +71,20 @@ int main() {
 		int keycode = waitKey(delay);
 
 		if(keycode == 32) // space
-			while(waitKey(delay) != 32)
-				;
+			waiting = true;
 		else if(keycode == 27) // ESCAPE
 			break;
+
+		// busy waiting
+		while(waiting){
+			keycode = waitKey(delay);
+			if(keycode == 32 ){
+				waiting = false;
+				break;
+			}
+			else if (keycode == 106) // "j"
+				break; // process ONE frame
+		}
 	}
 
 	capture.release();
