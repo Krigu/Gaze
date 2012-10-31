@@ -9,6 +9,7 @@
 #include <iomanip>
 
 #include "Starburst.hpp"
+#include "utils/helper.hpp"
 
 using namespace cv;
 using namespace std;
@@ -20,7 +21,7 @@ int main() {
 	Mat frame;
 
 	VideoCapture capture(
-			"/Users/fri/Dropbox/gaze/videos/osx/2012-10-17-194103.mov");
+			"/Users/fri/Dropbox/gaze/videos/osx/krigu.mov");
 	//VideoCapture capture(0);
 
 	// Get the frame rate
@@ -37,11 +38,19 @@ int main() {
 	Starburst starburst;
 	starburst.setUp(capture);
 
+	long i = 0;
+
 	// the main loop
 	while (capture.read(frame)) {
 
 		double t = getTickCount();
-		starburst.processImage(frame);
+		try{
+			starburst.processImage(frame);
+		} catch(cv::Exception &e) {
+			cerr << i << "\t" << e.what();
+			break;
+		}
+
 		totalTime += ((double) getTickCount() - t) / getTickFrequency();
 
 		numOfMeasures++;
@@ -52,11 +61,18 @@ int main() {
 			totalTime = 0;
 		}
 
+		i++;
+
 		// display the image
 		imshow("bla", frame);
 
-		// TODO: why doesnt wait() work here???
-		if (waitKey(delay) == 27) // ESCAPE
+		// check the key and add some busy waiting
+		int keycode = waitKey(delay);
+
+		if(keycode == 32) // space
+			while(waitKey(delay) != 32)
+				;
+		else if(keycode == 27) // ESCAPE
 			break;
 	}
 
