@@ -12,6 +12,5 @@
 *.a
 
 # hide some eclipse stuff
-.cproject
 Debug/
 Release/
