@@ -106,7 +106,22 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 cv::Mat FindGlints::distanceMatrix(cv::Mat & image,
 		std::vector<std::vector<cv::Point> >& contours) {
 	// Create identity matrix
-	Mat a = Mat::eye(4, 4, CV_32F);
+	Mat a = Mat::eye(4, 4, CV_8U);
+
+	int n = contours.size();
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i; j < n; j++)
+        {
+            double dist = Operations.Distance(blobs.BlobList[i].CenterOfGravity, blobs.BlobList[j].CenterOfGravity);
+
+            if (dist >= minDistance && dist <= maxDistance)
+            {
+                distMatrixThr[i, j] = 1;
+            }
+        }
+    }
 
 	return a;
 
