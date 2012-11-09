@@ -8,7 +8,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "Starburst.hpp"
+#include "detection/Starburst.hpp"
 #include "utils/helper.hpp"
 
 using namespace cv;

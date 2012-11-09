@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include "Starburst.hpp"
-#include "utils/helper.hpp"
+#include "../utils/helper.hpp"
 
 #define PI 3.14159265358979323846
 
