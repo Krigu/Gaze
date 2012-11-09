@@ -15,6 +15,11 @@ public:
 	static const short GLINT_MIN_DIAMETER = 2;
 	static const short GLINT_MAX_DIAMETER = 6;
 
+	// Min distance between two glints
+	static const short GLINT_MIN_DISTANCE = 5;
+	// Max distance between two glints
+	static const short GLINT_MAX_DISTANCE = 50;
+
 	GazeConstants();
 
 	/**

@@ -1,13 +1,16 @@
 #include <iostream>
+#include <math.h>
 
+#include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
-#include "opencv2/imgproc/imgproc.hpp"
 // TODO: entfernen
 #include "opencv2/highgui/highgui.hpp"
 
 #include "FindGlints.hpp"
-#include "utils/helper.hpp"
+#include "utils/log.hpp"
+#include "utils/geometry.hpp"
+#include "GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;
@@ -33,7 +36,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 	// Estimated diameter of pupil
 	int diameter = 4;
 	// Estimated number of pixels for two pupils
-	int pixelSize = pow(diameter, 2) * 3.14 * 8;
+	int pixelSize = diameter * diameter * 3.14 * 8;
 
 	// Find threshold beginning with brightest point
 	for (int i = hist.rows; i > 0; i--) {
@@ -59,11 +62,9 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 			CV_RETR_EXTERNAL, // retrieve the external contours
 			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
-	LOG_D("Countours size: " << contours.size())
+	LOG_D("Countours size: " << contours.size());
 
 	vector<Vec4i> hierarchy;
-
-	distanceMatrix(img, contours);
 
 	// TODO Add Shape analyses to make sure its really a circular form?
 	for (int i = 0; i < contours.size(); i++) {
@@ -93,7 +94,10 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 						hierarchy, 0, Point());
 			}
 		}
+
 	}
+	Mat a;
+	distanceMatrix(a, glintCenter);
 
 	/// Show in a window
 	namedWindow("Contours", CV_WINDOW_AUTOSIZE);
@@ -104,26 +108,27 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 }
 
 cv::Mat FindGlints::distanceMatrix(cv::Mat & image,
-		std::vector<std::vector<cv::Point> >& contours) {
+		vector<cv::Point>& glintCenter) {
 	// Create identity matrix
-	Mat a = Mat::eye(4, 4, CV_8U);
 
-	int n = contours.size();
+	// Amount of glints
+	int n = glintCenter.size();
 
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = i; j < n; j++)
-        {
-            double dist = Operations.Distance(blobs.BlobList[i].CenterOfGravity, blobs.BlobList[j].CenterOfGravity);
+	// Create identity matrix
+	Mat distanceMat = Mat::eye(n, n, CV_8U);
 
-            if (dist >= minDistance && dist <= maxDistance)
-            {
-                distMatrixThr[i, j] = 1;
-            }
-        }
-    }
+	for (int i = 0; i < n; i++) {
+		for (int j = i; j < n; j++) {
+			int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
 
-	return a;
+			if (dist >= 5
+					&& dist <= 50) {
+				distanceMat.at< short >(0,0) = 1;
+			}
+		}
+	}
+
+	return image;
 
 }
 
