@@ -3,6 +3,7 @@
 	<name>FindGlints</name>
 	<comment></comment>
 	<projects>
+		<project>GazeLib</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
