@@ -7,6 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "FindGlints.hpp"
+#include "utils/helper.hpp"
 
 using namespace std;
 using namespace cv;
@@ -58,7 +59,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 			CV_RETR_EXTERNAL, // retrieve the external contours
 			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
-	cout << "Countours size: " << contours.size() << endl;
+	LOG_D("Countours size: " << contours.size())
 
 	vector<Vec4i> hierarchy;
 
@@ -105,9 +106,9 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 cv::Mat FindGlints::distanceMatrix(cv::Mat & image,
 		std::vector<std::vector<cv::Point> >& contours) {
 	// Create identity matrix
-	Mat A = Mat::eye(4, 4, CV_32F);
+	Mat a = Mat::eye(4, 4, CV_32F);
 
-	return i;
+	return a;
 
 }
 

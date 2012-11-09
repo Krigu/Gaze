@@ -30,7 +30,7 @@
 								<option id="gnu.cpp.compiler.option.optimization.level.878206259" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.debugging.level.1623159661" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.17627215" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="/usr/include/opencv"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GazeLib}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1603631306" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -38,6 +38,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.1266560648" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.1801152503" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="opencv_highgui"/>
+									<listOptionValue builtIn="false" value="GazeLib"/>
 									<listOptionValue builtIn="false" value="opencv_imgproc"/>
 									<listOptionValue builtIn="false" value="opencv_legacy"/>
 									<listOptionValue builtIn="false" value="opencv_ml"/>
@@ -54,7 +55,7 @@
 									<listOptionValue builtIn="false" value="opencv_flann"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1458931112" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/usr/lib"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GazeLib/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1690607737" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
