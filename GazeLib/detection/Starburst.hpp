@@ -25,5 +25,15 @@ private:
     void remove_glints(cv::Mat &gray, cv::Rect &pupil_area, short num_of_glints, short interpolation_size);
 };
 
+
+class Ransac {
+public:
+    void ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
+
+private:
+    void fitCircle(float * x, float * y, float * r, std::vector<cv::Point>);
+};
+
+
 #endif	/* STARBURST_HPP */
 
