@@ -8,8 +8,9 @@
 #include <iostream>
 #include <iomanip>
 
+#include "GazeConstants.hpp"
 #include "detection/Starburst.hpp"
-#include "utils/helper.hpp"
+#include "utils/log.hpp"
 
 using namespace cv;
 using namespace std;
@@ -20,8 +21,7 @@ int main() {
 	int delay = 0;
 	Mat frame;
 
-	VideoCapture capture(
-			"/home/krigu/Dropbox/gaze/videos/osx/fri.mov");
+	VideoCapture capture(GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/osx/fri.mov"));
 	//VideoCapture capture(0);
 
 	// Get the frame rate
