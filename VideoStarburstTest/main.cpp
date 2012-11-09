@@ -21,7 +21,7 @@ int main() {
 	Mat frame;
 
 	VideoCapture capture(
-			"/Users/fri/Dropbox/gaze/videos/osx/fri.mov");
+			"/home/krigu/Dropbox/gaze/videos/osx/fri.mov");
 	//VideoCapture capture(0);
 
 	// Get the frame rate

@@ -53,9 +53,9 @@ bool FindEyeRegion::findRegion(Mat& frame, Rect& rect) {
 
 EyeRegionData FindEyeRegion::findEyes(Mat &image) {
 	EyeRegionData* data = new EyeRegionData;
-	//Rect* eye_region = new Rect;
-	Rect* eye_region = &(cv::Rect(0, 0,
-			image.cols, image.rows));
+	Rect* eye_region = new Rect;
+//	Rect* eye_region = &(cv::Rect(0, 0,
+//			image.cols, image.rows));
 
 	// find some eyes
 	//bool found = findRegion(image, *eye_region);

@@ -16,7 +16,7 @@ int main() {
 	Starburst starburst;
 	cout << "Test" << endl;
 
-	Mat im = imread("/Users/fri/Desktop/frame1.tif");
+	Mat im = imread("/home/krigu/Dropbox/gaze/pics/face_with_ir_grayscale.png");
 	imshow("bla",im);
 
 	// wait for a
