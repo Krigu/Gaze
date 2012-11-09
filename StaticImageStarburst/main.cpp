@@ -14,7 +14,7 @@ using namespace std;
 int main() {
 
 	Starburst starburst;
-	cout << "du sieech!" << endl;
+	cout << "Test" << endl;
 
 	Mat im = imread("/Users/fri/Desktop/frame1.tif");
 	imshow("bla",im);
