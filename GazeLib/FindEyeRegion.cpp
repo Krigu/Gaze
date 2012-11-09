@@ -6,7 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "FindEyeRegion.hpp"
-#include "utils/helper.hpp"
+#include "utils/log.hpp"
 
 using namespace std;
 using namespace cv;
