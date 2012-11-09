@@ -6,7 +6,7 @@
  */
 
 #include "detection/Starburst.hpp"
-#include "utils/helper.hpp"
+#include "GazeConstants.hpp"
 
 using namespace cv;
 using namespace std;
@@ -14,9 +14,8 @@ using namespace std;
 int main() {
 
 	Starburst starburst;
-	cout << "Test" << endl;
 
-	Mat im = imread("/home/krigu/Dropbox/gaze/pics/face_with_ir_grayscale.png");
+	Mat im = imread(GazeConstants::inHomeDirectory("/Dropbox/gaze/pics/face_with_ir_grayscale.png"));
 	imshow("bla",im);
 
 	// wait for a
