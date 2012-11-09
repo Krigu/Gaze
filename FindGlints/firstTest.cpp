@@ -7,6 +7,8 @@
 #include "FindEyeRegion.hpp"
 #include "FindGlints.hpp"
 
+#include "GazeConstants.hpp"
+
 using namespace cv;
 using namespace std;
 
@@ -19,7 +21,7 @@ int main() {
 	char* source_window = "Source image";
 
 	// Load video capture
-	cv::VideoCapture capture("/home/krigu/Dropbox/gaze/videos/k.webm");
+	cv::VideoCapture capture(GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/k.webm"));
 	// check if capture can be read
 	if (!capture.isOpened())
 		return 1;

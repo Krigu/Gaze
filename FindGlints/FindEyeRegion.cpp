@@ -5,6 +5,7 @@
 #include <opencv2/objdetect/objdetect.hpp>
 
 #include "FindEyeRegion.hpp"
+#include "GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;
@@ -12,7 +13,7 @@ using namespace cv;
 bool FindEyeRegion::findRegion(Mat& frame, Rect& rect) {
 	vector<Rect> faces;
 
-	if (!cascade_eye.load("/home/krigu/Dropbox/gaze/haar/parojosG.xml")) {
+	if (!cascade_eye.load(GazeConstants::inHomeDirectory("/Dropbox/gaze/haar/parojosG.xml"))) {
 		std::cerr << "ERROR: Could not load classifier cascade" << std::endl;
 		return false;
 	}
