@@ -8,6 +8,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "FindGlints.hpp"
+#include "Blobs.hpp"
 #include "utils/log.hpp"
 #include "utils/geometry.hpp"
 #include "utils/gui.hpp"
@@ -30,7 +31,8 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 	imshow("Thresholded image", img);
 
-	dilate(img, img, Mat::ones(3,3, CV_8U));
+	// Dilate the blobs. Sometimes one glint is just one small pixel
+	dilate(img, img, Mat::ones(3, 3, CV_8U));
 
 	std::vector<std::vector<cv::Point> > contours;
 
@@ -41,43 +43,15 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 	LOG_D("Countours size: " << contours.size());
 
-
-
 	vector<Vec4i> hierarchy;
 
-	// TODO Add Shape analyses to make sure its really a circular form?
-	for (int i = 0; i < contours.size(); i++) {
+	Blobs blobs = Blobs(contours);
+	blobs.removeInvalidSize();
+	blobs.removeInvalidShape();
 
-		// TODO:
-		// Filter:
-		// 1. nach Grösse -> grosse Objekte ausschliessen
-		// 2. nach Rundheit -> unrunde objekte ausschliessen
-		// 3. nach Position
-		// 4. vorheriger Glint Position
-		Moments m = moments(contours[i], false);
-		int centerX = m.m10 / m.m00;
-		int centerY = m.m01 / m.m00;
+	blobs.blobCenters(glintCenter);
 
-		cout << "Pixel size: " << m.m00 << endl;
-		// TODO min & max size
-		if (m.m00 > 0 && m.m00 < 50) { // Grösse
-
-			// Check if object is circular
-			if (centerX > 0 && centerY > 0) {
-			Point p(centerX, centerY);
-			LOG_D(
-					"Point: centerX: " << centerX << " " << " centerY: " << centerY);
-
-			cross(pointImage, p, 5);
-
-			glintCenter.push_back(p);
-
-			drawContours(counturImage, contours, i, Scalar(255, 255, 255),
-					CV_FILLED, 8, hierarchy, 0, Point());
-			}
-		}
-
-	}
+	LOG_D("Blobs size: " << glintCenter);
 
 	filterByNighbor(glintCenter);
 

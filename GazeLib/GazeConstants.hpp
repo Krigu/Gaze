@@ -19,6 +19,10 @@ public:
 
 	static const short GLINT_MIN_DIAMETER = 2;
 	static const short GLINT_MAX_DIAMETER = 6;
+	// TODO calculate from diameter
+	static const short GLINT_MIN_PIXEL = 1;
+	// TODO calculate from diameter
+	static const short GLINT_MAX_PIXEL = 50;
 
 	// Min distance between two glints
 	static const short GLINT_MIN_DISTANCE = 6;
