@@ -80,12 +80,12 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 		int centerY = m.m01 / m.m00;
 
 		// TODO min & max size
-		if (m.m00 > 0 && m.m00 < 10) { // Grösse
+		if (m.m00 > GazeConstants::GLINT_MIN_DISTANCE
+				&& m.m00 < GazeConstants::GLINT_MAX_DISTANCE) { // Grösse
 			cout << "Pixel size: " << m.m00 << endl;
 
 			// Check if object is circular
 			if (centerX > 0 && centerY > 0) {
-				// TODO: Add offset for haar part
 				Point p(centerX, centerY);
 
 				glintCenter.push_back(p);
@@ -96,8 +96,8 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 		}
 
 	}
-	Mat a;
-	distanceMatrix(a, glintCenter);
+
+	filterByNighbor(glintCenter);
 
 	/// Show in a window
 	namedWindow("Contours", CV_WINDOW_AUTOSIZE);
@@ -107,8 +107,10 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 }
 
-cv::Mat FindGlints::distanceMatrix(cv::Mat & image,
-		vector<cv::Point>& glintCenter) {
+/**
+ * Creates a matrix. The element is 1, if the distance between two blobs is in the configurated range
+ */
+cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 	// Create identity matrix
 
 	// Amount of glints
@@ -117,18 +119,33 @@ cv::Mat FindGlints::distanceMatrix(cv::Mat & image,
 	// Create identity matrix
 	Mat distanceMat = Mat::eye(n, n, CV_8U);
 
+	// Add all points to matrix where a adjacent point is in Glint distance range
 	for (int i = 0; i < n; i++) {
 		for (int j = i; j < n; j++) {
 			int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
-
-			if (dist >= 5
-					&& dist <= 50) {
-				distanceMat.at< short >(0,0) = 1;
+			if (dist >= GazeConstants::GLINT_MIN_DISTANCE
+					&& dist <= GazeConstants::GLINT_MAX_DISTANCE) {
+				distanceMat.at<short>(i, j) = 1;
 			}
 		}
 	}
 
-	return image;
+	return distanceMat;
+
+}
+
+/**
+ * Removes all blobs with less than 3 neigbors
+ */
+void FindGlints::filterByNighbor(vector<cv::Point>& blobs) {
+
+	Mat a = distanceMatrix(blobs);
+
+	LOG_D("DistanceMat: " << endl << " " << a << endl);
+	cout << "DistanceMat: " << endl << " " << a << endl;
+
+
+	LOG_D("Sum: " << sum(a).val);
 
 }
 
