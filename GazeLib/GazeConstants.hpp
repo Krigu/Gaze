@@ -12,13 +12,16 @@
 
 class GazeConstants {
 public:
+	// Amounts of glints (per eye)
+	static const char GLINT_COUNT = 4;
+
 	static const short GLINT_MIN_DIAMETER = 2;
 	static const short GLINT_MAX_DIAMETER = 6;
 
 	// Min distance between two glints
-	static const short GLINT_MIN_DISTANCE = 5;
+	static const short GLINT_MIN_DISTANCE = 6;
 	// Max distance between two glints
-	static const short GLINT_MAX_DISTANCE = 50;
+	static const short GLINT_MAX_DISTANCE = 25;
 
 	GazeConstants();
 

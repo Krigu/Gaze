@@ -10,6 +10,7 @@
 #include "FindGlints.hpp"
 #include "utils/log.hpp"
 #include "utils/geometry.hpp"
+#include "utils/gui.hpp"
 #include "GazeConstants.hpp"
 
 using namespace std;
@@ -31,10 +32,11 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 	calcHist(&frame, 1, chnls, Mat(), hist, 1, hsize, ranges);
 
 	float pixelSum = 0;
+	// Startvalue
 	int threshold = 255;
 
 	// Estimated diameter of pupil
-	int diameter = 4;
+	int diameter = 5;
 	// Estimated number of pixels for two pupils
 	int pixelSize = diameter * diameter * 3.14 * 8;
 
@@ -48,10 +50,15 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 		}
 	}
 
+	Mat counturImage = Mat(frame);
+
+
 	// Threshold image.
 	cv::threshold(frame, img, threshold, 255, cv::THRESH_TOZERO);
 
-	imshow("Thresholded image ", img);
+	Mat pointImage = Mat(img);
+
+	imshow("Thresholded image", img);
 
 	cout << "Threshold: " << threshold << endl;
 
@@ -79,20 +86,21 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 		int centerX = m.m10 / m.m00;
 		int centerY = m.m01 / m.m00;
 
+		cout << "Pixel size: " << m.m00 << endl;
 		// TODO min & max size
-		if (m.m00 > GazeConstants::GLINT_MIN_DISTANCE
-				&& m.m00 < GazeConstants::GLINT_MAX_DISTANCE) { // Grösse
-			cout << "Pixel size: " << m.m00 << endl;
+		if (m.m00 < 50) { // Grösse
 
 			// Check if object is circular
-			if (centerX > 0 && centerY > 0) {
-				Point p(centerX, centerY);
+			//if (centerX > 0 && centerY > 0) {
+			Point p(centerX, centerY);
 
-				glintCenter.push_back(p);
+			cross(pointImage,p,5);
 
-				drawContours(img, contours, i, Scalar(255, 255, 255), 2, 8,
-						hierarchy, 0, Point());
-			}
+			glintCenter.push_back(p);
+
+			drawContours(counturImage, contours, i, Scalar(255, 255, 255), CV_FILLED, 8,
+					hierarchy, 0, Point());
+			//}
 		}
 
 	}
@@ -100,8 +108,12 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 	filterByNighbor(glintCenter);
 
 	/// Show in a window
-	namedWindow("Contours", CV_WINDOW_AUTOSIZE);
+	//namedWindow("Contours", CV_WINDOW_AUTOSIZE);
 	imshow("Contours", img);
+
+	//namedWindow("Points", CV_WINDOW_AUTOSIZE);
+	imshow("Points", pointImage);
+
 
 	return true;
 
@@ -122,10 +134,12 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 	// Add all points to matrix where a adjacent point is in Glint distance range
 	for (int i = 0; i < n; i++) {
 		for (int j = i; j < n; j++) {
+		//for (int j = 0; j < n; j++) {
 			int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
 			if (dist >= GazeConstants::GLINT_MIN_DISTANCE
 					&& dist <= GazeConstants::GLINT_MAX_DISTANCE) {
-				distanceMat.at<short>(i, j) = 1;
+				distanceMat.at<char>(i, j) = 1;
+				distanceMat.at<char>(j, i) = 1;
 			}
 		}
 	}
@@ -141,11 +155,26 @@ void FindGlints::filterByNighbor(vector<cv::Point>& blobs) {
 
 	Mat a = distanceMatrix(blobs);
 
-	LOG_D("DistanceMat: " << endl << " " << a << endl);
-	cout << "DistanceMat: " << endl << " " << a << endl;
+	LOG_D("DistanceMat out: " << endl << " " << a << endl);
+	//cout << "DistanceMat: " << endl << " " << a << endl;
 
+	Mat column_sum;
+	reduce(a, column_sum, 1, CV_REDUCE_SUM, CV_32S);
 
-	LOG_D("Sum: " << sum(a).val);
+	LOG_D("Sum: " << column_sum);
+
+	// Iterate over all blobs and remove blobs with insufficient nighbors
+	vector<cv::Point>::iterator iter;
+	int i = 0;
+	vector<cv::Point> centerPoints;
+	for (iter = blobs.begin(); iter != blobs.end();) {
+		if (column_sum.at<char>(i, 0) < GazeConstants::GLINT_COUNT)
+			iter = blobs.erase(iter);
+		else
+			++iter;
+		i++;
+	}
+
 
 }
 

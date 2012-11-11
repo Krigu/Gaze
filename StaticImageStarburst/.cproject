@@ -112,13 +112,22 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="StaticImageStarburst.cdt.managedbuild.target.gnu.cross.exe.1929556161" name="Executable" projectType="cdt.managedbuild.target.gnu.cross.exe"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/StaticImageStarburst"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/StaticImageStarburst"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.2064250375;cdt.managedbuild.config.gnu.cross.exe.release.2064250375.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.975168190;cdt.managedbuild.tool.gnu.cpp.compiler.input.37135356">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.1486481874;cdt.managedbuild.config.gnu.cross.exe.debug.1486481874.;cdt.managedbuild.tool.gnu.cross.c.compiler.1984179848;cdt.managedbuild.tool.gnu.c.compiler.input.1607447884">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.2064250375;cdt.managedbuild.config.gnu.cross.exe.release.2064250375.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.975168190;cdt.managedbuild.tool.gnu.cpp.compiler.input.37135356">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.1486481874;cdt.managedbuild.config.gnu.cross.exe.debug.1486481874.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1546721303;cdt.managedbuild.tool.gnu.cpp.compiler.input.505585375">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
@@ -127,6 +136,5 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
