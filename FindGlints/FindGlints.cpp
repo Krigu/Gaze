@@ -18,49 +18,19 @@ using namespace cv;
 
 bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
-	MatND hist;
-	Mat img;
-
-	// TODO put variables in setUp
-	int nbins = 256; // 256 levels histogram levels
-	int hsize[] = { nbins }; // just one dimension
-	float range[] = { 0, 255 };
-	const float *ranges[] = { range };
-	int chnls[] = { 0 };
-
-	// Calc history
-	calcHist(&frame, 1, chnls, Mat(), hist, 1, hsize, ranges);
-
-	float pixelSum = 0;
-	// Startvalue
-	int threshold = 255;
-
-	// Estimated diameter of pupil
-	int diameter = 5;
-	// Estimated number of pixels for two pupils
-	int pixelSize = diameter * diameter * 3.14 * 8;
-
-	// Find threshold beginning with brightest point
-	for (int i = hist.rows; i > 0; i--) {
-		float histValue = hist.at<float>(i, 0);
-		pixelSum += histValue;
-		if (pixelSum > pixelSize) {
-			threshold = i;
-			break;
-		}
-	}
+	Mat img = Mat(frame);
 
 	Mat counturImage = Mat(frame);
 
-
 	// Threshold image.
-	cv::threshold(frame, img, threshold, 255, cv::THRESH_TOZERO);
+	threshold(frame, img, GazeConstants::GLINT_THRESHOLD, 255,
+			cv::THRESH_TOZERO);
 
-	Mat pointImage = Mat(img);
+	Mat pointImage = Mat(img.clone());
 
 	imshow("Thresholded image", img);
 
-	cout << "Threshold: " << threshold << endl;
+	dilate(img, img, Mat::ones(3,3, CV_8U));
 
 	std::vector<std::vector<cv::Point> > contours;
 
@@ -70,6 +40,8 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
 	LOG_D("Countours size: " << contours.size());
+
+
 
 	vector<Vec4i> hierarchy;
 
@@ -88,19 +60,21 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 		cout << "Pixel size: " << m.m00 << endl;
 		// TODO min & max size
-		if (m.m00 < 50) { // Grösse
+		if (m.m00 > 0 && m.m00 < 50) { // Grösse
 
 			// Check if object is circular
-			//if (centerX > 0 && centerY > 0) {
+			if (centerX > 0 && centerY > 0) {
 			Point p(centerX, centerY);
+			LOG_D(
+					"Point: centerX: " << centerX << " " << " centerY: " << centerY);
 
-			cross(pointImage,p,5);
+			cross(pointImage, p, 5);
 
 			glintCenter.push_back(p);
 
-			drawContours(counturImage, contours, i, Scalar(255, 255, 255), CV_FILLED, 8,
-					hierarchy, 0, Point());
-			//}
+			drawContours(counturImage, contours, i, Scalar(255, 255, 255),
+					CV_FILLED, 8, hierarchy, 0, Point());
+			}
 		}
 
 	}
@@ -113,7 +87,6 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 	//namedWindow("Points", CV_WINDOW_AUTOSIZE);
 	imshow("Points", pointImage);
-
 
 	return true;
 
@@ -133,13 +106,12 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 
 	// Add all points to matrix where a adjacent point is in Glint distance range
 	for (int i = 0; i < n; i++) {
-		for (int j = i; j < n; j++) {
-		//for (int j = 0; j < n; j++) {
+		for (int j = 0; j < n; j++) {
+			//for (int j = 0; j < n; j++) {
 			int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
 			if (dist >= GazeConstants::GLINT_MIN_DISTANCE
 					&& dist <= GazeConstants::GLINT_MAX_DISTANCE) {
 				distanceMat.at<char>(i, j) = 1;
-				distanceMat.at<char>(j, i) = 1;
 			}
 		}
 	}
@@ -174,7 +146,6 @@ void FindGlints::filterByNighbor(vector<cv::Point>& blobs) {
 			++iter;
 		i++;
 	}
-
 
 }
 

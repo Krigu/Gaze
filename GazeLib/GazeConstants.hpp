@@ -12,6 +12,8 @@
 
 class GazeConstants {
 public:
+	static const double GLINT_THRESHOLD = 235;
+
 	// Amounts of glints (per eye)
 	static const char GLINT_COUNT = 4;
 
