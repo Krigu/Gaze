@@ -8,6 +8,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "FindGlints.hpp"
+#include "GlintCluster.hpp"
 #include "Blobs.hpp"
 #include "utils/log.hpp"
 #include "utils/geometry.hpp"
@@ -53,7 +54,26 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 	LOG_D("Blobs size: " << glintCenter);
 
-	filterByNighbor(glintCenter);
+	// Find all clusters
+	vector<GlintCluster> clusters;
+	findClusters(glintCenter, clusters);
+
+
+	// TODO
+	// If there is more than one -> filter
+	if (clusters.size() == 0) {
+
+	}
+	// TODO remove hack
+	glintCenter.clear();
+	if (clusters.size() > 1) {
+		glintCenter.clear();
+
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(0));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(1));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(2));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(3));
+	}
 
 	/// Show in a window
 	//namedWindow("Contours", CV_WINDOW_AUTOSIZE);
@@ -80,7 +100,7 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 
 	// Add all points to matrix where a adjacent point is in Glint distance range
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
+		for (int j = i; j < n; j++) {
 			//for (int j = 0; j < n; j++) {
 			int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
 			if (dist >= GazeConstants::GLINT_MIN_DISTANCE
@@ -97,28 +117,34 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 /**
  * Removes all blobs with less than 3 neigbors
  */
-void FindGlints::filterByNighbor(vector<cv::Point>& blobs) {
+void FindGlints::findClusters(vector<cv::Point>& blobs,
+		vector<GlintCluster>& clusters) {
 
-	Mat a = distanceMatrix(blobs);
+	Mat nighbourMat = distanceMatrix(blobs);
 
-	LOG_D("DistanceMat out: " << endl << " " << a << endl);
-	//cout << "DistanceMat: " << endl << " " << a << endl;
+	LOG_D("DistanceMat out: " << endl << " " << nighbourMat << endl);
 
+	// Calculate number of nighbors per row
 	Mat column_sum;
-	reduce(a, column_sum, 1, CV_REDUCE_SUM, CV_32S);
-
+	reduce(nighbourMat, column_sum, 1, CV_REDUCE_SUM, CV_32S);
 	LOG_D("Sum: " << column_sum);
 
-	// Iterate over all blobs and remove blobs with insufficient nighbors
-	vector<cv::Point>::iterator iter;
-	int i = 0;
-	vector<cv::Point> centerPoints;
-	for (iter = blobs.begin(); iter != blobs.end();) {
-		if (column_sum.at<char>(i, 0) < GazeConstants::GLINT_COUNT)
-			iter = blobs.erase(iter);
-		else
-			++iter;
-		i++;
+	// This beautiful piece of code might be reviewed by Mr. C++
+	// Principle idea: Iterate over nighborMat and only consider lines
+	// with at least 4 glints (3 nightbours). Those line creates a new cluster of glints.
+	//
+	for (int row = 0; row < nighbourMat.rows; ++row) {
+		uchar* p = nighbourMat.ptr(row);
+		if (column_sum.at<char>(row, 0) >= GazeConstants::GLINT_COUNT) {
+			std::vector<cv::Point> glints;
+			for (int col = 0; col < nighbourMat.cols; ++col) {
+				if (*p++ == 1) {
+					glints.push_back(blobs.at(col));
+				}
+			}
+			GlintCluster glintCluster(glints, Point(100, 100));
+			clusters.push_back(glintCluster);
+		}
 	}
 
 }
