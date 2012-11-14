@@ -18,7 +18,8 @@
 using namespace std;
 using namespace cv;
 
-bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
+bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
+		cv::Point& lastMeasurement) {
 
 	Mat img = Mat(frame);
 
@@ -56,8 +57,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 
 	// Find all clusters
 	vector<GlintCluster> clusters;
-	findClusters(glintCenter, clusters);
-
+	findClusters(glintCenter, clusters, lastMeasurement);
 
 	// TODO
 	// If there is more than one -> filter
@@ -66,8 +66,18 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter) {
 	}
 	// TODO remove hack
 	glintCenter.clear();
+	if (clusters.size() == 1) {
+
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(0));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(1));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(2));
+		glintCenter.push_back(clusters.at(0).glintsInCluster().at(3));
+	}
 	if (clusters.size() > 1) {
-		glintCenter.clear();
+
+		LOG_D( "Before: " << clusters.at(0).averageDistanceToCenter());
+		sort(clusters.begin(), clusters.end());
+		LOG_D("After: " << clusters.at(0).averageDistanceToCenter());
 
 		glintCenter.push_back(clusters.at(0).glintsInCluster().at(0));
 		glintCenter.push_back(clusters.at(0).glintsInCluster().at(1));
@@ -118,7 +128,7 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
  * Removes all blobs with less than 3 neigbors
  */
 void FindGlints::findClusters(vector<cv::Point>& blobs,
-		vector<GlintCluster>& clusters) {
+		vector<GlintCluster>& clusters, cv::Point& lastMeasurement) {
 
 	Mat nighbourMat = distanceMatrix(blobs);
 
@@ -132,7 +142,6 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
 	// This beautiful piece of code might be reviewed by Mr. C++
 	// Principle idea: Iterate over nighborMat and only consider lines
 	// with at least 4 glints (3 nightbours). Those line creates a new cluster of glints.
-	//
 	for (int row = 0; row < nighbourMat.rows; ++row) {
 		uchar* p = nighbourMat.ptr(row);
 		if (column_sum.at<char>(row, 0) >= GazeConstants::GLINT_COUNT) {
@@ -142,7 +151,7 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
 					glints.push_back(blobs.at(col));
 				}
 			}
-			GlintCluster glintCluster(glints, Point(100, 100));
+			GlintCluster glintCluster(glints, lastMeasurement);
 			clusters.push_back(glintCluster);
 		}
 	}

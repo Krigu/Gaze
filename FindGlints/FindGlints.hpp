@@ -12,9 +12,10 @@ class FindGlints {
 
 private:
 	cv::Mat distanceMatrix(vector<cv::Point>& glintCenter);
-	void findClusters(vector<cv::Point>& blobs, vector<GlintCluster>& clusters);
+	void findClusters(vector<cv::Point>& blobs, vector<GlintCluster>& clusters, cv::Point& lastMeasurement);
 
 public:
-	bool findGlints(cv::Mat & image, vector<cv::Point>& glintCenter);
+	bool findGlints(cv::Mat & image, vector<cv::Point>& glintCenter,
+			cv::Point& lastMeasurement);
 
 };

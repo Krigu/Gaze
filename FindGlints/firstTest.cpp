@@ -92,7 +92,8 @@ int main() {
 
 		// TODO optimize
 		Mat img = image(rect);
-		pupil.findGlints(img, centerPoints);
+		Point p = Point(140,85);
+		pupil.findGlints(img, centerPoints, p);
 
 		cout << "Size: " + centerPoints.size() << endl;
 
