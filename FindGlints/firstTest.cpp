@@ -4,8 +4,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-#include "FindEyeRegion.hpp"
 #include "FindGlints.hpp"
+#include "utils/gui.hpp"
+#include "detection/FindEyeRegion.hpp"
 
 #include "GazeConstants.hpp"
 
@@ -21,7 +22,9 @@ int main() {
 	char* source_window = "Source image";
 
 	// Load video capture
-	cv::VideoCapture capture(GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/k.webm"));
+	cv::VideoCapture capture(
+	//GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/k.webm"));
+			GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/f.webm"));
 	// check if capture can be read
 	if (!capture.isOpened())
 		return 1;
@@ -57,6 +60,8 @@ int main() {
 	Rect rect;
 	int tries;
 
+	Point p1;
+
 	bool findFace = false;
 	while (!findFace) {
 		// read next frame (if available)
@@ -65,11 +70,26 @@ int main() {
 
 		cvtColor(image, image, CV_RGB2GRAY);
 
-		findFace = eye.findRegion(image, rect);
+		findFace = eye.findLeftEye(image,p1);
+
 		tries++;
 	}
 
+	imshow("hoo", image);
+
+	Mat eyeRegion = image(rect);
+
+	while (waitKey(delay) != 32);
+
+	return 0;
+
 	cout << "Found eyes after " << tries << endl;
+
+	// k
+	//Point intialPoint = Point(140, 85);
+
+	// Lurin
+	Point intialPoint = Point(0, 0);
 
 	Mat colorImage;
 // get all frames
@@ -88,24 +108,16 @@ int main() {
 
 		rectangle(image, rect, cvScalar(0, 255, 0), 2, 8, 0);
 
+		imshow("image", image); // Show our image inside it.
+
 		vector<cv::Point> centerPoints;
 
 		// TODO optimize
-		Mat img = image(rect);
-		Point p = Point(140,85);
-		pupil.findGlints(img, centerPoints, p);
+//		Mat img = image(data.getLeftEye());
+//		pupil.findGlints(img, centerPoints, intialPoint);
 
-		cout << "Size: " + centerPoints.size() << endl;
-
-		for (vector<cv::Point>::iterator it = centerPoints.begin();
-				it != centerPoints.end(); ++it) {
-			int x = (*it).x + rect.x;
-			int y = (*it).y + rect.y;
-			cv::circle(colorImage, Point(x, y), 3, Scalar(0, 0, 255), 3);
-
-		}
-
-		//threshold(image, image, lowThreshold, 0, cv::THRESH_TOZERO);
+		Point p = Point(intialPoint.x + rect.x, intialPoint.y + rect.y);
+		cross(colorImage, p, 6, Scalar(0, 0, 255));
 
 		imshow(window_name, colorImage); // Show our image inside it.
 

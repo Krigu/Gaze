@@ -28,10 +28,6 @@ public:
 
 };
 
-bool operator< (const GlintCluster& g1, const GlintCluster& g2);
-
-//bool operator< (GlintCluster &gc1, GlintCluster &gc2) {
-//	return gc1.averageDistanceToCenter() < gc2.averageDistanceToCenter();
-//}
+bool operator<(const GlintCluster& g1, const GlintCluster& g2);
 
 #endif /* GLINTCLUSTER_HPP_ */

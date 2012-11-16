@@ -36,20 +36,26 @@ int const GlintCluster::averageDistanceToCenter() const {
 }
 
 cv::Point GlintCluster::centerPoint() {
-	return cv::Point(100, 100);
+	int amount = glints.size();
+	int sumX = 0;
+	int sumY = 0;
+	for (vector<Point>::iterator it = glints.begin(); it != glints.end();
+			++it) {
+		sumX += it->x;
+		sumY += it->y;
+	}
+
+	int x = sumX / amount;
+	int y = sumY / amount;
+
+	return cv::Point(x, y);
 }
 
 std::vector<cv::Point> const& GlintCluster::glintsInCluster() const {
 	return glints;
 }
 
-bool operator< (const GlintCluster& g1, const GlintCluster& g2) {
-	cout << "Compare g1:" <<  g1.averageDistanceToCenter() << " g2:" << g2.averageDistanceToCenter() << endl;
+bool operator<(const GlintCluster& g1, const GlintCluster& g2) {
 	return (g1.averageDistanceToCenter() < g2.averageDistanceToCenter());
 }
-
-//ostream& GlintCluster::operator<<(ostream& output, const GlintCluster& p) {
-//    output << "(" <<  p.x << ", " << p.y <<")";
-//    return output;  // for multiple << operators.
-//}
 

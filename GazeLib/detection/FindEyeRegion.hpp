@@ -30,10 +30,9 @@ class FindEyeRegion {
 private:
 	cv::CascadeClassifier eye_region_classifier;
 	cv::CascadeClassifier eye_classifier;
-	void removeFalsePositives(vector<Rect> &eyes);
+	//void removeFalsePositives(vector<Rect> &eyes);
 
 public:
 	FindEyeRegion();
-	bool findRegion(Mat & image, Rect& rect);
-	EyeRegionData findEyes(Mat & image);
+	bool findLeftEye(Mat &image, Point& centerOfEye);
 };

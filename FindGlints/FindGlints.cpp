@@ -33,8 +33,8 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 
 	imshow("Thresholded image", img);
 
-	// Dilate the blobs. Sometimes one glint is just one small pixel
-	dilate(img, img, Mat::ones(3, 3, CV_8U));
+	// Dilate the blobs. Sometimes a glint is just one small pixel
+	dilate(img, img, Mat::ones(2, 2, CV_8U));
 
 	std::vector<std::vector<cv::Point> > contours;
 
@@ -62,27 +62,20 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 	// TODO
 	// If there is more than one -> filter
 	if (clusters.size() == 0) {
-
+		//return false;
 	}
 	// TODO remove hack
 	glintCenter.clear();
 	if (clusters.size() == 1) {
 
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(0));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(1));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(2));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(3));
+		Point p = clusters.at(0).centerPoint();
+		cross(frame, p, 5);
 	}
 	if (clusters.size() > 1) {
-
-		LOG_D( "Before: " << clusters.at(0).averageDistanceToCenter());
 		sort(clusters.begin(), clusters.end());
-		LOG_D("After: " << clusters.at(0).averageDistanceToCenter());
 
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(0));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(1));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(2));
-		glintCenter.push_back(clusters.at(0).glintsInCluster().at(3));
+		lastMeasurement = clusters.at(0).centerPoint();
+		cross(pointImage, lastMeasurement, 6);
 	}
 
 	/// Show in a window

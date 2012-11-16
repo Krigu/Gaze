@@ -23,6 +23,7 @@ using namespace std;
  */
 void Starburst::setUp(cv::VideoCapture& capture) {
 
+
 }
 
 /*
