@@ -10,14 +10,16 @@
 
 class Starburst {
 private:
-    cv::Rect eye;
-    cv::Rect eye_region;
-    cv::Point2f last_center;
+    //cv::Rect eye;
+    //cv::Rect eye_region;
+	cv::Point2f last_center;
     FindEyeRegion eyeReg;
+    cv::Rect search_area;
 
 public:
     void setUp(cv::VideoCapture &capture);
     void processImage(cv::Mat & image);
+    void setLastCenter(cv::Point2f last_center);
     void tearDown();
     
 private:

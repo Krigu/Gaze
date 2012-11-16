@@ -29,6 +29,8 @@ public:
 	// Max distance between two glints
 	static const short GLINT_MAX_DISTANCE = 25;
 
+	static const short PUPIL_SEARCH_AREA_WIDHT_HEIGHT = 90;
+
 	GazeConstants();
 
 	/**

@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+#include "../GazeConstants.hpp"
 #include "Starburst.hpp"
 #include "../utils/gui.hpp"
 #include "../utils/log.hpp"
@@ -21,20 +22,7 @@ using namespace std;
  * TODO: use a haar file, that tracks one eye
  */
 void Starburst::setUp(cv::VideoCapture& capture) {
-	Mat frame;
 
-	for (;;) {
-		capture.read(frame);
-		Rect region;
-		if(eyeReg.findRegion(frame, region)){
-			//eye = data.getLeftEye();
-			eye_region = region;
-			break;
-		}
-	}
-
-	//namedWindow("StarBurstResult");
-	//namedWindow("GlintsRemoved");
 }
 
 /*
@@ -45,67 +33,65 @@ void Starburst::setUp(cv::VideoCapture& capture) {
  * 
  */
 void Starburst::processImage(cv::Mat& frame) {
-	/*Mat search_region = frame(eye_region);
-	EyeRegionData data = eyeReg.findEyes(search_region);
 
-	if (data.isDataSet()) {
-		// mark the position on the image
-		Scalar right_color = Scalar(0, 0, 255);
-		//rectangle(frame, data.getRightEye(), right_color, 2, 8, 0);
-		//imshow("TheEyes", frame);
-		eye = data.getLeftEye();
-		eye = Rect(eye.x + eye_region.x, eye.y + eye_region.y, eye.width, eye.height);
-	}
-	rectangle(frame, eye, Scalar(0, 255, 0), 2, 8, 0);
-	rectangle(frame, eye_region, Scalar(0, 0, 255), 2, 8, 0);*/
-
-	return;
+	//return;
+	search_area = Rect(
+			last_center.x - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+			last_center.y - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT,
+			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT);
 
 	// get our working area of the image
-	Mat img = frame(eye);
+	Mat img = frame(search_area);
 	Mat gray = img;
+
+	Point2f new_center(GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
 
 	// mark the position on the image
 	Scalar color = Scalar(0, 255, 0);
-	rectangle(frame, eye, color, 2, 8, 0);
+	rectangle(frame, search_area, color, 2, 8, 0);
 
 	cvtColor(img, gray, CV_BGR2GRAY);
 
 	//TODO: don't overwrite the last_center at every step...
 
-	if (last_center.x == 0 && last_center.y == 0) {
-		// find the darkest point. it's probably inside the pupil
-		double minVal = 0;
-		double maxVal = 0;
-		Point minLoc;
-		Point maxLoc;
+	/*if (last_center.x == 0 && last_center.y == 0) {
+	 // find the darkest point. it's probably inside the pupil
+	 double minVal = 0;
+	 double maxVal = 0;
+	 Point minLoc;
+	 Point maxLoc;
 
-		LOG_D("used the darkest point!");
+	 LOG_D("used the darkest point!");
 
-		minMaxLoc(gray, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
-		last_center = minLoc;
-	}
+	 minMaxLoc(gray, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+	 last_center = minLoc;
+	 }*/
 
 	// draw a circle around the darkest point
 	//circle(img, last_center, 1, color);
-
 	// let's guess the pupil size and only remove the glints inside it
 	//Rect pupil = Rect(last_center.x - 10, last_center.y - 10, 20, 20);
 	//rectangle(img, pupil, Scalar(0, 0, 255), 2, 8, 0);
-
 	// the algorithm: blur image, remove glint and starburst
 	medianBlur(gray, gray, 3);
 	//  remove_glints(gray, pupil, 4, 4);
 	float radius = 0;
-	starburst(gray, last_center, radius, 20, 1);
+	starburst(gray, new_center, radius, 20, 1);
 
 	// display the center on the source image
-	Point absolute_center = Point(last_center.x + eye.x, last_center.y + eye.y);
+	Point absolute_center = Point(search_area.x + new_center.x,
+			search_area.y + new_center.y);
 	cross(frame, absolute_center, 4, Scalar(0, 0, 255));
 	circle(frame, absolute_center, radius, Scalar(0, 0, 255));
 
 	// display our working area
 	imshow("StarBurstResult", gray);
+}
+
+void Starburst::setLastCenter(Point2f last_center) {
+	this->last_center = last_center;
 }
 
 /**
@@ -271,7 +257,6 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 // the RANSAC stuff:
 
-
 //
 // algorithm:
 // - chose 3 random points
@@ -280,100 +265,102 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 // - repeate above steps N times
 //
 
-void Ransac::ransac(float * x, float * y, float * radius, std::vector<cv::Point> points) {
-    // N: num of iterations
-    const int N = 1000;
-    // T: distance in which
-    const float T = 5;
+void Ransac::ransac(float * x, float * y, float * radius,
+		std::vector<cv::Point> points) {
+	// N: num of iterations
+	const int N = 1000;
+	// T: distance in which
+	const float T = 5;
 
-    // initialize randomizer
-    srand(time(NULL));
+	// initialize randomizer
+	srand(time(NULL));
 
-    int max_points_within_range = 0;
+	int max_points_within_range = 0;
 
-    // lets fit a circle into 3 random points
-    // after N iterations the circle that fitted
-    // the most points is chosen as the result
-    for (int i = 0; i < N; i++) {
-        float tmp_x, tmp_y, tmp_r;
-        tmp_x = tmp_y = tmp_r = 0;
-        int points_within_range = 0;
+	// lets fit a circle into 3 random points
+	// after N iterations the circle that fitted
+	// the most points is chosen as the result
+	for (int i = 0; i < N; i++) {
+		float tmp_x, tmp_y, tmp_r;
+		tmp_x = tmp_y = tmp_r = 0;
+		int points_within_range = 0;
 
-        // fit a random circle
-        std::random_shuffle(points.begin(), points.end());
-        fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
+		// fit a random circle
+		std::random_shuffle(points.begin(), points.end());
+		fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
 
-        if (tmp_x == std::numeric_limits<float>::min()
-                || tmp_y == std::numeric_limits<float>::min()
-                || tmp_r == std::numeric_limits<float>::min())
-            continue;
+		if (tmp_x == std::numeric_limits<float>::min()
+				|| tmp_y == std::numeric_limits<float>::min()
+				|| tmp_r == std::numeric_limits<float>::min())
+			continue;
 
-        const float lower_bound = tmp_r - T;
-        const float upper_bound = tmp_r + T;
+		const float lower_bound = tmp_r - T;
+		const float upper_bound = tmp_r + T;
 
-        // how many points lie within the lower/upper bound of the radius
-        for (std::vector<cv::Point>::iterator it = points.begin();
-                it != points.end(); ++it) {
-            //TODO: opencv should do this with magnitude()
-            // calculate the magnitude between the point and the center
-            float delta_y = it->y - tmp_y;
-            float delta_x = it->x - tmp_x;
+		// how many points lie within the lower/upper bound of the radius
+		for (std::vector<cv::Point>::iterator it = points.begin();
+				it != points.end(); ++it) {
+			//TODO: opencv should do this with magnitude()
+			// calculate the magnitude between the point and the center
+			float delta_y = it->y - tmp_y;
+			float delta_x = it->x - tmp_x;
 
-            float magnitude = sqrt(pow(delta_y, 2) + pow(delta_x, 2));
+			float magnitude = sqrt(pow(delta_y, 2) + pow(delta_x, 2));
 
-            if (magnitude >= lower_bound && magnitude <= upper_bound)
-                points_within_range++;
-        }
+			if (magnitude >= lower_bound && magnitude <= upper_bound)
+				points_within_range++;
+		}
 
-        if (points_within_range > max_points_within_range) {
-            *x = tmp_x;
-            *y = tmp_y;
-            *radius = tmp_r;
-            max_points_within_range = points_within_range;
-        }
-    }
+		if (points_within_range > max_points_within_range) {
+			*x = tmp_x;
+			*y = tmp_y;
+			*radius = tmp_r;
+			max_points_within_range = points_within_range;
+		}
+	}
 }
 
 //
 // fits a circle into the first three points of the vector
 //
 
-void Ransac::fitCircle(float * x, float * y, float * radius, std::vector<cv::Point> points) {
-    // http://www.exaflop.org/docs/cgafaq/cga1.html
-    // "Subject 1.04: How do I generate a circle through three points?"
-    cv::Point a = points.at(0);
-    cv::Point b = points.at(1);
-    cv::Point c = points.at(2);
+void Ransac::fitCircle(float * x, float * y, float * radius,
+		std::vector<cv::Point> points) {
+	// http://www.exaflop.org/docs/cgafaq/cga1.html
+	// "Subject 1.04: How do I generate a circle through three points?"
+	cv::Point a = points.at(0);
+	cv::Point b = points.at(1);
+	cv::Point c = points.at(2);
 
-    float A = b.x - a.x;
-    float B = b.y - a.y;
-    float C = c.x - a.x;
-    float D = c.y - a.y;
-    float E = A * (a.x + b.x) + B * (a.y + b.y);
-    float F = C * (a.x + c.x) + D * (a.y + c.y);
-    float G = 2.0 * (A * (c.y - b.y) - B * (c.x - b.x));
+	float A = b.x - a.x;
+	float B = b.y - a.y;
+	float C = c.x - a.x;
+	float D = c.y - a.y;
+	float E = A * (a.x + b.x) + B * (a.y + b.y);
+	float F = C * (a.x + c.x) + D * (a.y + c.y);
+	float G = 2.0 * (A * (c.y - b.y) - B * (c.x - b.x));
 
-    // wenn G nahe bei null ist, so sind die drei Punkte
-    if (G < 0.000000001) {
-        *x = *y = *radius = std::numeric_limits<float>::min();
-        return;
-    }
+	// wenn G nahe bei null ist, so sind die drei Punkte
+	if (G < 0.000000001) {
+		*x = *y = *radius = std::numeric_limits<float>::min();
+		return;
+	}
 
-    *x = (D * E - B * F) / G;
-    *y = (A * F - C * E) / G;
+	*x = (D * E - B * F) / G;
+	*y = (A * F - C * E) / G;
 
-    *radius = sqrt(pow(a.x - *x, 2) + pow(a.y - *y, 2));
+	*radius = sqrt(pow(a.x - *x, 2) + pow(a.y - *y, 2));
 
-    //A = b_0 - a_0;
-    //B = b_1 - a_1;
-    //C = c_0 - a_0;
-    //D = c_1 - a_1;
-    //E = A*(a_0 + b_0) + B*(a_1 + b_1);
-    //F = C*(a_0 + c_0) + D*(a_1 + c_1);
-    //G = 2.0*(A*(c_1 - b_1)-B*(c_0 - b_0));
-    //p_0 = (D*E - B*F) / G;
-    //p_1 = (A*F - C*E) / G;
-    //If G is zero then the three points are collinear and no finite-radius circle through them exists. Otherwise, the radius of the circle is:
-    //
-    //r^2 = (a_0 - p_0)^2 + (a_1 - p_1)^2
+	//A = b_0 - a_0;
+	//B = b_1 - a_1;
+	//C = c_0 - a_0;
+	//D = c_1 - a_1;
+	//E = A*(a_0 + b_0) + B*(a_1 + b_1);
+	//F = C*(a_0 + c_0) + D*(a_1 + c_1);
+	//G = 2.0*(A*(c_1 - b_1)-B*(c_0 - b_0));
+	//p_0 = (D*E - B*F) / G;
+	//p_1 = (A*F - C*E) / G;
+	//If G is zero then the three points are collinear and no finite-radius circle through them exists. Otherwise, the radius of the circle is:
+	//
+	//r^2 = (a_0 - p_0)^2 + (a_1 - p_1)^2
 }
