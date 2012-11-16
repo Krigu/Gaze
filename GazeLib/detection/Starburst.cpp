@@ -12,6 +12,8 @@
 #include "../utils/gui.hpp"
 #include "../utils/log.hpp"
 
+#include "../cattin/IplExtractProfile.h"
+
 #define PI 3.14159265358979323846
 
 using namespace cv;
@@ -54,21 +56,6 @@ void Starburst::processImage(cv::Mat& frame) {
 	rectangle(frame, search_area, color, 2, 8, 0);
 
 	cvtColor(img, gray, CV_BGR2GRAY);
-
-	//TODO: don't overwrite the last_center at every step...
-
-	/*if (last_center.x == 0 && last_center.y == 0) {
-	 // find the darkest point. it's probably inside the pupil
-	 double minVal = 0;
-	 double maxVal = 0;
-	 Point minLoc;
-	 Point maxLoc;
-
-	 LOG_D("used the darkest point!");
-
-	 minMaxLoc(gray, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
-	 last_center = minLoc;
-	 }*/
 
 	// draw a circle around the darkest point
 	//circle(img, last_center, 1, color);
@@ -194,7 +181,7 @@ void Starburst::tearDown() {
  */
 void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines, int distance_growth) {
-	const float angle = 2 * PI / num_of_lines; // in radiants!
+	const double angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
 
 	// the intensity of the point that is inside the pupil
@@ -205,34 +192,37 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	// calculate the lines in every direction
 	for (unsigned short i = 0; i < num_of_lines; i++) {
 		// calculate the current degree
-		const float current_angle = angle * i;
+		const double current_angle = angle * i;
 
-		// initialize the distance
-		int distance = distance_growth;
+		bool done;
+		double dx, dy;
+		dx = dy = 0;
 
-		// follow in this direction and increase the distance
-		while (true) {
-			int x = center.x + cos(current_angle) * distance;
-			int y = center.y + sin(current_angle) * distance;
+		//TODO Herr cattin fragen (dx/dy rausgeben...)
+		vector<unsigned char> profile = IplExtractProfile(&gray, center.x,
+				center.y, 0, 130, current_angle, done, dx, dy);
 
-			// get the intensity at the current position
-			int val = gray.at<uchar>(y, x);
+		unsigned char start_val = 0;
+		if (profile.size() > 0)
+			start_val = profile.at(0);
+		unsigned char val = 0;
 
-			//            if (val > 100) {
-			//                break;
-			//            } else if (val > 40) {
+		int j = 0;
+		for (vector<unsigned char>::iterator it = profile.begin();
+				it != profile.end(); it++) {
+			if (*it > start_val + 5) { // TODO: +10 is probably a hack
 
-			// if the intensity made a jump, its the end of the pupil
-			if (val > start_val + 10) { // TODO: +10 is probably a hack
+			// calculate
+				double x = center.x + j * dx;
+				double y = center.y + j * dy;
+
 				Point p = Point(x, y);
-				if (val - start_val <= 30) {
+				if (*it - start_val <= 30) {
 					points.push_back(p);
 				}
 				break;
 			}
-
-			// if nothing was found, increase the line length
-			distance += distance_growth;
+			++j;
 		}
 	}
 
@@ -245,8 +235,8 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	minEnclosingCircle(points, center, radius);
 	//LOG_D("Size: " << points.size());
 
-//    center = Point2f(x,y);
-//    radius = r;
+	//center = Point2f(x, y);
+	//radius = r;
 
 	for (std::vector<Point>::iterator it = points.begin(); it != points.end();
 			++it) {
