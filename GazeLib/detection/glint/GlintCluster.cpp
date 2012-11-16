@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "GlintCluster.hpp"
-#include "utils/geometry.hpp"
+#include "../../utils/geometry.hpp"
 
 using namespace std;
 using namespace cv;

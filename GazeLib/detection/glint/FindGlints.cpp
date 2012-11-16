@@ -10,10 +10,10 @@
 #include "FindGlints.hpp"
 #include "GlintCluster.hpp"
 #include "Blobs.hpp"
-#include "utils/log.hpp"
-#include "utils/geometry.hpp"
-#include "utils/gui.hpp"
-#include "GazeConstants.hpp"
+#include "../../utils/log.hpp"
+#include "../../utils/geometry.hpp"
+#include "../../utils/gui.hpp"
+#include "../../GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;

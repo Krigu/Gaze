@@ -12,8 +12,8 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "Blobs.hpp"
-#include "GazeConstants.hpp"
-#include "utils/log.hpp"
+#include "../../GazeConstants.hpp"
+#include "../../utils/log.hpp"
 
 using namespace std;
 using namespace cv;
