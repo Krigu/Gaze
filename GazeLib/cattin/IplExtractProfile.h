@@ -10,9 +10,9 @@
 #include <opencv2/highgui/highgui.hpp>
 
 std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double y0,
-                           int r1, int r2, double phi, bool& done );
+                           int r1, int r2, double phi, bool& done, double& dx, double& dy );
 
 std::vector<unsigned char> IplExtractProfile( cv::Mat* image, double x0, double y0,
-                           int r1, int r2, double phi, bool& done );
+                           int r1, int r2, double phi, bool& done ,double& dx, double& dy);
 
 #endif

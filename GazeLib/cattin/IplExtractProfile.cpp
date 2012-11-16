@@ -8,7 +8,7 @@
 
 
 std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double y0,
-                           int r1, int r2, double phi, bool& done )
+                           int r1, int r2, double phi, bool& done, double& dx, double& dy)
 {
     int width = image->width;
     int height = image->height;
@@ -28,8 +28,10 @@ std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double
     }
     r2 = std::floor( std::sqrt((x2-x0)*(x2-x0)+(y2-y0)*(y2-y0))+0.5 );
     int n = r2 - r1 + 1;
-    double dx = (x2-x1)/(n-1);
-    double dy = (y2-y1)/(n-1);
+    //double
+    dx = (x2-x1)/(n-1);
+    //double
+    dy = (y2-y1)/(n-1);
 
     // get profile (nearest neighbor)
     std::vector<unsigned char> profile;
@@ -87,8 +89,8 @@ std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double
 }
 
 std::vector<unsigned char> IplExtractProfile( cv::Mat* image, double x0, double y0,
-                           int r1, int r2, double phi, bool& done ){
+                           int r1, int r2, double phi, bool& done, double& dx, double& dy){
 
 	IplImage ipl_img = *image;
-	return IplExtractProfile( &ipl_img,  x0,  y0, r1,  r2,  phi, done );
+	return IplExtractProfile( &ipl_img,  x0,  y0, r1,  r2,  phi, done, dx, dy);
 }
