@@ -8,17 +8,19 @@
 #include "FindEyeRegion.hpp"
 #include "../utils/log.hpp"
 
+#include "../GazeConstants.hpp"
+
 using namespace std;
 using namespace cv;
 
 FindEyeRegion::FindEyeRegion() {
 	if (!eye_region_classifier.load(
-			"/home/krigu/Dropbox/gaze/haar/parojosG.xml")) {
+			GazeConstants::inHomeDirectory("/Dropbox/gaze/haar/parojosG.xml"))) {
 		LOG_W("ERROR: Could not load left eye classifier cascade");
 	}
 
 	if (!eye_classifier.load(
-			"/home/krigu/Dropbox/gaze/haar/haar_left_eye.xml")) {
+			GazeConstants::inHomeDirectory("/Dropbox/gaze/haar/haar_left_eye.xml"))) {
 		LOG_W("ERROR: Could not load left eyes classifier cascade");
 	}
 
