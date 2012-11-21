@@ -6,6 +6,9 @@
 using namespace std;
 using namespace cv;
 
+
+
+
 class EyeRegionData {
 private:
 	Rect *eye_region;
@@ -34,5 +37,5 @@ private:
 
 public:
 	FindEyeRegion();
-	bool findLeftEye(Mat &image, Point& centerOfEye);
+	bool findLeftEye(Mat &image, Rect& eyeRect);
 };
