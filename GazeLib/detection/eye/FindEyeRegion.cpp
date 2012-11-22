@@ -16,6 +16,14 @@ bool compareRect(Rect r1, Rect r2) {
 	return ((r1.width * r1.height) < (r2.width * r2.height));
 }
 
+Rect takeLeftEye(const Rect r1, const Rect r2) {
+	return (r1.x < r2.x) ? r1 : r2;
+}
+
+Rect takeRightEye(const Rect r1, const Rect r2) {
+	return (r1.x > r2.x) ? r1 : r2;
+}
+
 FindEyeRegion::FindEyeRegion() {
 	if (!eye_region_classifier.load(
 			"/home/krigu/Dropbox/gaze/haar/parojosG.xml")) {
@@ -29,8 +37,7 @@ FindEyeRegion::FindEyeRegion() {
 
 }
 
-bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
-
+bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc) {
 	vector<Rect> faces;
 	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
 			0 | CV_HAAR_SCALE_IMAGE, Size(400, 100));
@@ -43,23 +50,11 @@ bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 	// TODO: What to do with multiple detections?
 	Rect eyeRegion = faces.at(0);
 
-	//rectangle(image, eyeRegion, Scalar(0, 255, 255), 20, 8, 0);
-
 	// TODO extract min and maxsize to constants
 	vector<Rect> eyes;
 	Mat region = image(eyeRegion);
 	eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
 			0 | CV_HAAR_SCALE_IMAGE, Size(20, 20), Size(200, 200));
-
-//	int i = 1;
-//	for (vector<Rect>::const_iterator r = eyes.begin(); r != eyes.end();
-//			r++, i++) {
-//		Rect rect = cv::Rect(r->x + eyeRegion.x, r->y + eyeRegion.y, r->width,
-//				r->height);
-//		rectangle(image, rect, Scalar(0, 255, 255), i * i * i, 8, 0);
-//	}
-
-	cout << "Size: " << eyes.size() << endl;
 
 	// No eye detected
 	if (eyes.size() == 0) {
@@ -74,11 +69,13 @@ bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 	else {
 		sort(eyes.begin(), eyes.end(), compareRect);
 
-		int minDistance = 100000;
+		int minDistance = 1000;
+		// TODO: Maybe use pointers?
 		Rect r1;
 		Rect r2;
 
 		for (std::vector<int>::size_type i = 0; i != (eyes.size() - 1); i++) {
+
 			int distance = (eyes[i + 1].width * eyes[i + 1].height)
 					- (eyes[i].width * eyes[i].height);
 
@@ -90,8 +87,7 @@ bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 		}
 
 		// Take left rect
-		eyeRect = (r1.x < r2.x) ? r1 : r2;
-
+		eyeRect = compareFunc(r1, r2);
 	}
 
 	// Add offset
@@ -99,4 +95,16 @@ bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 	eyeRect.y += eyeRegion.y;
 
 	return true;
+}
+
+bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
+	// TODO: in konstruktor?
+	eyeCompareFunction compFunc = &takeRightEye;
+	return findEye(image, eyeRect, compFunc);
+}
+
+bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
+	// TODO: in konstruktor?
+	eyeCompareFunction compFunc = &takeLeftEye;
+	return findEye(image, eyeRect, compFunc);
 }

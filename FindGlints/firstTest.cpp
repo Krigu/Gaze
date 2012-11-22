@@ -69,7 +69,7 @@ int main() {
 
 		cvtColor(image, image, CV_RGB2GRAY);
 
-		findFace = eye.findLeftEye(image,r1);
+		findFace = eye.findRightEye(image,r1);
 
 		tries++;
 	}

@@ -28,14 +28,17 @@ public:
 	void setEyeRegion(Rect *eyes);
 };
 
+typedef Rect (*eyeCompareFunction)(Rect, Rect);
+
 class FindEyeRegion {
 
 private:
 	cv::CascadeClassifier eye_region_classifier;
 	cv::CascadeClassifier eye_classifier;
-	//void removeFalsePositives(vector<Rect> &eyes);
+	bool findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc );
 
 public:
 	FindEyeRegion();
 	bool findLeftEye(Mat &image, Rect& eyeRect);
+	bool findRightEye(Mat &image, Rect& eyeRect);
 };
