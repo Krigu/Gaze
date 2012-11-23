@@ -42,15 +42,15 @@ public:
 	// Max height of eyeregion
 	static const short HAAR_EYEREGION_MAX_HEIGHT = 100;
 	// Max width of eyeregion
-	static const short HAAR_EYEREGION_MAX_WIDTH = 100;
-	// Max height of eyeregion
-	static const short HAAR_EYE_MIN_HEIGHT = 100;
-	// Max width of eyeregion
-	static const short HAAR_EYE_MIN_WIDTH = 100;
-	// Max height of eyeregion
-	static const short HAAR_EYE_MAX_HEIGHT = 100;
-	// Max width of eyeregion
-	static const short HAAR_EYE_MAX_WIDTH = 100;
+	static const short HAAR_EYEREGION_MAX_WIDTH = 400;
+	// Max height of eye
+	static const short HAAR_EYE_MIN_HEIGHT = 20;
+	// Max width of eye
+	static const short HAAR_EYE_MIN_WIDTH = 20;
+	// Max height of eye
+	static const short HAAR_EYE_MAX_HEIGHT = 200;
+	// Max width of eye
+	static const short HAAR_EYE_MAX_WIDTH = 200;
 
 	//
 	// Pupilcenter
