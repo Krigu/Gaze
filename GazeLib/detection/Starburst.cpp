@@ -1,30 +1,32 @@
-//#include <QString>
-//#include <QDir>
-#include <vector>
 
 #include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/objdetect/objdetect.hpp>
-
-#include <iostream>
 
 #include "../GazeConstants.hpp"
 #include "Starburst.hpp"
-#include "../utils/gui.hpp"
-#include "../utils/log.hpp"
 
 #include "../cattin/IplExtractProfile.h"
-
-#define PI 3.14159265358979323846
 
 using namespace cv;
 using namespace std;
 
-/**
- * finds the eye using haar, then create a rectangle for one eye
- * TODO: use a haar file, that tracks one eye
- */
-void Starburst::setUp(cv::VideoCapture& capture) {
+Starburst::Starburst() {
 
+	// pre calculate the sin/cos values
+	float angle_delta = 1 * PI / 180;
+	this->angle_num = (int) (2 * PI / angle_delta);
+	double angle_array[angle_num];
+	double sin_array[angle_num];
+	double cos_array[angle_num];
+
+	for (int i = 0; i < angle_num; i++) {
+		angle_array[i] = i * angle_delta;
+		sin_array[i] = sin(angle_array[i]);
+		cos_array[i] = cos(angle_array[i]);
+	}
+
+	this->angle_array = angle_array;
+	this->sin_array = sin_array;
+	this->cos_array = cos_array;
 
 }
 
@@ -35,147 +37,76 @@ void Starburst::setUp(cv::VideoCapture& capture) {
  * - use starburst to find the pupil and its center
  * 
  */
-void Starburst::processImage(cv::Mat& frame) {
+void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
+		cv::Point startpoint, cv::Point &pupil_center, float & radius) {
 
-	//return;
+	// only search within a limited region
 	search_area = Rect(
-			last_center.x - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
-			last_center.y - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+			startpoint.x - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+			startpoint.y - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT);
 
 	// get our working area of the image
-	Mat img = frame(search_area);
-	Mat gray = img;
+	Mat without_glnts = frame.clone();
+	Mat eye_area = without_glnts(search_area);
 
-	Point2f new_center(GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
+	Point2f relative_new_center(
+			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
 
-	// mark the position on the image
-	Scalar color = Scalar(0, 255, 0);
-	rectangle(frame, search_area, color, 2, 8, 0);
-
-	cvtColor(img, gray, CV_BGR2GRAY);
-
-	// draw a circle around the darkest point
-	//circle(img, last_center, 1, color);
-	// let's guess the pupil size and only remove the glints inside it
-	//Rect pupil = Rect(last_center.x - 10, last_center.y - 10, 20, 20);
-	//rectangle(img, pupil, Scalar(0, 0, 255), 2, 8, 0);
 	// the algorithm: blur image, remove glint and starburst
-	medianBlur(gray, gray, 3);
-	//  remove_glints(gray, pupil, 4, 4);
-	float radius = 0;
-	starburst(gray, new_center, radius, 20, 1);
+	//medianBlur(without_glnts, without_glnts, 3);
+	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
+	starburst(eye_area, relative_new_center, radius, 20, 1);
 
 	// display the center on the source image
-	Point absolute_center = Point(search_area.x + new_center.x,
-			search_area.y + new_center.y);
-	cross(frame, absolute_center, 4, Scalar(0, 0, 255));
-	circle(frame, absolute_center, radius, Scalar(0, 0, 255));
-
-	// display our working area
-	imshow("StarBurstResult", gray);
-}
-
-void Starburst::setLastCenter(Point2f last_center) {
-	this->last_center = last_center;
+	pupil_center = Point(search_area.x + relative_new_center.x,
+			search_area.y + relative_new_center.y);
 }
 
 /**
- * calls itself recursively. searches for num_of_glints glints inside the pupil_area.
- * all found glints are removed by bi-linear interpolations using a window with 
- * the size "2 * interpolation_size".
- * @param gray
- * @param pupil_area
- * @param num_of_glints
- * @param interpolation_size
+ * removes each glint using the interpolatin of the average
+ * perimeter intensity and the perimeter pixel for each angle
+ * this
  */
-void Starburst::remove_glints(Mat& gray, Rect& pupil_area, short num_of_glints,
-		short interpolation_size) {
+void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
+		short radius) {
 
-	if (num_of_glints == 0) {
-		imshow("GlintsRemoved", gray);
-		return;
-	}
+	for (vector<Point>::iterator it = glint_centers.begin();
+			it != glint_centers.end(); ++it) {
 
-	double minVal = 0;
-	double maxVal = 0;
-	Point minLoc;
-	Point glint;
+		// this code is based on the algorithm by Parkhurst and Li
+		// cvEyeTracker - Version 1.2.5 - http://thirtysixthspan.com/openEyes/software.html
+		int i, r, r2, x, y;
+		uchar perimeter_pixel[angle_num];
+		int sum = 0;
+		double avg;
+		for (i = 0; i < angle_num; i++) {
+			x = (int) (it->x + radius * cos_array[i]);
+			y = (int) (it->y + radius * sin_array[i]);
+			perimeter_pixel[i] = (uchar) (*(gray.data + y * gray.cols + x));
+			sum += perimeter_pixel[i];
+		}
+		avg = sum * 1.0 / angle_num;
 
-	Mat search_area = gray(pupil_area);
-
-	// are there any glints inside our "pupil"
-	minMaxLoc(search_area, &minVal, &maxVal, &minLoc, &glint, Mat());
-
-	glint.x += pupil_area.x;
-	glint.y += pupil_area.y;
-
-	if (maxVal < 120) {
-		return remove_glints(gray, pupil_area, --num_of_glints,
-				interpolation_size);
-	}
-
-	//    if the eyes are closed, we get a point outside of the image...
-	//    if (glint.x > gray.cols - interpolation_size
-	//            || glint.y > gray.rows - interpolation_size)
-	//        return;
-
-	const short cols = interpolation_size * 2 + 1;
-	const float fraction = 1.0 / cols;
-	float current_col = 1;
-	for (signed short i = -interpolation_size; i <= interpolation_size; i++) {
-
-		float current_row = 1;
-
-		// calculate the interpolated values at the top and bottom row of the window
-		float top_row = (cols - current_col) * fraction
-				* (float) gray.at<uchar>(glint.y - interpolation_size,
-						glint.x - interpolation_size);
-		top_row += current_col * fraction
-				* (float) gray.at<uchar>(glint.y - interpolation_size,
-						glint.x + interpolation_size);
-		float bottom_row = (cols - current_col) * fraction
-				* (float) gray.at<uchar>(glint.y + interpolation_size,
-						glint.x - interpolation_size);
-		bottom_row += current_col * fraction
-				* (float) gray.at<uchar>(glint.y + interpolation_size,
-						glint.x + interpolation_size);
-
-		// if there are two glints, don't interpolate the bright pixels...
-		// let's darken it
-		if (top_row > minVal + 10)
-			top_row = minVal + 10;
-		if (bottom_row > minVal + 10)
-			bottom_row = minVal + 10;
-
-		current_col++;
-
-		// interpolate the values
-		for (signed short j = -interpolation_size; j <= interpolation_size;
-				j++) {
-			uchar interpolated = (cols - current_row) * fraction * top_row;
-			interpolated += current_row * fraction * bottom_row;
-			gray.at<uchar>(glint.y + j, glint.x + i) = interpolated;
-			//            gray.at<uchar > (glint.y + j, glint.x + i) = minVal;
-			current_row++;
+		for (r = 1; r < radius; r++) {
+			r2 = radius - r;
+			for (i = 0; i < angle_num; i++) {
+				x = (int) (it->x + r * cos_array[i]);
+				y = (int) (it->y + r * sin_array[i]);
+				*(gray.data + y * gray.cols + x) = (uchar) ((r2 * 1.0 / radius)
+						* avg + (r * 1.0 / radius) * perimeter_pixel[i]);
+			}
 		}
 	}
-
-	// remove the next glint
-	remove_glints(gray, pupil_area, --num_of_glints, interpolation_size);
-}
-
-void Starburst::tearDown() {
-
 }
 
 /**
  * 
  * @param gray a grayscale image of the eye
  * @param start a starting point for the algorithm inside the pupil
- * @param num_of_lines the number of lines to draw (5 degrees = 72)
+ * @param num_of_lines the number of lines to draw (5 degrees = 72 lines)
  * @param distance_growth how fast should the lines grow? smaller = exacter
  * @return the center of the pupil
  */
@@ -238,12 +169,12 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	//center = Point2f(x, y);
 	//radius = r;
 
-	for (std::vector<Point>::iterator it = points.begin(); it != points.end();
+	/*for (std::vector<Point>::iterator it = points.begin(); it != points.end();
 			++it) {
 		cross(gray, *it, 3);
 		//line(gray, start, *it, color);
 		//circle(gray, *it, 1, color);
-	}
+	}*/
 }
 
 // the RANSAC stuff:

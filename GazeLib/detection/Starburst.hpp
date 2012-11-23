@@ -1,41 +1,40 @@
 #ifndef STARBURST_HPP
 #define	STARBURST_HPP
 
-//#include "Algorithm.hpp"
-
+#include <vector>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 
-#include "eye/FindEyeRegion.hpp"
+#define PI 3.14159265358979323846
 
 class Starburst {
 private:
-    //cv::Rect eye;
-    //cv::Rect eye_region;
-	cv::Point2f last_center;
-    FindEyeRegion eyeReg;
-    cv::Rect search_area;
+	cv::Rect search_area;
+	int angle_num;
+
+	// needed for the precalculation of sin/cos
+	double *angle_array;
+	double *sin_array;
+	double *cos_array;
 
 public:
-    void setUp(cv::VideoCapture &capture);
-    void processImage(cv::Mat & image);
-    void setLastCenter(cv::Point2f last_center);
-    void tearDown();
-    
-private:
-    void starburst(cv::Mat &image, cv::Point2f &center, float &radius,  int num_of_lines, int distance_growth);
-    void remove_glints(cv::Mat &gray, cv::Rect &pupil_area, short num_of_glints, short interpolation_size);
-};
+	Starburst();
+	void processImage(cv::Mat & image, std::vector<cv::Point> glint_centers,
+			cv::Point startpoint, cv::Point & pupil_center, float & radius);
 
+private:
+	void starburst(cv::Mat &image, cv::Point2f &center, float &radius,
+			int num_of_lines, int distance_growth);
+	void remove_glints(cv::Mat &gray, std::vector<cv::Point> glint_centers,
+			short interpolation_size);
+};
 
 class Ransac {
 public:
-    void ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
+	void ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
 
 private:
-    void fitCircle(float * x, float * y, float * r, std::vector<cv::Point>);
+	void fitCircle(float * x, float * y, float * r, std::vector<cv::Point>);
 };
-
 
 #endif	/* STARBURST_HPP */
 

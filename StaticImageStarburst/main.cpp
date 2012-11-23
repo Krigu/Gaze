@@ -7,8 +7,13 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 #include "detection/Starburst.hpp"
+#include "detection/glint/FindGlints.hpp"
 #include "GazeConstants.hpp"
 #include "utils/gui.hpp"
 
@@ -20,6 +25,7 @@ struct test_pix {
 	int x_koord;
 	int y_koord;
 };
+
 int main() {
 	// setup up some test data using the starting position and an inputimage
 	string im1 = "frame1.tif";
@@ -49,11 +55,25 @@ int main() {
 		cout << "Start the detection using any key" << endl;
 		waitKey(0);
 
-		Point2f p = startpoint;
+		Point p = startpoint;
+		Point pupil_centre;
 
+		// switch to grayscale
+		cvtColor(im, im, CV_RGB2GRAY);
+
+		//TODO: Findglints --> suchregion mitgeben und lastMeasurement als startpoint verwenden
+		FindGlints glints;
+		Mat glint_search = im.clone();
+
+		vector<cv::Point> glint_centers;
+		bool found = glints.findGlints(glint_search, glint_centers, p);
+
+		float radius;
 		Starburst starburst;
-		starburst.setLastCenter(p);
-		starburst.processImage(im);
+		starburst.processImage(im, glint_centers, p, pupil_centre, radius);
+
+		circle(im, pupil_centre, radius, Scalar(255,255,255));
+		cross(im, pupil_centre, 5);
 
 		imshow("full_image", im);
 		waitKey(0);
