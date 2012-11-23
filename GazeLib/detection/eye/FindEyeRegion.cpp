@@ -7,6 +7,7 @@
 
 #include "FindEyeRegion.hpp"
 #include "../../utils/log.hpp"
+#include "../../GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;
@@ -16,31 +17,40 @@ bool compareRect(Rect r1, Rect r2) {
 	return ((r1.width * r1.height) < (r2.width * r2.height));
 }
 
-Rect takeLeftEye(const Rect r1, const Rect r2) {
-	return (r1.x < r2.x) ? r1 : r2;
+Rect* takeLeftEye(Rect* r1, Rect* r2) {
+	return (r1->x < r2->x) ? r1 : r2;
 }
 
-Rect takeRightEye(const Rect r1, const Rect r2) {
-	return (r1.x > r2.x) ? r1 : r2;
+Rect* takeRightEye(Rect* r1, Rect* r2) {
+	return (r1->x > r2->x) ? r1 : r2;
 }
 
 FindEyeRegion::FindEyeRegion() {
+	// TODO exit when classiefier can0t be loaded
 	if (!eye_region_classifier.load(
-			"/home/krigu/Dropbox/gaze/haar/parojosG.xml")) {
+			GazeConstants::inHomeDirectory(
+					"/Dropbox/gaze/haar/parojosG.xml"))) {
 		LOG_W("ERROR: Could not load left eye classifier cascade");
 	}
 
 	if (!eye_classifier.load(
-			"/home/krigu/Dropbox/gaze/haar/haar_left_eye.xml")) {
+			GazeConstants::inHomeDirectory(
+					"/Dropbox/gaze/haar/haar_left_eye.xml"))) {
 		LOG_W("ERROR: Could not load left eyes classifier cascade");
 	}
 
+	// Init compare functions
+	rightEyeCompareFunc = &takeRightEye;
+	leftEyeCompareFunc = &takeLeftEye;
 }
 
-bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc) {
+bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
+		eyeCompareFunction& compareFunc) {
 	vector<Rect> faces;
 	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
-			0 | CV_HAAR_SCALE_IMAGE, Size(400, 100));
+			0 | CV_HAAR_SCALE_IMAGE,
+			Size(GazeConstants::HAAR_EYEREGION_MAX_WIDTH,
+					GazeConstants::HAAR_EYEREGION_MAX_HEIGHT));
 
 	if (faces.size() < 1) {
 		LOG_W("No face detected!");
@@ -54,7 +64,11 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compa
 	vector<Rect> eyes;
 	Mat region = image(eyeRegion);
 	eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
-			0 | CV_HAAR_SCALE_IMAGE, Size(20, 20), Size(200, 200));
+			0 | CV_HAAR_SCALE_IMAGE,
+			Size(GazeConstants::HAAR_EYE_MIN_WIDTH,
+					GazeConstants::HAAR_EYE_MIN_HEIGHT),
+			Size(GazeConstants::HAAR_EYE_MAX_WIDTH,
+					GazeConstants::HAAR_EYE_MAX_HEIGHT));
 
 	// No eye detected
 	if (eyes.size() == 0) {
@@ -69,10 +83,10 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compa
 	else {
 		sort(eyes.begin(), eyes.end(), compareRect);
 
-		int minDistance = 1000;
-		// TODO: Maybe use pointers?
-		Rect r1;
-		Rect r2;
+		// Take a high value so minDistance will be overriden with the first iteration
+		int minDistance = 100000;
+		Rect* r1 = NULL;
+		Rect* r2 = NULL;
 
 		for (std::vector<int>::size_type i = 0; i != (eyes.size() - 1); i++) {
 
@@ -80,14 +94,14 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compa
 					- (eyes[i].width * eyes[i].height);
 
 			if (distance < minDistance) {
-				r1 = eyes[i];
-				r2 = eyes[i + 1];
+				r1 = &eyes[i];
+				r2 = &eyes[i + 1];
 				minDistance = distance;
 			}
 		}
-
+		// TODO Check if r1, r2 is not null
 		// Take left rect
-		eyeRect = compareFunc(r1, r2);
+		eyeRect = *compareFunc(r1, r2);
 	}
 
 	// Add offset
@@ -98,13 +112,9 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compa
 }
 
 bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
-	// TODO: in konstruktor?
-	eyeCompareFunction compFunc = &takeRightEye;
-	return findEye(image, eyeRect, compFunc);
+	return findEye(image, eyeRect, rightEyeCompareFunc);
 }
 
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
-	// TODO: in konstruktor?
-	eyeCompareFunction compFunc = &takeLeftEye;
-	return findEye(image, eyeRect, compFunc);
+	return findEye(image, eyeRect, leftEyeCompareFunc);
 }

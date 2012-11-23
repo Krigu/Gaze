@@ -15,3 +15,10 @@ int calcPointDistance(cv::Point point1, cv::Point point2) {
 	// Use Pythagoras to calc distance between two points
 	return sqrt(sum);
 }
+
+cv::Point calcRectBarycenter(cv::Rect& rect) {
+	int x = rect.width / 2;
+	int y = rect.height / 2;
+
+	return cv::Point(rect.x + x, rect.y + y);
+}
