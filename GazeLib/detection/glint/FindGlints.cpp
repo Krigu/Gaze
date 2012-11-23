@@ -31,7 +31,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 
 	Mat pointImage = Mat(img.clone());
 
-	imshow("Thresholded image", img);
+	//imshow("Thresholded image", img);
 
 	// Dilate the blobs. Sometimes a glint is just one small pixel
 	dilate(img, img, Mat::ones(2, 2, CV_8U));
@@ -62,7 +62,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 	// TODO
 	// If there is more than one -> filter
 	if (clusters.size() == 0) {
-		//return false;
+		return false;
 	}
 	// TODO remove hack
 	glintCenter.clear();
@@ -80,10 +80,12 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 
 	/// Show in a window
 	//namedWindow("Contours", CV_WINDOW_AUTOSIZE);
-	imshow("Contours", img);
+	//imshow("Contours", img);
 
 	//namedWindow("Points", CV_WINDOW_AUTOSIZE);
-	imshow("Points", pointImage);
+	//imshow("Points", pointImage);
+
+	glintCenter = clusters.at(0).glintsInCluster();
 
 	return true;
 
