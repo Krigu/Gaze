@@ -8,8 +8,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
-// TODO: entfernen
-#include "opencv2/highgui/highgui.hpp"
 
 #include "Blobs.hpp"
 #include "../../GazeConstants.hpp"
@@ -20,7 +18,7 @@ using namespace cv;
 
 Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
 
-	// Add all blobs to vector
+	// Add all blobs to vector and calculate moments
 	for (int i = 0; i < contours.size(); i++) {
 
 		Moments m = moments(contours[i], false);
@@ -34,10 +32,9 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
 	}
 }
 
-Blobs::~Blobs() {
-
-}
-
+/**
+ * Removes all blobs larger or smaller than a predefined size
+ */
 void Blobs::removeInvalidSize() {
 
 	std::vector<Blob>::iterator iter;
@@ -50,6 +47,9 @@ void Blobs::removeInvalidSize() {
 	}
 }
 
+/**
+ * Removes all blobs which don't have a roundish form
+ */
 void Blobs::removeInvalidShape() {
 	std::vector<Blob>::iterator iter;
 	for (iter = blobs.begin(); iter != blobs.end();) {
@@ -60,10 +60,17 @@ void Blobs::removeInvalidShape() {
 	}
 }
 
+/**
+ * Returns a vector with all blob centers
+ */
 void Blobs::blobCenters(std::vector<cv::Point> & points) {
 	std::vector<Blob>::iterator iter;
 	for (iter = blobs.begin(); iter != blobs.end(); ++iter) {
 		Point p(iter->centerX, iter->centerY);
 		points.push_back(p);
 	}
+}
+
+int Blobs::blobSize(){
+	return blobs.size();
 }

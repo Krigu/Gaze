@@ -10,7 +10,16 @@
 
 #include "opencv2/core/core.hpp"
 
-// Calculate to absolute distance between to points
+/**
+ * Calculate to absolute distance between to points
+ * TODO: Use pointers?
+ */
 int calcPointDistance(cv::Point point1, cv::Point point2);
+
+/**
+ * Calculates the barycenter of a Rect
+ */
+cv::Point calcRectBarycenter(cv::Rect& rect);
+
 
 #endif /* GEOMETRY_HPP_ */

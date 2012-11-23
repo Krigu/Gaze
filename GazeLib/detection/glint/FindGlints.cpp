@@ -18,75 +18,82 @@
 using namespace std;
 using namespace cv;
 
-bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
+/**
+ * Gets the center of the glints and attaches the center of the glintcluster
+ * to the variable lastMeasurement
+ */
+bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 		cv::Point& lastMeasurement) {
 
 	Mat img = Mat(frame);
-
-	Mat counturImage = Mat(frame);
 
 	// Threshold image.
 	threshold(frame, img, GazeConstants::GLINT_THRESHOLD, 255,
 			cv::THRESH_TOZERO);
 
 	Mat pointImage = Mat(img.clone());
-
-	//imshow("Thresholded image", img);
+#ifdef __DEBUG
+	    imshow("Thresholded image", img);
+#endif
 
 	// Dilate the blobs. Sometimes a glint is just one small pixel
 	dilate(img, img, Mat::ones(2, 2, CV_8U));
 
 	std::vector<std::vector<cv::Point> > contours;
 
+	vector<Vec4i> hierarchy;
 	// Find all countours
 	findContours(img, contours, // a vector of contours
 			CV_RETR_EXTERNAL, // retrieve the external contours
 			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
+#ifdef __DEBUG
+	/// Draw contours
+	RNG rng(12345);
+	Mat drawing = Mat::zeros(img.size(), CV_8UC3);
+	for (int i = 0; i < contours.size(); i++) {
+		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
+				rng.uniform(0, 255));
+		drawContours(drawing, contours, i, color, 2, 8);
+	}
+	imshow("Contours: ", drawing);
+#endif
+
 	LOG_D("Countours size: " << contours.size());
 
-	vector<Vec4i> hierarchy;
-
 	Blobs blobs = Blobs(contours);
+	LOG_D("Blobs size 1: " << blobs.blobSize());
 	blobs.removeInvalidSize();
+	LOG_D("Blobs size 2: " << blobs.blobSize());
 	blobs.removeInvalidShape();
+	LOG_D("Blobs size 3: " << blobs.blobSize());
 
-	blobs.blobCenters(glintCenter);
+	blobs.blobCenters(glintCenters);
 
-	LOG_D("Blobs size: " << glintCenter);
+	LOG_D("Blobs size: " << glintCenters);
+
+#ifdef __DEBUG
+	Mat glints = Mat::zeros(img.size(), CV_8UC3);
+	std::vector<Point>::iterator iter;
+	for (iter = glintCenters.begin(); iter != glintCenters.end(); ++iter) {
+		cross(glints, *iter, 5);
+	}
+	imshow("Glints", glints);
+#endif
 
 	// Find all clusters
 	vector<GlintCluster> clusters;
-	findClusters(glintCenter, clusters, lastMeasurement);
+	findClusters(glintCenters, clusters, lastMeasurement);
 
-	// TODO
-	// If there is more than one -> filter
 	if (clusters.size() == 0) {
 		return false;
-	}
-	// TODO remove hack
-	glintCenter.clear();
-	if (clusters.size() == 1) {
-
-		Point p = clusters.at(0).centerPoint();
-		cross(frame, p, 5);
-	}
-	if (clusters.size() > 1) {
-		sort(clusters.begin(), clusters.end());
-
+	} else if (clusters.size() == 1) {
 		lastMeasurement = clusters.at(0).centerPoint();
-		cross(pointImage, lastMeasurement, 6);
+	} else if (clusters.size() > 1) {
 
+		sort(clusters.begin(), clusters.end());
+		lastMeasurement = clusters.at(0).centerPoint();
 	}
-
-	/// Show in a window
-	//namedWindow("Contours", CV_WINDOW_AUTOSIZE);
-	//imshow("Contours", img);
-
-	//namedWindow("Points", CV_WINDOW_AUTOSIZE);
-	//imshow("Points", pointImage);
-
-	glintCenter = clusters.at(0).glintsInCluster();
 
 	return true;
 
@@ -117,7 +124,6 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 	}
 
 	return distanceMat;
-
 }
 
 /**
@@ -126,6 +132,7 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
 void FindGlints::findClusters(vector<cv::Point>& blobs,
 		vector<GlintCluster>& clusters, cv::Point& lastMeasurement) {
 
+	// Get the distance Matrix
 	Mat nighbourMat = distanceMatrix(blobs);
 
 	LOG_D("DistanceMat out: " << endl << " " << nighbourMat << endl);
@@ -135,7 +142,7 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
 	reduce(nighbourMat, column_sum, 1, CV_REDUCE_SUM, CV_32S);
 	LOG_D("Sum: " << column_sum);
 
-	// This beautiful piece of code might be reviewed by Mr. C++
+	// TODO: This beautiful piece of code might be reviewed by Mr. C++
 	// Principle idea: Iterate over nighborMat and only consider lines
 	// with at least 4 glints (3 nightbours). Those line creates a new cluster of glints.
 	for (int row = 0; row < nighbourMat.rows; ++row) {

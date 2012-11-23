@@ -15,20 +15,20 @@ struct Blob {
 	int centerX;
 	// Center of gravity Y
 	int centerY;
-
 };
 
 class Blobs {
 private:
-	std::vector<Blob>  blobs;
+	std::vector<Blob> blobs;
 public:
 	Blobs(std::vector<std::vector<cv::Point> > & contours);
-	virtual ~Blobs();
 
 	void removeInvalidSize();
 	void removeInvalidShape();
 
-	void blobCenters(std::vector< cv::Point > & points);
+	void blobCenters(std::vector<cv::Point> & points);
+	// TODO: Remove. only for debug
+	int blobSize();
 
 };
 

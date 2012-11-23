@@ -18,12 +18,11 @@ private:
 	int distanceToLastMeasurement;
 
 public:
-	//TODO ask mr C++ if this is valid code
 	GlintCluster(std::vector<cv::Point> & glints, cv::Point lastMeasurement);
 
 	int const averageDistanceToCenter() const;
 	cv::Point centerPoint();
-// TODO: WTF?
+	// TODO: Unserstand const?
 	std::vector<cv::Point> const& glintsInCluster() const;
 
 };
