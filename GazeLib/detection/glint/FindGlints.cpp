@@ -76,6 +76,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenter,
 
 		lastMeasurement = clusters.at(0).centerPoint();
 		cross(pointImage, lastMeasurement, 6);
+
 	}
 
 	/// Show in a window

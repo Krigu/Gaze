@@ -6,7 +6,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "FindEyeRegion.hpp"
+#include "eye/FindEyeRegion.hpp"
 
 class Starburst {
 private:
