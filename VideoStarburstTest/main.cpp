@@ -81,7 +81,6 @@ int main() {
 		vector<cv::Point> glint_centers;
 		float radius;
 
-
 		bool found = glints.findGlints(glint_search, glint_centers, start);
 
 		if (found) {
@@ -105,16 +104,15 @@ int main() {
 			// follow the eye with our search region
 			eyeRegion = Rect(start.x - 100, start.y - 50, 200, 100);
 
-
-			circle(frame, start, radius, Scalar(255,255,255));
+			circle(frame, start, radius, Scalar(255, 255, 255));
 			cross(frame, start, 5);
-			rectangle(frame, eyeRegion, Scalar(255,255,255));
+			rectangle(frame, eyeRegion, Scalar(255, 255, 255));
 		}
 
 		if (numOfMeasures > 100) {
-			cout << "Average processing time in seconds(100 measures): "
-					<< setiosflags(ios::fixed) << setprecision(10)
-					<< totalTime / numOfMeasures << endl;
+			cout << "Average processing time in seconds(" << numOfMeasures
+					<< " measures): " << setiosflags(ios::fixed)
+					<< setprecision(10) << totalTime / numOfMeasures << endl;
 			numOfMeasures = 0;
 			totalTime = 0;
 		}
