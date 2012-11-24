@@ -9,12 +9,12 @@
 class Starburst {
 private:
 	cv::Rect search_area;
-	int angle_num;
 
 	// needed for the precalculation of sin/cos
-	double *angle_array;
-	double *sin_array;
-	double *cos_array;
+	static const int angle_num = 360;
+	double angle_array[angle_num];
+	double sin_array[angle_num];
+	double cos_array[angle_num];
 
 public:
 	Starburst();
