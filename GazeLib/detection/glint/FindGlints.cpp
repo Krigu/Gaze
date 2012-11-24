@@ -32,7 +32,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 			cv::THRESH_TOZERO);
 
 	Mat pointImage = Mat(img.clone());
-#ifdef __DEBUG
+#if __DEBUG_FINDGLINTS == 1
 	imshow("Thresholded image", img);
 #endif
 
@@ -47,7 +47,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 			CV_RETR_EXTERNAL, // retrieve the external contours
 			CV_CHAIN_APPROX_NONE); // all pixels of each contours
 
-#ifdef __DEBUG
+#if __DEBUG_FINDGLINTS == 1
 	/// Draw contours
 	RNG rng(12345);
 	Mat drawing = Mat::zeros(img.size(), CV_8UC3);
@@ -72,7 +72,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 
 	LOG_D("Blobs size: " << glintCenters);
 
-#ifdef __DEBUG
+#if __DEBUG_FINDGLINTS == 1
 	Mat glints = Mat::zeros(img.size(), CV_8UC3);
 	std::vector<Point>::iterator iter;
 	for (iter = glintCenters.begin(); iter != glintCenters.end(); ++iter) {

@@ -9,6 +9,11 @@
 using namespace cv;
 using namespace std;
 
+#if __DEBUG_STARBURST == 1
+#include "../utils/gui.hpp"
+#include <opencv2/highgui/highgui.hpp>
+#endif
+
 Starburst::Starburst() {
 
 	// pre calculate the sin/cos values
@@ -47,10 +52,18 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
 
+#if __DEBUG_STARBURST == 1
+	imshow("with glints", eye_area);
+#endif
+
 	// the algorithm: blur image, remove glint and starburst
 	//medianBlur(without_glnts, without_glnts, 3);
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
 	starburst(eye_area, relative_new_center, radius, 20, 1);
+
+#if __DEBUG_STARBURST == 1
+	imshow("without glints", eye_area);
+#endif
 
 	// display the center on the source image
 	pupil_center = Point(search_area.x + relative_new_center.x,
@@ -161,12 +174,17 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	//center = Point2f(x, y);
 	//radius = r;
 
-	/*for (std::vector<Point>::iterator it = points.begin(); it != points.end();
+#if __DEBUG_STARBURST == 1
+	Mat copy = gray.clone();
+	for (std::vector<Point>::iterator it = points.begin(); it != points.end();
 			++it) {
-		cross(gray, *it, 3);
+		cross(copy, *it, 3);
 		//line(gray, start, *it, color);
 		//circle(gray, *it, 1, color);
-	}*/
+	}
+	imshow("starburst result", copy);
+#endif
+
 }
 
 // the RANSAC stuff:
