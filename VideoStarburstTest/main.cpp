@@ -30,7 +30,7 @@ int main() {
 
 	VideoCapture capture(
 			GazeConstants::inHomeDirectory(
-					"/Dropbox/gaze/videos/osx/fri.mov"));
+					"/Dropbox/gaze/videos/osx/krigu.mov"));
 	//VideoCapture capture(0);
 
 	// Get the frame rate
@@ -87,6 +87,16 @@ int main() {
 		if (found) {
 			// get the absolute coordinates
 			start = Point(start.x + eyeRegion.x, start.y + eyeRegion.y);
+
+			//TODO: worst fix ever,
+			for (vector<Point>::iterator it = glint_centers.begin();
+					it != glint_centers.end(); ++it) {
+
+				// the glint_centers are relative to the search region...
+				it->x = it->x + eyeRegion.x;
+				it->y = it->y + eyeRegion.y;
+
+			}
 
 			starburst.processImage(frame, glint_centers, start, start, radius);
 			totalTime += ((double) getTickCount() - t) / getTickFrequency();
