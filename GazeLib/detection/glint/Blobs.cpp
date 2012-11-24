@@ -64,6 +64,9 @@ void Blobs::removeInvalidShape() {
  * Returns a vector with all blob centers
  */
 void Blobs::blobCenters(std::vector<cv::Point> & points) {
+	// TODO: check if ok
+	points.clear();
+
 	std::vector<Blob>::iterator iter;
 	for (iter = blobs.begin(); iter != blobs.end(); ++iter) {
 		Point p(iter->centerX, iter->centerY);

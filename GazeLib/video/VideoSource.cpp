@@ -19,21 +19,28 @@ VideoSource::VideoSource(string videoPath) {
 	videoCapture = VideoCapture(videoPath);
 }
 
-bool VideoSource::nextGrayFrame(cv::Mat img) {
+VideoSource::~VideoSource() {
+	videoCapture.release();
+}
+
+
+bool VideoSource::nextGrayFrame(cv::Mat& frame) {
+
 	// Check if capture is open
 	if (!videoCapture.isOpened())
 		return false;
 
 	// Check if there are more frames
-	if (!videoCapture.read(img))
+	if (!videoCapture.read(frame))
 		return false;
 
 	 // Check for invalid input
-	if (!img.data)
+	if (!frame.data)
 		return false;
 
 	// Convert to grayscale
-	cvtColor(img, img, CV_BGR2GRAY);
+	cvtColor(frame, frame, CV_BGR2GRAY);
 
 	return true;
 }
+

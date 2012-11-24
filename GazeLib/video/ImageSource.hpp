@@ -14,7 +14,7 @@ class ImageSource {
 
 public:
 	virtual ~ImageSource() {}
-	virtual bool nextGrayFrame(cv::Mat img) = 0;
+	virtual bool nextGrayFrame(cv::Mat& frame) = 0;
 };
 
 #endif /* IVIDEOSOURCE_HPP_ */

@@ -76,7 +76,7 @@ int main() {
 //	cross(image, lastMeasurement, 6);
 //	imshow("hoo", image);
 //
-//	while (waitKey(delay) != 32)
+	//while (waitKey(delay) != 32)
 //		;
 
 	FindGlints pupil;
