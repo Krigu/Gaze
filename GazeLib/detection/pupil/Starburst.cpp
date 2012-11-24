@@ -10,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 #if __DEBUG_STARBURST == 1
-#include "../utils/gui.hpp"
+#include "../../utils/gui.hpp"
 #include <opencv2/highgui/highgui.hpp>
 #endif
 
