@@ -12,7 +12,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "GazeConstants.hpp"
-#include "detection/Starburst.hpp"
+#include "detection/pupil/Starburst.hpp"
 #include "detection/glint/FindGlints.hpp"
 #include "detection/eye/FindEyeRegion.hpp"
 #include "utils/log.hpp"

@@ -91,4 +91,5 @@ bool IplClipLineToImage( IplImage* img, double& x0, double& y0, double& x1, doub
             outCode1 = outCodes( img, x1, y1 );
         }
     }
+    return false; // just to quieten the compiler...
 }
