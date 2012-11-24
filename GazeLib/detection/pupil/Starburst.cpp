@@ -121,7 +121,7 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	const Scalar color = Scalar(255, 255, 255);
 
 	// the intensity of the point that is inside the pupil
-	uchar start_val = gray.at<uchar>(center.y, center.x);
+	//uchar start_val = gray.at<uchar>(center.y, center.x);
 
 	std::vector<Point> points;
 
@@ -141,7 +141,7 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		unsigned char start_val = 0;
 		if (profile.size() > 0)
 			start_val = profile.at(0);
-		unsigned char val = 0;
+		//unsigned char val = 0;
 
 		int j = 0;
 		for (vector<unsigned char>::iterator it = profile.begin();

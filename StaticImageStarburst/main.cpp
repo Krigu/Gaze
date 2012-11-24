@@ -38,14 +38,15 @@ int main() {
 	pics[1].x_koord = 410;
 	pics[1].y_koord = 426;
 
-	for (char i = 0; i < 2; i++) {
+	for (unsigned char i = 0; i < 2; i++) {
 		// read the current image and display it
 		Mat im = imread(
 				GazeConstants::inHomeDirectory(
-						"/Dropbox/gaze/pics/starburst_tests/" + *(pics[i].image)));
+						"/Dropbox/gaze/pics/starburst_tests/"
+								+ *(pics[i].image)));
 
 		//short size = 5;
-		 Point startpoint(pics[i].x_koord, pics[i].y_koord);
+		Point startpoint(pics[i].x_koord, pics[i].y_koord);
 		//Scalar color(0,0,255);
 		//cross(im, startpoint, size, color);
 
@@ -66,15 +67,14 @@ int main() {
 		Mat glint_search = im.clone();
 
 		vector<cv::Point> glint_centers;
-		bool found = glints.findGlints(glint_search, glint_centers, p);
+		if (glints.findGlints(glint_search, glint_centers, p)) {
+			float radius;
+			Starburst starburst;
+			starburst.processImage(im, glint_centers, p, pupil_centre, radius);
 
-		float radius;
-		Starburst starburst;
-		starburst.processImage(im, glint_centers, p, pupil_centre, radius);
-
-		circle(im, pupil_centre, radius, Scalar(255,255,255));
-		cross(im, pupil_centre, 5);
-
+			circle(im, pupil_centre, radius, Scalar(255, 255, 255));
+			cross(im, pupil_centre, 5);
+		}
 		imshow("full_image", im);
 		waitKey(0);
 

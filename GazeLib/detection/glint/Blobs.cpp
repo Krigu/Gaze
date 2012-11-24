@@ -19,7 +19,7 @@ using namespace cv;
 Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
 
 	// Add all blobs to vector and calculate moments
-	for (int i = 0; i < contours.size(); i++) {
+	for (unsigned int i = 0; i < contours.size(); i++) {
 
 		Moments m = moments(contours[i], false);
 
