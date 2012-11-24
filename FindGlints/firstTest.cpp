@@ -18,6 +18,8 @@ using namespace std;
 int lowThreshold;
 int const max_lowThreshold = 255;
 
+
+
 int main() {
 
 	// Load video capture
@@ -49,7 +51,7 @@ int main() {
 		return -1;
 	}
 	// Convert to grayscale
-	cvtColor(image, image, CV_RGB2GRAY);
+	cvtColor(image, image, CV_BGR2GRAY);
 
 	Rect eyeRegion;
 
@@ -60,7 +62,7 @@ int main() {
 		if (!capture.read(image))
 			break;
 
-		cvtColor(image, image, CV_RGB2GRAY);
+		cvtColor(image, image, CV_BGR2GRAY);
 
 		findFace = eye.findLeftEye(image, eyeRegion);
 
