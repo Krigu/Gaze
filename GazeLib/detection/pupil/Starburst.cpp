@@ -1,10 +1,10 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "../GazeConstants.hpp"
+#include "../../GazeConstants.hpp"
 #include "Starburst.hpp"
 
-#include "../cattin/IplExtractProfile.h"
+#include "../../cattin/IplExtractProfile.h"
 
 using namespace cv;
 using namespace std;

@@ -12,7 +12,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include "detection/Starburst.hpp"
+#include "detection/pupil/Starburst.hpp"
 #include "detection/glint/FindGlints.hpp"
 #include "GazeConstants.hpp"
 #include "utils/gui.hpp"
