@@ -39,6 +39,7 @@
 									<listOptionValue builtIn="false" value="__DEBUG_FINDGLINTS=0"/>
 									<listOptionValue builtIn="false" value="__DEBUG_STARBURST=0"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.include.paths.982885365" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.2054871904" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1776051767" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker">

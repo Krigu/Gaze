@@ -13,15 +13,14 @@
 
 #include "ImageSource.hpp"
 
-namespace std {
-
 class VideoSource: public ImageSource {
 private:
 	cv::VideoCapture videoCapture;
 public:
-	VideoSource(string videoPath);
-	virtual bool nextGrayFrame(cv::Mat img);
+	VideoSource(std::string videoPath);
+	~VideoSource();
+	virtual bool nextGrayFrame(cv::Mat& frame);
 };
 
-}
+
 #endif /* VIDEOSOURCE_H_ */

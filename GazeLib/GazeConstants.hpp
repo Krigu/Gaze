@@ -51,6 +51,8 @@ public:
 	static const short HAAR_EYE_MAX_HEIGHT = 200;
 	// Max width of eye
 	static const short HAAR_EYE_MAX_WIDTH = 200;
+	// Max amount of tries to find eye region
+	static const short HAAR_FINDREGION_MAX_TRIES = 10;
 
 	//
 	// Pupilcenter
