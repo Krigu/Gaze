@@ -59,7 +59,7 @@ int main() {
 		Point pupil_centre;
 
 		// switch to grayscale
-		cvtColor(im, im, CV_RGB2GRAY);
+		cvtColor(im, im, CV_BGR2GRAY);
 
 		//TODO: Findglints --> suchregion mitgeben und lastMeasurement als startpoint verwenden
 		FindGlints glints;
