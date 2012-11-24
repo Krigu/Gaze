@@ -33,7 +33,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 
 	Mat pointImage = Mat(img.clone());
 #ifdef __DEBUG
-	    imshow("Thresholded image", img);
+	imshow("Thresholded image", img);
 #endif
 
 	// Dilate the blobs. Sometimes a glint is just one small pixel
@@ -87,13 +87,12 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 
 	if (clusters.size() == 0) {
 		return false;
-	} else if (clusters.size() == 1) {
-		lastMeasurement = clusters.at(0).centerPoint();
 	} else if (clusters.size() > 1) {
-
 		sort(clusters.begin(), clusters.end());
-		lastMeasurement = clusters.at(0).centerPoint();
 	}
+
+	glintCenters = clusters.at(0).glintsInCluster();
+	lastMeasurement = clusters.at(0).centerPoint();
 
 	return true;
 

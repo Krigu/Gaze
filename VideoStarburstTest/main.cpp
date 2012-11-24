@@ -8,9 +8,16 @@
 #include <iostream>
 #include <iomanip>
 
+#include "opencv2/video/video.hpp"
+#include "opencv2/highgui/highgui.hpp"
+
 #include "GazeConstants.hpp"
 #include "detection/Starburst.hpp"
+#include "detection/glint/FindGlints.hpp"
+#include "detection/eye/FindEyeRegion.hpp"
 #include "utils/log.hpp"
+#include "utils/gui.hpp"
+#include "utils/geometry.hpp"
 
 using namespace cv;
 using namespace std;
@@ -21,7 +28,9 @@ int main() {
 	int delay = 0;
 	Mat frame;
 
-	VideoCapture capture(GazeConstants::inHomeDirectory("/Dropbox/gaze/videos/osx/fri.mov"));
+	VideoCapture capture(
+			GazeConstants::inHomeDirectory(
+					"/Dropbox/gaze/videos/osx/fri.mov"));
 	//VideoCapture capture(0);
 
 	// Get the frame rate
@@ -35,29 +44,67 @@ int main() {
 		return 1;
 	}
 
+	// first, lets find the eye region
+	Rect eyeRegion;
+	FindEyeRegion eye;
+
+	bool findFace = false;
+	int tries;
+	while (!findFace) {
+		// read next frame (if available)
+		if (!capture.read(frame))
+			break;
+
+		cvtColor(frame, frame, CV_BGR2GRAY);
+
+		findFace = eye.findLeftEye(frame, eyeRegion);
+
+		tries++;
+	}
+
+	FindGlints glints;
 	Starburst starburst;
-	starburst.setUp(capture);
 
 	long i = 0;
 	bool waiting = false;
+
+	Point start = calcRectBarycenter(eyeRegion);
 
 	// the main loop
 	while (capture.read(frame)) {
 
 		double t = getTickCount();
-		try{
-			starburst.processImage(frame);
-		} catch(cv::Exception &e) {
-			cerr << i << "\t" << e.what();
-			break;
+
+		cvtColor(frame, frame, CV_BGR2GRAY);
+
+		Mat glint_search = frame(eyeRegion).clone();
+		vector<cv::Point> glint_centers;
+		float radius;
+
+
+		bool found = glints.findGlints(glint_search, glint_centers, start);
+
+		if (found) {
+			// get the absolute coordinates
+			start = Point(start.x + eyeRegion.x, start.y + eyeRegion.y);
+
+			starburst.processImage(frame, glint_centers, start, start, radius);
+			totalTime += ((double) getTickCount() - t) / getTickFrequency();
+			numOfMeasures++;
+
+			// follow the eye with our search region
+			eyeRegion = Rect(start.x - 100, start.y - 50, 200, 100);
+
+
+			circle(frame, start, radius, Scalar(255,255,255));
+			cross(frame, start, 5);
+			rectangle(frame, eyeRegion, Scalar(255,255,255));
 		}
 
-		totalTime += ((double) getTickCount() - t) / getTickFrequency();
-
-		numOfMeasures++;
 		if (numOfMeasures > 100) {
 			cout << "Average processing time in seconds(100 measures): "
-					<< setiosflags(ios::fixed) << setprecision(10) << totalTime / numOfMeasures << endl;
+					<< setiosflags(ios::fixed) << setprecision(10)
+					<< totalTime / numOfMeasures << endl;
 			numOfMeasures = 0;
 			totalTime = 0;
 		}
@@ -70,19 +117,18 @@ int main() {
 		// check the key and add some busy waiting
 		int keycode = waitKey(delay);
 
-		if(keycode == 32) // space
+		if (keycode == 32) // space
 			waiting = true;
-		else if(keycode == 27) // ESCAPE
+		else if (keycode == 27) // ESCAPE
 			break;
 
 		// busy waiting
-		while(waiting){
+		while (waiting) {
 			keycode = waitKey(delay);
-			if(keycode == 32 ){
+			if (keycode == 32) {
 				waiting = false;
 				break;
-			}
-			else if (keycode == 106) // "j"
+			} else if (keycode == 106) // "j"
 				break; // process ONE frame
 		}
 	}

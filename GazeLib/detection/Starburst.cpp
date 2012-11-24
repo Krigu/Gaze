@@ -13,20 +13,12 @@ Starburst::Starburst() {
 
 	// pre calculate the sin/cos values
 	float angle_delta = 1 * PI / 180;
-	this->angle_num = (int) (2 * PI / angle_delta);
-	double angle_array[angle_num];
-	double sin_array[angle_num];
-	double cos_array[angle_num];
 
 	for (int i = 0; i < angle_num; i++) {
-		angle_array[i] = i * angle_delta;
-		sin_array[i] = sin(angle_array[i]);
-		cos_array[i] = cos(angle_array[i]);
+		this->angle_array[i] = i * angle_delta;
+		this->sin_array[i] = sin(this->angle_array[i]);
+		this->cos_array[i] = cos(this->angle_array[i]);
 	}
-
-	this->angle_array = angle_array;
-	this->sin_array = sin_array;
-	this->cos_array = cos_array;
 
 }
 
