@@ -123,7 +123,7 @@ bool GazeTracker::startTracking() {
 			starburst.processImage(orig, glints, absoluteGlintCenter, pupilCenter,
 					radius);
 
-
+			circle(orig, pupilCenter,radius, Scalar(255,255,255));
 
 			//Point absolutePupilCenter(pupilCenter.x + frameRegion.x, pupilCenter.y + frameRegion.y);
 

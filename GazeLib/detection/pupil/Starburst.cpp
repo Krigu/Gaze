@@ -180,29 +180,20 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 					start_point.x, start_point.y, 0, 130, current_angle, done,
 					dx, dy);
 
-			smooth_vector(profile);
+			int vectorSize = profile.size();
+			if (vectorSize > 3) {
+				for (int i = 3; i < vectorSize; i++) {
+					unsigned char current = profile.at(i);
+					unsigned char last = profile.at(i - 3);
 
-			unsigned char start_val = 0;
-			if (profile.size() > 0)
-				start_val = profile.at(0);
-			//unsigned char val = 0;
-
-			int j = 0;
-			for (vector<unsigned char>::iterator it = profile.begin();
-					it != profile.end(); it++) {
-				if (*it > start_val + 5) { // TODO: +10 is probably a hack
-
-				// calculate
-					double x = start_point.x + j * dx;
-					double y = start_point.y + j * dy;
-
-					Point p = Point(x, y);
-					if (*it - start_val <= 30) {
+					if (current > (last + 10)) {
+						double x = start_point.x + i * dx;
+						double y = start_point.y + i * dy;
+						Point p = Point(x, y);
 						points.push_back(p);
+						break;
 					}
-					break;
 				}
-				++j;
 			}
 		}
 
@@ -420,16 +411,6 @@ void Starburst::smooth_vector(std::vector<unsigned char>& vector) {
 	for (int i = 0; i < size; i++) {
 		average.push_back(calcRegionAverage(i, vector));
 	}
-	std::cout << "-------- Start ------" << endl;
-	for (std::vector<unsigned char>::const_iterator i = vector.begin();
-			i != vector.end(); ++i)
-		std::cout << (int) *i << endl;
-
-	std::cout << "--------------" << endl;
-	for (std::vector<unsigned char>::const_iterator i = average.begin();
-			i != average.end(); ++i)
-		std::cout << (int) *i << endl;
-	std::cout << "-------- End ------" << endl;
 	vector = average;
 }
 
