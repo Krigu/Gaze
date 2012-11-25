@@ -14,7 +14,6 @@
 #include "../detection/eye/FindEyeRegion.hpp"
 #include "../detection/glint/FindGlints.hpp"
 #include "../detection/pupil/Starburst.hpp"
-#include "../detection/pupil/DarkPupilFinder.hpp"
 
 
 class GazeTracker {

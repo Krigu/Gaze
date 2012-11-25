@@ -123,15 +123,14 @@ bool GazeTracker::startTracking() {
 			starburst.processImage(orig, glints, absoluteGlintCenter, pupilCenter,
 					radius);
 
-			pupilFinder.findDarkPupil(currentFrame,darkPupilCenter);
+
 
 			//Point absolutePupilCenter(pupilCenter.x + frameRegion.x, pupilCenter.y + frameRegion.y);
 
 			LOG_D(
 					"Absolute Pupilcenter: " << pupilCenter);
 			LOG_D("Vector length: " << calcPointDistance(pupilCenter, absoluteGlintCenter));
-			LOG_D(
-								"Dark pupil center: " << darkPupilCenter);
+
 			adjustRect(glintCenter, frameRegion);
 
 //#if __DEBUG_TRACKER == 1
