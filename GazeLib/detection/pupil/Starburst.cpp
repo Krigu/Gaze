@@ -57,8 +57,8 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 #endif
 
 	// the algorithm: blur image, remove glint and starburst
-	//medianBlur(without_glnts, without_glnts, 3);
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
+	medianBlur(eye_area, without_glnts, 3);
 	starburst(eye_area, relative_new_center, radius, 20, 1);
 
 #if __DEBUG_STARBURST == 1
