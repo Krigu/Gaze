@@ -23,7 +23,6 @@ private:
 	FindEyeRegion eyeFinder;
 	FindGlints glintFinder;
 	Starburst starburst;
-	DarkPupilFinder pupilFinder;
 
 	bool isRunning;
 	bool isStopping;
