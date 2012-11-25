@@ -121,7 +121,7 @@ int main() {
 
 		// display the image
 		imshow("bla", frame);
-		waitKey(0);
+		//waitKey(0);
 
 		// check the key and add some busy waiting
 		int keycode = waitKey(delay);

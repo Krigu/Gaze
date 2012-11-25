@@ -59,6 +59,9 @@ public:
 	//
 	static const short PUPIL_SEARCH_AREA_WIDHT_HEIGHT = 90;
 
+	static const short PUPIL_MIN_RADIUS = 15;
+	static const short PUPIL_MAX_RADIUS = 17;
+
 	GazeConstants();
 
 	/**
