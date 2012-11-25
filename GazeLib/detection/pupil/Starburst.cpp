@@ -1,4 +1,3 @@
-
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "../../GazeConstants.hpp"
@@ -113,9 +112,8 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 	}
 }
 
-
-void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center, float &radius,
-		int num_of_lines, int distance_growth) {
+void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
+		float &radius, int num_of_lines, int distance_growth) {
 	//TODO krigu
 	LOG_W("test");
 }
@@ -133,47 +131,76 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	const double angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
 
-	// the intensity of the point that is inside the pupil
-	//uchar start_val = gray.at<uchar>(center.y, center.x);
-
 	std::vector<Point> points;
 
-	// calculate the lines in every direction
-	for (unsigned short i = 0; i < num_of_lines; i++) {
-		// calculate the current degree
-		const double current_angle = angle * i;
+	Point2f start_point = Point(center.x,center.y);
 
-		bool done;
-		double dx, dy;
-		dx = dy = 0;
+	unsigned short max_iterations = 0;
+	do {
 
-		//TODO Herr cattin fragen (dx/dy rausgeben...)
-		vector<unsigned char> profile = IplExtractProfile(&gray, center.x,
-				center.y, 0, 130, current_angle, done, dx, dy);
+		// calculate the lines in every direction
+		for (unsigned short i = 0; i < num_of_lines; i++) {
+			// calculate the current degree
+			const double current_angle = angle * i;
 
-		unsigned char start_val = 0;
-		if (profile.size() > 0)
-			start_val = profile.at(0);
-		//unsigned char val = 0;
+			bool done;
+			double dx, dy;
+			dx = dy = 0;
 
-		int j = 0;
-		for (vector<unsigned char>::iterator it = profile.begin();
-				it != profile.end(); it++) {
-			if (*it > start_val + 5) { // TODO: +10 is probably a hack
+			//TODO Herr cattin fragen (dx/dy rausgeben...)
+			vector<unsigned char> profile = IplExtractProfile(&gray, start_point.x,
+					start_point.y, 0, 130, current_angle, done, dx, dy);
 
-			// calculate
-				double x = center.x + j * dx;
-				double y = center.y + j * dy;
+			unsigned char start_val = 0;
+			if (profile.size() > 0)
+				start_val = profile.at(0);
+			//unsigned char val = 0;
 
-				Point p = Point(x, y);
-				if (*it - start_val <= 30) {
-					points.push_back(p);
+			int j = 0;
+			for (vector<unsigned char>::iterator it = profile.begin();
+					it != profile.end(); it++) {
+				if (*it > start_val + 5) { // TODO: +10 is probably a hack
+
+				// calculate
+					double x = start_point.x + j * dx;
+					double y = start_point.y + j * dy;
+
+					Point p = Point(x, y);
+					if (*it - start_val <= 30) {
+						points.push_back(p);
+					}
+					break;
 				}
-				break;
+				++j;
 			}
-			++j;
 		}
-	}
+
+		// calculate the mean of all points
+		float mean_x=0, mean_y=0;
+		for(vector<Point>::iterator it = points.begin(); it != points.end(); ++it){
+			mean_x += it->x;
+			mean_y += it->y;
+		}
+
+		if(points.size() > 0){
+			mean_x /= points.size();
+			mean_y /= points.size();
+		} else {
+			//TODO report error
+			LOG_D("no mean calculated!");
+		}
+
+		if((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4){
+			LOG_D((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)));
+			break;
+		}
+
+		start_point.x = mean_x;
+		start_point.y = mean_y;
+
+		++max_iterations;
+
+	} while (max_iterations < 10);
 
 	Ransac ransac;
 	float x, y, r;
