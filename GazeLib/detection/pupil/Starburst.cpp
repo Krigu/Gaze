@@ -53,17 +53,15 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
 
-#if __DEBUG_STARBURST == 1
-	imshow("with glints", eye_area);
-#endif
-
 	// the algorithm: blur image, remove glint and starburst
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
-	medianBlur(eye_area, without_glnts, 3);
+
 #if __DEBUG_STARBURST == 1
+	imshow("with glints", eye_area);
 	imshow("without glints", eye_area);
 #endif
 
+	medianBlur(eye_area, without_glnts, 3);
 #if __FINDPUPIL_STARBURST == 1
 	starburst(eye_area, relative_new_center, radius, 20, 1);
 #else
@@ -111,35 +109,35 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 		}
 	}
 }
-void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center, float &radius,
-		int num_of_lines, int distance_growth) {
+void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
+		float &radius, int num_of_lines, int distance_growth) {
 
-	    MatND hist;
+	MatND hist;
 
-	    // TODO put variables in setUp
-	    int nbins = 256; // 256 levels histogram levels
-	    int hsize[] = {nbins}; // just one dimension
-	    float range[] = {0, 255};
-	    const float *ranges[] = {range};
-	    int chnls[] = {0};
+	// TODO put variables in setUp
+	int nbins = 256; // 256 levels histogram levels
+	int hsize[] = { nbins }; // just one dimension
+	float range[] = { 0, 255 };
+	const float *ranges[] = { range };
+	int chnls[] = { 0 };
 
-	    // Calc history
-	    calcHist(&gray, 1, chnls, Mat(), hist, 1, hsize, ranges);
+	// Calc history
+	calcHist(&gray, 1, chnls, Mat(), hist, 1, hsize, ranges);
 
-	    float pixelSum;
-	    int threshold = 0;
+	float pixelSum;
+	int threshold = 0;
 
-	    // Find threshold beginning with brightest point
-	    for (int i = 0; i < hist.rows; i++) {
-	        float histValue = hist.at<float>(i, 0);
-	        pixelSum += histValue;
-	        if (pixelSum > 750) {
-	            threshold = i;
-	            break;
-	        }
-	    }
+	// Find threshold beginning with brightest point
+	for (int i = 0; i < hist.rows; i++) {
+		float histValue = hist.at<float>(i, 0);
+		pixelSum += histValue;
+		if (pixelSum > 750) {
+			threshold = i;
+			break;
+		}
+	}
 
-	    cv::threshold(gray, gray, threshold, 0, cv::THRESH_TOZERO_INV);
+	cv::threshold(gray, gray, threshold, 0, cv::THRESH_TOZERO_INV);
 
 //	Mat img;
 //	// Threshold image.
@@ -163,7 +161,7 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	std::vector<Point> points;
 
-	Point2f start_point = Point(center.x,center.y);
+	Point2f start_point = Point(center.x, center.y);
 
 	unsigned short max_iterations = 0;
 	do {
@@ -178,8 +176,11 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			dx = dy = 0;
 
 			//TODO Herr cattin fragen (dx/dy rausgeben...)
-			vector<unsigned char> profile = IplExtractProfile(&gray, start_point.x,
-					start_point.y, 0, 130, current_angle, done, dx, dy);
+			vector<unsigned char> profile = IplExtractProfile(&gray,
+					start_point.x, start_point.y, 0, 130, current_angle, done,
+					dx, dy);
+
+			smooth_vector(profile);
 
 			unsigned char start_val = 0;
 			if (profile.size() > 0)
@@ -206,13 +207,14 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		}
 
 		// calculate the mean of all points
-		float mean_x=0, mean_y=0;
-		for(vector<Point>::iterator it = points.begin(); it != points.end(); ++it){
+		float mean_x = 0, mean_y = 0;
+		for (vector<Point>::iterator it = points.begin(); it != points.end();
+				++it) {
 			mean_x += it->x;
 			mean_y += it->y;
 		}
 
-		if(points.size() > 0){
+		if (points.size() > 0) {
 			mean_x /= points.size();
 			mean_y /= points.size();
 		} else {
@@ -220,8 +222,9 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			LOG_D("no mean calculated!");
 		}
 
-		if((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4){
-			LOG_D((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)));
+		if ((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4) {
+			LOG_D(
+					(fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)));
 			break;
 		}
 
@@ -302,17 +305,17 @@ void Ransac::ransac(float * x, float * y, float * radius,
 			continue;
 
 #if __DEBUG_STARBURST == 1
-		Mat debug = Mat::zeros(90,90,CV_8UC3);
+		Mat debug = Mat::zeros(90, 90, CV_8UC3);
 		cv::Point a = points.at(0);
 		cv::Point b = points.at(1);
 		cv::Point c = points.at(2);
 
-		cross(debug, a, 5, Scalar(255,0,0));
-		cross(debug, b, 5, Scalar(255,0,0));
-		cross(debug, c, 5, Scalar(255,0,0));
+		cross(debug, a, 5, Scalar(255, 0, 0));
+		cross(debug, b, 5, Scalar(255, 0, 0));
+		cross(debug, c, 5, Scalar(255, 0, 0));
 
-		circle(debug,Point(tmp_x,tmp_y),tmp_r,Scalar(255,255,255));
-		imshow("debug",debug);
+		circle(debug, Point(tmp_x, tmp_y), tmp_r, Scalar(255, 255, 255));
+		imshow("debug", debug);
 #endif
 
 		if (tmp_x == std::numeric_limits<float>::min()
@@ -333,16 +336,16 @@ void Ransac::ransac(float * x, float * y, float * radius,
 
 			float magnitude = sqrt(pow(delta_y, 2) + pow(delta_x, 2));
 
-			if (magnitude >= lower_bound && magnitude <= upper_bound){
+			if (magnitude >= lower_bound && magnitude <= upper_bound) {
 				points_within_range++;
 #if __DEBUG_STARBURST == 1
-				Point p(it->x,it->y);
-				cross(debug,p,5,Scalar(0,255,0));
+				Point p(it->x, it->y);
+				cross(debug, p, 5, Scalar(0, 255, 0));
 #endif
 			} else {
 #if __DEBUG_STARBURST == 1
-				Point p(it->x,it->y);
-				cross(debug,p,5,Scalar(0,0,255));
+				Point p(it->x, it->y);
+				cross(debug, p, 5, Scalar(0, 0, 255));
 #endif
 			}
 
@@ -408,4 +411,47 @@ void Ransac::fitCircle(float * x, float * y, float * radius,
 	//If G is zero then the three points are collinear and no finite-radius circle through them exists. Otherwise, the radius of the circle is:
 	//
 	//r^2 = (a_0 - p_0)^2 + (a_1 - p_1)^2
+}
+
+void Starburst::smooth_vector(std::vector<unsigned char>& vector) {
+	// TODO: optimize
+	std::vector<unsigned char> average;
+	int size = vector.size();
+	for (int i = 0; i < size; i++) {
+		average.push_back(calcRegionAverage(i, vector));
+	}
+	std::cout << "-------- Start ------" << endl;
+	for (std::vector<unsigned char>::const_iterator i = vector.begin();
+			i != vector.end(); ++i)
+		std::cout << (int) *i << endl;
+
+	std::cout << "--------------" << endl;
+	for (std::vector<unsigned char>::const_iterator i = average.begin();
+			i != average.end(); ++i)
+		std::cout << (int) *i << endl;
+	std::cout << "-------- End ------" << endl;
+	vector = average;
+}
+
+unsigned char Starburst::calcRegionAverage(int index,
+		std::vector<unsigned char>& vector) {
+	int offset = 10;
+	int start = index - (offset / 2);
+	int end = index + (offset / 2);
+
+	start = (start < 1) ? 0 : start;
+	end = (end >= vector.size() - 1) ? vector.size() : end;
+
+	int sum = 0;
+	int divisor = 0;
+	for (int i = start; i < end; i++) {
+		sum += vector.at(i);
+		divisor++;
+	}
+
+	if (divisor > 0)
+		return (sum / divisor);
+	else
+		return sum;
+
 }
