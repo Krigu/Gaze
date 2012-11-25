@@ -60,14 +60,14 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 	// the algorithm: blur image, remove glint and starburst
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
 	medianBlur(eye_area, without_glnts, 3);
+#if __DEBUG_STARBURST == 1
+	imshow("without glints", eye_area);
+#endif
+
 #if __FINDPUPIL_STARBURST == 1
 	starburst(eye_area, relative_new_center, radius, 20, 1);
 #else
 	pupil_threasholding(eye_area, relative_new_center, radius, 20, 1);
-#endif
-
-#if __DEBUG_STARBURST == 1
-	imshow("without glints", eye_area);
 #endif
 
 	// display the center on the source image
@@ -238,11 +238,11 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	ransac.ransac(&x, &y, &r, points);
 
 	// find the radius and the circle center
-	minEnclosingCircle(points, center, radius);
+	//minEnclosingCircle(points, center, radius);
 	//LOG_D("Size: " << points.size());
 
-	//center = Point2f(x, y);
-	//radius = r;
+	center = Point2f(x, y);
+	radius = r;
 
 #if __DEBUG_STARBURST == 1
 	Mat copy = gray.clone();
@@ -272,12 +272,17 @@ void Ransac::ransac(float * x, float * y, float * radius,
 	// N: num of iterations
 	const int N = 1000;
 	// T: distance in which
-	const float T = 5;
+	const float T = 2;
 
 	// initialize randomizer
 	srand(time(NULL));
 
 	int max_points_within_range = 0;
+
+
+#if __DEBUG_STARBURST == 1
+	Mat debug_result;
+#endif
 
 	// lets fit a circle into 3 random points
 	// after N iterations the circle that fitted
@@ -338,18 +343,21 @@ void Ransac::ransac(float * x, float * y, float * radius,
 
 		}
 
-#if __DEBUG_STARBURST == 1
-		imshow("debug",debug);
-		waitKey(0);
-#endif
-
 		if (points_within_range > max_points_within_range) {
 			*x = tmp_x;
 			*y = tmp_y;
 			*radius = tmp_r;
 			max_points_within_range = points_within_range;
+#if __DEBUG_STARBURST == 1
+			debug_result = debug;
+#endif
 		}
 	}
+
+#if __DEBUG_STARBURST == 1
+	LOG_D("RANSAC_RESULT: x=" << *x << " y=" << *y << " R=" << *radius);
+	imshow("debug", debug_result);
+#endif
 }
 
 //
