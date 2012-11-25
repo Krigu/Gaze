@@ -166,6 +166,8 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	unsigned short max_iterations = 0;
 	do {
 
+		points.clear();
+
 		// calculate the lines in every direction
 		for (unsigned short i = 0; i < num_of_lines; i++) {
 			// calculate the current degree
