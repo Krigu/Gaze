@@ -9,6 +9,8 @@
 using namespace cv;
 using namespace std;
 
+#include "../../utils/log.hpp"
+
 #if __DEBUG_STARBURST == 1
 #include "../../utils/gui.hpp"
 #include <opencv2/highgui/highgui.hpp>
@@ -59,7 +61,11 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 	// the algorithm: blur image, remove glint and starburst
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
 	medianBlur(eye_area, without_glnts, 3);
+#if __FINDPUPIL_STARBURST == 1
 	starburst(eye_area, relative_new_center, radius, 20, 1);
+#else
+	pupil_threasholding(eye_area, relative_new_center, radius, 20, 1);
+#endif
 
 #if __DEBUG_STARBURST == 1
 	imshow("without glints", eye_area);
@@ -105,6 +111,13 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 			}
 		}
 	}
+}
+
+
+void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center, float &radius,
+		int num_of_lines, int distance_growth) {
+	//TODO krigu
+	LOG_W("test");
 }
 
 /**
