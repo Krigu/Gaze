@@ -261,6 +261,20 @@ void Ransac::ransac(float * x, float * y, float * radius,
 		std::random_shuffle(points.begin(), points.end());
 		fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
 
+#if __DEBUG_STARBURST == 1
+		Mat debug = Mat::zeros(90,90,CV_8UC3);
+		cv::Point a = points.at(0);
+		cv::Point b = points.at(1);
+		cv::Point c = points.at(2);
+
+		cross(debug, a, 5, Scalar(255,0,0));
+		cross(debug, b, 5, Scalar(255,0,0));
+		cross(debug, c, 5, Scalar(255,0,0));
+
+		circle(debug,Point(tmp_x,tmp_y),tmp_r,Scalar(255,255,255));
+		imshow("debug",debug);
+#endif
+
 		if (tmp_x == std::numeric_limits<float>::min()
 				|| tmp_y == std::numeric_limits<float>::min()
 				|| tmp_r == std::numeric_limits<float>::min())
@@ -279,9 +293,25 @@ void Ransac::ransac(float * x, float * y, float * radius,
 
 			float magnitude = sqrt(pow(delta_y, 2) + pow(delta_x, 2));
 
-			if (magnitude >= lower_bound && magnitude <= upper_bound)
+			if (magnitude >= lower_bound && magnitude <= upper_bound){
 				points_within_range++;
+#if __DEBUG_STARBURST == 1
+				Point p(it->x,it->y);
+				cross(debug,p,5,Scalar(0,255,0));
+#endif
+			} else {
+#if __DEBUG_STARBURST == 1
+				Point p(it->x,it->y);
+				cross(debug,p,5,Scalar(0,0,255));
+#endif
+			}
+
 		}
+
+#if __DEBUG_STARBURST == 1
+		imshow("debug",debug);
+		waitKey(0);
+#endif
 
 		if (points_within_range > max_points_within_range) {
 			*x = tmp_x;
