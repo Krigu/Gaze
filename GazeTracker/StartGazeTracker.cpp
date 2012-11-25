@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "detection/GazeTracker.hpp"
+#include "detection/pupil/Starburst.hpp"
 #include "video/VideoSource.hpp"
 #include "GazeConstants.hpp"
 

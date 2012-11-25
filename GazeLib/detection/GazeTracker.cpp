@@ -11,9 +11,9 @@
 #include "../GazeConstants.hpp"
 #include "../utils/log.hpp"
 
-#if __DEBUG_FINDGLINTS == 1
+//#if __DEBUG_FINDGLINTS == 1 || __DEBUG_TRACKER == 1
 #include "opencv2/highgui/highgui.hpp"
-#endif
+//#endif
 
 using namespace cv;
 
@@ -62,7 +62,10 @@ bool GazeTracker::startTracking() {
 
 	Mat currentFrame;
 	Rect frameRegion;
-	Point frameCenter;
+	Point glintCenter;
+	Point pupilCenter;
+	Point darkPupilCenter;
+	float radius;
 	vector<cv::Point> glints;
 
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
@@ -72,14 +75,14 @@ bool GazeTracker::startTracking() {
 		return false;
 	}
 
-	bool foundRegion = initialize(currentFrame, frameRegion, frameCenter);
+	bool foundRegion = initialize(currentFrame, frameRegion, glintCenter);
 	if (!foundRegion) {
 		LOG_D("No region found");
 		return false;
 	}
 
 	LOG_D(
-			"frameCenter:" << frameCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
+			"glintCenter:" << glintCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
 
 	isRunning = true;
 	int noGlints = 0;
@@ -91,8 +94,9 @@ bool GazeTracker::startTracking() {
 			break;
 		}
 
-#if __DEBUG_FINDGLINTS == 1
 		Mat orig = currentFrame.clone();
+#if __DEBUG_FINDGLINTS == 1
+
 		rectangle(orig, frameRegion, Scalar(255, 255, 255), 1);
 		imshow("Search region", orig);
 #endif
@@ -100,30 +104,65 @@ bool GazeTracker::startTracking() {
 		// Adjust rect
 		currentFrame = currentFrame(frameRegion);
 
-		if (glintFinder.findGlints(currentFrame, glints, frameCenter)) {
+		if (glintFinder.findGlints(currentFrame, glints, glintCenter)) {
+
+			//TODO: worst fix ever,
+			for (vector<Point>::iterator it = glints.begin();
+					it != glints.end(); ++it) {
+
+				// the glint_centers are relative to the search region...
+				it->x = it->x + frameRegion.x;
+				it->y = it->y + frameRegion.y;
+
+			}
+			Point absoluteGlintCenter(glintCenter.x + frameRegion.x,
+					glintCenter.y + frameRegion.y);
 			LOG_D(
-					"frameCenter:" << frameCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
-			adjustRect(frameCenter, frameRegion);
+					"Before starburst. Absolute Glintcenter: " << absoluteGlintCenter);
+
+			starburst.processImage(orig, glints, absoluteGlintCenter, pupilCenter,
+					radius);
+
+			pupilFinder.findDarkPupil(currentFrame,darkPupilCenter);
+
+			//Point absolutePupilCenter(pupilCenter.x + frameRegion.x, pupilCenter.y + frameRegion.y);
+
+			LOG_D(
+					"Absolute Pupilcenter: " << pupilCenter);
+			LOG_D("Vector length: " << calcPointDistance(pupilCenter, absoluteGlintCenter));
+			LOG_D(
+								"Dark pupil center: " << darkPupilCenter);
+			adjustRect(glintCenter, frameRegion);
+
+//#if __DEBUG_TRACKER == 1
+		cross(orig, absoluteGlintCenter, 10);
+		cross(orig, pupilCenter, 5);
+		imshow("Tracker", orig);
+//#endif
 		} else {
 			noGlints++;
 			if (noGlints > 5) {
 				imageSrc.nextGrayFrame(currentFrame);
-				initialize(currentFrame, frameRegion, frameCenter);
+				initialize(currentFrame, frameRegion, glintCenter);
 
 				noGlints = 0;
 			}
 		}
 
+		int keycode = waitKey(50);
+		if (keycode == 32)// space
+		while (waitKey(100) != 32)
+		;
+
 #if __DEBUG_FINDGLINTS == 1
 		cross(currentFrame, frameCenter, 5);
 		imshow("After calib", currentFrame);
 
-
 		// check the key and add some busy waiting
 		int keycode = waitKey(100);
-		if (keycode == 32) // space
-			while (waitKey(100) != 32)
-				;
+		if (keycode == 32)// space
+		while (waitKey(100) != 32)
+		;
 #endif
 
 		// TODO: check if it works

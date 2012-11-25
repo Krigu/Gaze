@@ -111,11 +111,41 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 		}
 	}
 }
+void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center, float &radius,
+		int num_of_lines, int distance_growth) {
 
-void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
-		float &radius, int num_of_lines, int distance_growth) {
-	//TODO krigu
-	LOG_W("test");
+	    MatND hist;
+
+	    // TODO put variables in setUp
+	    int nbins = 256; // 256 levels histogram levels
+	    int hsize[] = {nbins}; // just one dimension
+	    float range[] = {0, 255};
+	    const float *ranges[] = {range};
+	    int chnls[] = {0};
+
+	    // Calc history
+	    calcHist(&gray, 1, chnls, Mat(), hist, 1, hsize, ranges);
+
+	    float pixelSum;
+	    int threshold = 0;
+
+	    // Find threshold beginning with brightest point
+	    for (int i = 0; i < hist.rows; i++) {
+	        float histValue = hist.at<float>(i, 0);
+	        pixelSum += histValue;
+	        if (pixelSum > 750) {
+	            threshold = i;
+	            break;
+	        }
+	    }
+
+	    cv::threshold(gray, gray, threshold, 0, cv::THRESH_TOZERO_INV);
+
+//	Mat img;
+//	// Threshold image.
+//	threshold(gray, gray, 150, 0, cv::THRESH_TOZERO_INV);
+
+	imshow("pupil thres", gray);
 }
 
 /**

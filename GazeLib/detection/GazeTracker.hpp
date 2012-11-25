@@ -13,6 +13,8 @@
 #include "../video/ImageSource.hpp"
 #include "../detection/eye/FindEyeRegion.hpp"
 #include "../detection/glint/FindGlints.hpp"
+#include "../detection/pupil/Starburst.hpp"
+#include "../detection/pupil/DarkPupilFinder.hpp"
 
 
 class GazeTracker {
@@ -20,6 +22,8 @@ private:
 	ImageSource& imageSrc;
 	FindEyeRegion eyeFinder;
 	FindGlints glintFinder;
+	Starburst starburst;
+	DarkPupilFinder pupilFinder;
 
 	bool isRunning;
 	bool isStopping;

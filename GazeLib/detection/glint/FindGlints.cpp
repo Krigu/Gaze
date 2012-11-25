@@ -31,7 +31,6 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 	threshold(frame, img, GazeConstants::GLINT_THRESHOLD, 255,
 			cv::THRESH_TOZERO);
 
-	Mat pointImage = Mat(img.clone());
 #if __DEBUG_FINDGLINTS == 1
 	imshow("Thresholded image", img);
 #endif
