@@ -11,8 +11,9 @@
 #include "../GazeConstants.hpp"
 #include "../utils/log.hpp"
 
-// TODO: remove
+#if __DEBUG_FINDGLINTS == 1
 #include "opencv2/highgui/highgui.hpp"
+#endif
 
 using namespace cv;
 
@@ -77,31 +78,31 @@ bool GazeTracker::startTracking() {
 		return false;
 	}
 
-	LOG_D("frameCenter:" << frameCenter <<  "x: " << frameRegion.x << "y: " << frameRegion.y);
+	LOG_D(
+			"frameCenter:" << frameCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
 
 	isRunning = true;
 	int noGlints = 0;
 	// main loop
 	while (true) {
 		// Get next frame
-		if (!imageSrc.nextGrayFrame(currentFrame)){
+		if (!imageSrc.nextGrayFrame(currentFrame)) {
 			LOG_D("No more frames");
 			break;
 		}
-		// TODO rename
-//#ifdef __DEBUG_FIND_GLINTS
+
+#if __DEBUG_FINDGLINTS == 1
 		Mat orig = currentFrame.clone();
-		rectangle(orig, frameRegion, Scalar(255,255,255), 1);
+		rectangle(orig, frameRegion, Scalar(255, 255, 255), 1);
 		imshow("Search region", orig);
-//#endif
-
-
+#endif
 
 		// Adjust rect
 		currentFrame = currentFrame(frameRegion);
 
 		if (glintFinder.findGlints(currentFrame, glints, frameCenter)) {
-			LOG_D("frameCenter:" << frameCenter <<  "x: " << frameRegion.x << "y: " << frameRegion.y);
+			LOG_D(
+					"frameCenter:" << frameCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
 			adjustRect(frameCenter, frameRegion);
 		} else {
 			noGlints++;
@@ -112,14 +113,18 @@ bool GazeTracker::startTracking() {
 				noGlints = 0;
 			}
 		}
-		cross(currentFrame, frameCenter,5);
+
+#if __DEBUG_FINDGLINTS == 1
+		cross(currentFrame, frameCenter, 5);
 		imshow("After calib", currentFrame);
+
 
 		// check the key and add some busy waiting
 		int keycode = waitKey(100);
 		if (keycode == 32) // space
 			while (waitKey(100) != 32)
 				;
+#endif
 
 		// TODO: check if it works
 		while (!isRunning) {
