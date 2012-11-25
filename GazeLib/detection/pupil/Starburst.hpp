@@ -28,6 +28,8 @@ private:
 			int num_of_lines, int distance_growth);
 	void remove_glints(cv::Mat &gray, std::vector<cv::Point> glint_centers,
 			short interpolation_size);
+	void smooth_vector(std::vector<unsigned char>& vector);
+	unsigned char calcRegionAverage(int index, std::vector<unsigned char>& vector);
 };
 
 class Ransac {
