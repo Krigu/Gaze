@@ -53,11 +53,14 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
 			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
 
+#if __DEBUG_STARBURST == 1
+	imshow("with glints", eye_area);
+#endif
+
 	// the algorithm: blur image, remove glint and starburst
 	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
 
 #if __DEBUG_STARBURST == 1
-	imshow("with glints", eye_area);
 	imshow("without glints", eye_area);
 #endif
 
