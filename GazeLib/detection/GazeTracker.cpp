@@ -20,6 +20,8 @@ GazeTracker::GazeTracker(ImageSource & imageSource) :
 		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(
 				0) {
 	c.createMatrix();
+
+
 }
 
 bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
@@ -87,6 +89,13 @@ bool GazeTracker::startTracking() {
 
 	LOG_D(
 			"glintCenter:" << glintCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
+
+	c.printBluePoint(Point(100,50));
+
+	int keycode = waitKey(50);
+		if (keycode == 32) // space
+			while (waitKey(100) != 32)
+				;
 
 	isRunning = true;
 	int noGlints = 0;

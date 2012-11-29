@@ -17,7 +17,7 @@ using namespace std;
 
 int main(){
 
-	string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/k.webm");
+	string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
 
 
 	cout << path << endl;
