@@ -167,6 +167,8 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	const double angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
 
+	bool found=false;
+
 	std::vector<Point> points;
 
 	Point2f start_point = Point(center.x, center.y);
@@ -224,6 +226,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		}
 
 		if ((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4) {
+			found = true;
 			break; // the mean converged, lets fit a circle now
 		}
 
@@ -232,7 +235,11 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	}
 
-	bool found=false;
+	// we didn't find a center within the
+	// max iterations!
+	if(!found)
+		return false;
+
 	float x, y, r;
 	x = y = r = 0;
 	Ransac ransac;
