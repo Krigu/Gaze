@@ -186,7 +186,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 			//TODO Herr cattin fragen (dx/dy rausgeben...)
 			vector<unsigned char> profile = IplExtractProfile(&gray,
-					start_point.x, start_point.y, 0, 130, current_angle, done,
+					start_point.x, start_point.y, 0, 50, current_angle, done,
 					dx, dy);
 
 			int vectorSize = profile.size();
