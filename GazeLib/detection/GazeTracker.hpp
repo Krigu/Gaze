@@ -15,6 +15,7 @@
 #include "../detection/glint/FindGlints.hpp"
 #include "../detection/pupil/Starburst.hpp"
 
+#include "../GazeConstants.hpp"
 
 class GazeTracker {
 private:
@@ -23,8 +24,15 @@ private:
 	FindGlints glintFinder;
 	Starburst starburst;
 
+	Point last_pupil_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+	Point last_glint_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+
 	bool isRunning;
 	bool isStopping;
+
+	void smoothSignal(Point &measured, Point &smoothed, Point data[], unsigned int framenumber);
+
+	unsigned int framenumber;
 
 protected:
 	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point& frameCenter);

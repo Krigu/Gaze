@@ -8,7 +8,6 @@
 #include "GazeTracker.hpp"
 #include "../utils/geometry.hpp"
 #include "../utils/gui.hpp"
-#include "../GazeConstants.hpp"
 #include "../utils/log.hpp"
 
 //#if __DEBUG_FINDGLINTS == 1 || __DEBUG_TRACKER == 1
@@ -18,7 +17,7 @@
 using namespace cv;
 
 GazeTracker::GazeTracker(ImageSource & imageSource) :
-		imageSrc(imageSource), isRunning(false), isStopping(false) {
+		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(0) {
 }
 
 bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
@@ -120,22 +119,33 @@ bool GazeTracker::startTracking() {
 			}
 			Point absoluteGlintCenter(glintCenter.x + frameRegion.x,
 					glintCenter.y + frameRegion.y);
+			//Point smoothedGlintCenter;
 			LOG_D(
 					"Before starburst. Absolute Glintcenter: " << absoluteGlintCenter);
+
+			// smooth the measured signal
+			//this->smoothSignal(absoluteGlintCenter, smoothedGlintCenter, this->last_glint_centers, framenumber);
+			//LOG_D("GlintCenter: " << absoluteGlintCenter << " Smoothed: " << smoothedGlintCenter);
+			//absoluteGlintCenter = smoothedGlintCenter; // TODO two points only for debugging
 
 			starburst.processImage(orig, glints, absoluteGlintCenter,
 					pupilCenter, radius);
 
+			//Point smoothedPupilCenter;
+			//this->smoothSignal(pupilCenter, smoothedPupilCenter, this->last_pupil_centers, framenumber);
+			//LOG_D("PupilCenter: " << pupilCenter << " Smoothed: " << smoothedPupilCenter);
+			//pupilCenter = smoothedPupilCenter; // TODO two points only for debugging
+
 			circle(orig, pupilCenter, radius, Scalar(255, 255, 255));
 
-			//Point absolutePupilCenter(pupilCenter.x + frameRegion.x, pupilCenter.y + frameRegion.y);
-
-			LOG_D(
-					"Vec: " << calcAngle(absoluteGlintCenter,pupilCenter) << " " << calcPointDistance(absoluteGlintCenter,pupilCenter));
-
-			LOG_D( "Absolute Pupilcenter: " << pupilCenter);
-
 			adjustRect(glintCenter, frameRegion);
+
+			// now calculate the gaze vector
+			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x, absoluteGlintCenter.y - pupilCenter.y);
+			Point smoothed_gace_vec;
+			this->smoothSignal(gaze_vec, smoothed_gace_vec, this->last_pupil_centers, framenumber);
+			LOG_D("GazeVector: " << gaze_vec);
+			LOG_D("SmoothedVector: " << smoothed_gace_vec);
 
 //#if __DEBUG_TRACKER == 1
 			cross(orig, absoluteGlintCenter, 10);
@@ -175,6 +185,8 @@ bool GazeTracker::startTracking() {
 
 		if (isStopping)
 			break;
+
+		++framenumber;
 	}
 	return true;
 }
@@ -185,4 +197,22 @@ void GazeTracker::pauseTacking() {
 
 void GazeTracker::stopTracking() {
 	isStopping = true;
+}
+
+void GazeTracker::smoothSignal(Point &measured, Point &smoothed, Point data[], unsigned int framenumber){
+	if(framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES){
+		// nothing to smooth here
+		smoothed.x = measured.x;
+		smoothed.y = measured.y;
+	} else {
+		smoothed.x = 0;
+		smoothed.y = 0;
+		for(unsigned short i=0;i<GazeConstants::NUM_OF_SMOOTHING_FRAMES;++i){
+			smoothed.x += data[i].x;
+			smoothed.y += data[i].y;
+		}
+		smoothed.x /= GazeConstants::NUM_OF_SMOOTHING_FRAMES;
+		smoothed.y /= GazeConstants::NUM_OF_SMOOTHING_FRAMES;
+	}
+	data[framenumber % GazeConstants::NUM_OF_SMOOTHING_FRAMES] = measured;
 }
