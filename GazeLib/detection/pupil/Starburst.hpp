@@ -18,11 +18,11 @@ private:
 
 public:
 	Starburst();
-	void processImage(cv::Mat & image, std::vector<cv::Point> glint_centers,
+	bool processImage(cv::Mat & image, std::vector<cv::Point> glint_centers,
 			cv::Point startpoint, cv::Point & pupil_center, float & radius);
 
 private:
-	void starburst(cv::Mat &image, cv::Point2f &center, float &radius,
+	bool starburst(cv::Mat &image, cv::Point2f &center, float &radius,
 			int num_of_lines);
 	void pupil_threasholding(cv::Mat &image, cv::Point2f &center, float &radius,
 			int num_of_lines, int distance_growth);
@@ -34,7 +34,7 @@ private:
 
 class Ransac {
 public:
-	void ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
+	bool ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
 
 private:
 	void fitCircle(float * x, float * y, float * r, std::vector<cv::Point>);

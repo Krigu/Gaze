@@ -35,8 +35,10 @@ Starburst::Starburst() {
  * - use starburst to find the pupil and its center
  * 
  */
-void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
+bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 		cv::Point startpoint, cv::Point &pupil_center, float & radius) {
+
+	bool found = false;
 
 	// only search within a limited region
 	search_area = Rect(
@@ -66,14 +68,17 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 
 	medianBlur(eye_area, without_glnts, 3);
 #if __FINDPUPIL_STARBURST == 1
-	starburst(eye_area, relative_new_center, radius, 20);
+	found = starburst(eye_area, relative_new_center, radius, 20);
 #else
 	pupil_threasholding(eye_area, relative_new_center, radius, 20, 1);
 #endif
 
 	// display the center on the source image
-	pupil_center = Point(search_area.x + relative_new_center.x,
-			search_area.y + relative_new_center.y);
+	if (found)
+		pupil_center = Point(search_area.x + relative_new_center.x,
+				search_area.y + relative_new_center.y);
+
+	return found;
 }
 
 /**
@@ -157,7 +162,7 @@ void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
  * @param distance_growth how fast should the lines grow? smaller = exacter
  * @return the center of the pupil
  */
-void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
+bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {
 	const double angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
@@ -166,8 +171,7 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	Point2f start_point = Point(center.x, center.y);
 
-	unsigned short max_iterations = 0;
-	do {
+	for(unsigned short iterations = 0; iterations < GazeConstants::MAX_RANSAC_ITERATIONS; ++iterations){
 
 		points.clear();
 
@@ -216,32 +220,32 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		} else {
 			//TODO report error
 			LOG_D("no mean calculated!");
+			continue;
 		}
 
 		if ((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4) {
-			LOG_D(
-					(fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)));
-			break;
+			break; // the mean converged, lets fit a circle now
 		}
 
 		start_point.x = mean_x;
 		start_point.y = mean_y;
 
-		++max_iterations;
+	}
 
-	} while (max_iterations < 10);
-
-	Ransac ransac;
+	bool found=false;
 	float x, y, r;
 	x = y = r = 0;
-	ransac.ransac(&x, &y, &r, points);
+	Ransac ransac;
+	found = ransac.ransac(&x, &y, &r, points);
 
 	// find the radius and the circle center
 	//minEnclosingCircle(points, center, radius);
 	//LOG_D("Size: " << points.size());
 
-	center = Point2f(x, y);
-	radius = r;
+	if(found){
+		center = Point2f(x, y);
+		radius = r;
+	}
 
 #if __DEBUG_STARBURST == 1
 	Mat copy = gray.clone();
@@ -254,6 +258,7 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	imshow("starburst result", copy);
 #endif
 
+	return found;
 }
 
 // the RANSAC stuff:
@@ -266,18 +271,20 @@ void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 // - repeate above steps N times
 //
 
-void Ransac::ransac(float * x, float * y, float * radius,
+bool Ransac::ransac(float * x, float * y, float * radius,
 		std::vector<cv::Point> points) {
 	// N: num of iterations
 	const int N = 1000;
 	// T: distance in which
 	const float T = 2;
 
+	if(points.size() < 3)
+		return false;
+
 	// initialize randomizer
 	srand(time(NULL));
 
 	int max_points_within_range = 0;
-
 
 #if __DEBUG_STARBURST == 1
 	Mat debug_result;
@@ -362,6 +369,8 @@ void Ransac::ransac(float * x, float * y, float * radius,
 	LOG_D("RANSAC_RESULT: x=" << *x << " y=" << *y << " R=" << *radius);
 	imshow("debug", debug_result);
 #endif
+
+	return true;
 }
 
 //
