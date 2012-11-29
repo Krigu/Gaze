@@ -16,20 +16,23 @@ using namespace cv;
 
 Calibration::Calibration() {
 
-	namedWindow("Config", CV_WINDOW_AUTOSIZE);
-	out = Mat::zeros(Size(1440, 900), CV_8UC3);
+	namedWindow("Config");
+	out = Mat::zeros(Size(1680, 1050), CV_8UC3);
 
-
-
-	Point center(720, 452);
+	//Point center(720, 452);
+	Point center(835, 524);
 	calibrationPoints.push_back(center);
-	Point topLeft(86, 86);
+	//Point topLeft(86, 86);
+	Point topLeft(100, 100);
 	calibrationPoints.push_back(topLeft);
-	Point topRight(1360, 88);
+	//Point topRight(1360, 88);
+	Point topRight(1577, 100);
 	calibrationPoints.push_back(topRight);
-	Point bottomLeft(86, 815);
+	//Point bottomLeft(86, 815);
+	Point bottomLeft(100, 945);
 	calibrationPoints.push_back(bottomLeft);
-	Point bottomRight(1356, 815);
+	//Point bottomRight(1356, 815);
+	Point bottomRight(1572, 945);
 	calibrationPoints.push_back(bottomRight);
 
 	for (vector<Point>::iterator it = calibrationPoints.begin();
@@ -37,11 +40,11 @@ Calibration::Calibration() {
 		cross(out, (*it), 5, Scalar(255, 0, 0));
 	}
 
-	Point p1(-7, -1); // center
-	Point p2(2, -5);  // top left
-	Point p3(-14, -2);  // top right
-	Point p4(-13, 3);  // bottom right
-	Point p5(4, 2);  // bottom left
+	Point p1(6, 2); // center
+	Point p2(-2, 4);  // top left
+	Point p3(12, 5);  // top right
+	Point p4(12, -1);  // bottom right
+	Point p5(-3, -1);  // bottom left
 	gazeVectors.push_back(p1); // center
 	gazeVectors.push_back(p2);
 	gazeVectors.push_back(p3);
@@ -116,15 +119,14 @@ void std::Calibration::createMatrix() {
 //	printPoint(outX, outY, bottomLeft, p4);
 //	printPoint(outX, outY, bottomRight, p5);
 
-
 }
 
 Calibration::~Calibration() {
 
 }
 
-void std::Calibration::printPoint(
-		cv::Point vector) {
+void std::Calibration::printPoint(cv::Point vector) {
+	//out = Mat::zeros(Size(1680, 1050), CV_8UC3);
 
 	float a0 = vectorsX.at<float>(0, 0);
 	float a1 = vectorsX.at<float>(0, 1);
@@ -142,10 +144,21 @@ void std::Calibration::printPoint(
 //	cout << "vector:" << vector.x << "/ " << vector.y << endl;
 //	cout << "should be:" << p.x << "/ " << p.y << endl;
 	cout << vectorsX << endl;
-	cout << "x: " << x << " y: " << y << endl;
+	cout << "GVec: " << vector.x << "y: " << vector.y << " Point x: " << x << " y: " << y << endl;
 
-	Point calcPoint(x, y);
+	Point calcPoint(1680 - x, 1050 - y);
 	cross(out, calcPoint, 5, Scalar(0, 255, 0));
+
+	imshow("Config", out);
+}
+
+void std::Calibration::printBluePoint(cv::Point vector) {
+
+	cout << "x: " << vector.x << " y: " << vector.y << endl;
+	int x = 1680 - vector.x;
+	int y = 1050 - vector.y;
+	Point p(x,y);
+	cross(out, p, 5, Scalar(255, 255, 255));
 
 	imshow("Config", out);
 }

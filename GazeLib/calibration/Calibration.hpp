@@ -25,6 +25,7 @@ public:
 	Calibration();
 	void createMatrix();
 	void printPoint(cv::Point vector);
+	void printBluePoint(cv::Point vector);
 	virtual ~Calibration();
 };
 
