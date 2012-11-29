@@ -66,6 +66,10 @@ public:
 
 	static const unsigned short MAX_RANSAC_ITERATIONS = 10;
 
+	// how many frames should we use to smooth the signal?
+	static const unsigned short NUM_OF_SMOOTHING_FRAMES = 5;
+
+
 	GazeConstants();
 
 	/**
