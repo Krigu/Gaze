@@ -36,7 +36,7 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.1584323211" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.preprocessor.def.1121878764" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__FINDPUPIL_STARBURST=1"/>
-									<listOptionValue builtIn="false" value="__DEBUG=0"/>
+									<listOptionValue builtIn="false" value="__DEBUG=1"/>
 									<listOptionValue builtIn="false" value="__DEBUG_TRACKER=0"/>
 									<listOptionValue builtIn="false" value="__DEBUG_FINDGLINTS=0"/>
 									<listOptionValue builtIn="false" value="__DEBUG_STARBURST=0"/>

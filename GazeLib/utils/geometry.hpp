@@ -21,5 +21,7 @@ int calcPointDistance(cv::Point point1, cv::Point point2);
  */
 cv::Point calcRectBarycenter(cv::Rect& rect);
 
+double calcAngle(cv::Point start, cv::Point end);
+
 
 #endif /* GEOMETRY_HPP_ */

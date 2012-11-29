@@ -65,8 +65,11 @@ bool GazeTracker::startTracking() {
 	Point glintCenter;
 	Point pupilCenter;
 	Point darkPupilCenter;
+	Point lastVector;
+	Point currentVector;
 	float radius;
 	vector<cv::Point> glints;
+	int frames;
 
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
 	// TODO: return error?
@@ -88,6 +91,7 @@ bool GazeTracker::startTracking() {
 	int noGlints = 0;
 	// main loop
 	while (true) {
+		frames++;
 		// Get next frame
 		if (!imageSrc.nextGrayFrame(currentFrame)) {
 			LOG_D("No more frames");
@@ -96,7 +100,6 @@ bool GazeTracker::startTracking() {
 
 		Mat orig = currentFrame.clone();
 #if __DEBUG_FINDGLINTS == 1
-
 		rectangle(orig, frameRegion, Scalar(255, 255, 255), 1);
 		imshow("Search region", orig);
 #endif
@@ -120,23 +123,24 @@ bool GazeTracker::startTracking() {
 			LOG_D(
 					"Before starburst. Absolute Glintcenter: " << absoluteGlintCenter);
 
-			starburst.processImage(orig, glints, absoluteGlintCenter, pupilCenter,
-					radius);
+			starburst.processImage(orig, glints, absoluteGlintCenter,
+					pupilCenter, radius);
 
-			circle(orig, pupilCenter,radius, Scalar(255,255,255));
+			circle(orig, pupilCenter, radius, Scalar(255, 255, 255));
 
 			//Point absolutePupilCenter(pupilCenter.x + frameRegion.x, pupilCenter.y + frameRegion.y);
 
 			LOG_D(
-					"Absolute Pupilcenter: " << pupilCenter);
-			LOG_D("Vector length: " << calcPointDistance(pupilCenter, absoluteGlintCenter));
+					"Vec: " << calcAngle(absoluteGlintCenter,pupilCenter) << " " << calcPointDistance(absoluteGlintCenter,pupilCenter));
+
+			LOG_D( "Absolute Pupilcenter: " << pupilCenter);
 
 			adjustRect(glintCenter, frameRegion);
 
 //#if __DEBUG_TRACKER == 1
-		cross(orig, absoluteGlintCenter, 10);
-		cross(orig, pupilCenter, 5);
-		imshow("Tracker", orig);
+			cross(orig, absoluteGlintCenter, 10);
+			cross(orig, pupilCenter, 5);
+			imshow("Tracker", orig);
 //#endif
 		} else {
 			noGlints++;
@@ -149,9 +153,9 @@ bool GazeTracker::startTracking() {
 		}
 
 		int keycode = waitKey(50);
-		if (keycode == 32)// space
-		while (waitKey(100) != 32)
-		;
+		if (keycode == 32) // space
+			while (waitKey(100) != 32)
+				;
 
 #if __DEBUG_FINDGLINTS == 1
 		cross(currentFrame, frameCenter, 5);
