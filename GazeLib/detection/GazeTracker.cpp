@@ -119,30 +119,33 @@ bool GazeTracker::startTracking() {
 			}
 			Point absoluteGlintCenter(glintCenter.x + frameRegion.x,
 					glintCenter.y + frameRegion.y);
-			Point smoothedGlintCenter;
+			//Point smoothedGlintCenter;
 			LOG_D(
 					"Before starburst. Absolute Glintcenter: " << absoluteGlintCenter);
 
 			// smooth the measured signal
-			this->smoothSignal(absoluteGlintCenter, smoothedGlintCenter, this->last_glint_centers, framenumber);
-			LOG_D("GlintCenter: " << absoluteGlintCenter << " Smoothed: " << smoothedGlintCenter);
-			absoluteGlintCenter = smoothedGlintCenter; // TODO two points only for debugging
+			//this->smoothSignal(absoluteGlintCenter, smoothedGlintCenter, this->last_glint_centers, framenumber);
+			//LOG_D("GlintCenter: " << absoluteGlintCenter << " Smoothed: " << smoothedGlintCenter);
+			//absoluteGlintCenter = smoothedGlintCenter; // TODO two points only for debugging
 
 			starburst.processImage(orig, glints, absoluteGlintCenter,
 					pupilCenter, radius);
 
-			Point smoothedPupilCenter;
-			this->smoothSignal(pupilCenter, smoothedPupilCenter, this->last_pupil_centers, framenumber);
-			LOG_D("PupilCenter: " << pupilCenter << " Smoothed: " << smoothedPupilCenter);
-			pupilCenter = smoothedPupilCenter; // TODO two points only for debugging
+			//Point smoothedPupilCenter;
+			//this->smoothSignal(pupilCenter, smoothedPupilCenter, this->last_pupil_centers, framenumber);
+			//LOG_D("PupilCenter: " << pupilCenter << " Smoothed: " << smoothedPupilCenter);
+			//pupilCenter = smoothedPupilCenter; // TODO two points only for debugging
 
 			circle(orig, pupilCenter, radius, Scalar(255, 255, 255));
 
 			adjustRect(glintCenter, frameRegion);
 
 			// now calculate the gaze vector
-			Point gaze_vec(smoothedGlintCenter.x - smoothedPupilCenter.x, smoothedGlintCenter.y - smoothedPupilCenter.y);
+			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x, absoluteGlintCenter.y - pupilCenter.y);
+			Point smoothed_gace_vec;
+			this->smoothSignal(gaze_vec, smoothed_gace_vec, this->last_pupil_centers, framenumber);
 			LOG_D("GazeVector: " << gaze_vec);
+			LOG_D("SmoothedVector: " << smoothed_gace_vec);
 
 //#if __DEBUG_TRACKER == 1
 			cross(orig, absoluteGlintCenter, 10);
