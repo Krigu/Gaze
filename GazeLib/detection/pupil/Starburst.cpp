@@ -278,8 +278,10 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 	// T: distance in which
 	const float T = 2;
 
+	bool found = false;
+
 	if(points.size() < 3)
-		return false;
+		return found;
 
 	// initialize randomizer
 	srand(time(NULL));
@@ -359,6 +361,7 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 			*y = tmp_y;
 			*radius = tmp_r;
 			max_points_within_range = points_within_range;
+			found = true;
 #if __DEBUG_STARBURST == 1
 			debug_result = debug;
 #endif
@@ -366,11 +369,13 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 	}
 
 #if __DEBUG_STARBURST == 1
-	LOG_D("RANSAC_RESULT: x=" << *x << " y=" << *y << " R=" << *radius);
-	imshow("debug", debug_result);
+	if(found) {
+		LOG_D("RANSAC_RESULT: x=" << *x << " y=" << *y << " R=" << *radius);
+		imshow("debug", debug_result);
+	}
 #endif
 
-	return true;
+	return found;
 }
 
 //
