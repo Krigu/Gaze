@@ -146,7 +146,7 @@ void std::Calibration::printPoint(cv::Point vector) {
 	cout << vectorsX << endl;
 	cout << "GVec: " << vector.x << "y: " << vector.y << " Point x: " << x << " y: " << y << endl;
 
-	Point calcPoint(1680 - x, 1050 - y);
+	Point calcPoint(x,1050 - y);
 	cross(out, calcPoint, 5, Scalar(0, 255, 0));
 
 	imshow("Config", out);
@@ -155,7 +155,7 @@ void std::Calibration::printPoint(cv::Point vector) {
 void std::Calibration::printBluePoint(cv::Point vector) {
 
 	cout << "x: " << vector.x << " y: " << vector.y << endl;
-	int x = 1680 - vector.x;
+	int x = vector.x;
 	int y = 1050 - vector.y;
 	Point p(x,y);
 	cross(out, p, 5, Scalar(255, 255, 255));
