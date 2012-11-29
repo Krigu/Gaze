@@ -66,7 +66,7 @@ void Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 
 	medianBlur(eye_area, without_glnts, 3);
 #if __FINDPUPIL_STARBURST == 1
-	starburst(eye_area, relative_new_center, radius, 20, 1);
+	starburst(eye_area, relative_new_center, radius, 20);
 #else
 	pupil_threasholding(eye_area, relative_new_center, radius, 20, 1);
 #endif
@@ -158,7 +158,7 @@ void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
  * @return the center of the pupil
  */
 void Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
-		int num_of_lines, int distance_growth) {
+		int num_of_lines) {
 	const double angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
 

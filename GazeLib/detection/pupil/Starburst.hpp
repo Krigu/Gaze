@@ -23,7 +23,7 @@ public:
 
 private:
 	void starburst(cv::Mat &image, cv::Point2f &center, float &radius,
-			int num_of_lines, int distance_growth);
+			int num_of_lines);
 	void pupil_threasholding(cv::Mat &image, cv::Point2f &center, float &radius,
 			int num_of_lines, int distance_growth);
 	void remove_glints(cv::Mat &gray, std::vector<cv::Point> glint_centers,
