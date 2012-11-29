@@ -14,6 +14,7 @@
 #include "../detection/eye/FindEyeRegion.hpp"
 #include "../detection/glint/FindGlints.hpp"
 #include "../detection/pupil/Starburst.hpp"
+#include "../calibration/Calibration.hpp"
 
 #include "../GazeConstants.hpp"
 
@@ -23,6 +24,7 @@ private:
 	FindEyeRegion eyeFinder;
 	FindGlints glintFinder;
 	Starburst starburst;
+	Calibration c;
 
 	Point last_pupil_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 	Point last_glint_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];

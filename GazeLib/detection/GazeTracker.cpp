@@ -17,7 +17,9 @@
 using namespace cv;
 
 GazeTracker::GazeTracker(ImageSource & imageSource) :
-		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(0) {
+		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(
+				0) {
+	c.createMatrix();
 }
 
 bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
@@ -141,11 +143,15 @@ bool GazeTracker::startTracking() {
 			adjustRect(glintCenter, frameRegion);
 
 			// now calculate the gaze vector
-			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x, absoluteGlintCenter.y - pupilCenter.y);
+			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
+					absoluteGlintCenter.y - pupilCenter.y);
 			Point smoothed_gace_vec;
-			this->smoothSignal(gaze_vec, smoothed_gace_vec, this->last_pupil_centers, framenumber);
+			this->smoothSignal(gaze_vec, smoothed_gace_vec,
+					this->last_pupil_centers, framenumber);
 			LOG_D("GazeVector: " << gaze_vec);
 			LOG_D("SmoothedVector: " << smoothed_gace_vec);
+
+			c.printPoint(smoothed_gace_vec);
 
 //#if __DEBUG_TRACKER == 1
 			cross(orig, absoluteGlintCenter, 10);
@@ -199,15 +205,17 @@ void GazeTracker::stopTracking() {
 	isStopping = true;
 }
 
-void GazeTracker::smoothSignal(Point &measured, Point &smoothed, Point data[], unsigned int framenumber){
-	if(framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES){
+void GazeTracker::smoothSignal(Point &measured, Point &smoothed, Point data[],
+		unsigned int framenumber) {
+	if (framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES) {
 		// nothing to smooth here
 		smoothed.x = measured.x;
 		smoothed.y = measured.y;
 	} else {
 		smoothed.x = 0;
 		smoothed.y = 0;
-		for(unsigned short i=0;i<GazeConstants::NUM_OF_SMOOTHING_FRAMES;++i){
+		for (unsigned short i = 0; i < GazeConstants::NUM_OF_SMOOTHING_FRAMES;
+				++i) {
 			smoothed.x += data[i].x;
 			smoothed.y += data[i].y;
 		}
