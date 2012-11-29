@@ -50,10 +50,6 @@
      else
          url = QUrl("http://www.heise.de");
      MainWindow *browser = new MainWindow(url);
-     #if defined Q_OS_SYMBIAN || defined Q_WS_HILDON || defined Q_WS_MAEMO_5 || defined Q_WS_SIMULATOR
-         browser->showMaximized();
-     #else
-         browser->show();
-     #endif
+     browser->showMaximized();
      return app.exec();
  }
