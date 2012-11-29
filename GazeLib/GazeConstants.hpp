@@ -59,8 +59,12 @@ public:
 	//
 	static const short PUPIL_SEARCH_AREA_WIDHT_HEIGHT = 90;
 
+
+	// RANSAC stuff
 	static const short PUPIL_MIN_RADIUS = 15;
 	static const short PUPIL_MAX_RADIUS = 17;
+
+	static const unsigned short MAX_RANSAC_ITERATIONS = 10;
 
 	GazeConstants();
 
