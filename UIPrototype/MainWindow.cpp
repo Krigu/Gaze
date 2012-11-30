@@ -1,42 +1,3 @@
- /****************************************************************************
- **
- ** Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
- ** Contact: http://www.qt-project.org/legal
- **
- ** This file is part of the examples of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:BSD$
- ** You may use this file under the terms of the BSD license as follows:
- **
- ** "Redistribution and use in source and binary forms, with or without
- ** modification, are permitted provided that the following conditions are
- ** met:
- **   * Redistributions of source code must retain the above copyright
- **     notice, this list of conditions and the following disclaimer.
- **   * Redistributions in binary form must reproduce the above copyright
- **     notice, this list of conditions and the following disclaimer in
- **     the documentation and/or other materials provided with the
- **     distribution.
- **   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
- **     of its contributors may be used to endorse or promote products derived
- **     from this software without specific prior written permission.
- **
- **
- ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- ** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
- **
- ** $QT_END_LICENSE$
- **
- ****************************************************************************/
 
  #include <QtGui>
  #include <QtNetwork>
@@ -53,7 +14,7 @@
      file.open(QIODevice::ReadOnly);
      jQuery = file.readAll();
      file.close();
-
+     
      QNetworkProxyFactory::setUseSystemConfiguration(true);
 
      view = new QWebView(this);
@@ -67,20 +28,12 @@
      locationEdit->setSizePolicy(QSizePolicy::Expanding, locationEdit->sizePolicy().verticalPolicy());
      connect(locationEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
-     QToolBar *toolBar = addToolBar(tr("Navigation"));
-     toolBar->addAction(view->pageAction(QWebPage::Back));
-     toolBar->addAction(view->pageAction(QWebPage::Forward));
-     toolBar->addAction(view->pageAction(QWebPage::Reload));
-     toolBar->addAction(view->pageAction(QWebPage::Stop));
-     toolBar->addWidget(locationEdit);
-
-     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
-     QAction* viewSourceAction = new QAction("Page Source", this);
-     connect(viewSourceAction, SIGNAL(triggered()), SLOT(viewSource()));
-     viewMenu->addAction(viewSourceAction);
-
-     QMenu *effectMenu = menuBar()->addMenu(tr("&Effect"));
-     effectMenu->addAction("Highlight all links", this, SLOT(highlightAllLinks()));
+     QMenu *effectMenu = menuBar()->addMenu(tr("&Gaze Actions"));
+     effectMenu->addAction("Calibration", this, SLOT(highlightAllLinks()));
+     effectMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
+     effectMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
+     effectMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
+     //effectMenu->addAction("Scroll Up", this, SLOT(highlightAllLinks()));
 
      rotateAction = new QAction(this);
      rotateAction->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
@@ -89,32 +42,14 @@
      connect(rotateAction, SIGNAL(toggled(bool)), this, SLOT(rotateImages(bool)));
      effectMenu->addAction(rotateAction);
 
-     QMenu *toolsMenu = menuBar()->addMenu(tr("&Tools"));
+     /*QMenu *toolsMenu = menuBar()->addMenu(tr("&Tools"));
      toolsMenu->addAction(tr("Remove GIF images"), this, SLOT(removeGifImages()));
      toolsMenu->addAction(tr("Remove all inline frames"), this, SLOT(removeInlineFrames()));
      toolsMenu->addAction(tr("Remove all object elements"), this, SLOT(removeObjectElements()));
      toolsMenu->addAction(tr("Remove all embedded elements"), this, SLOT(removeEmbeddedElements()));
-
+    */
      setCentralWidget(view);
      setUnifiedTitleAndToolBarOnMac(true);
- }
-
- void MainWindow::viewSource()
- {
-     QNetworkAccessManager* accessManager = view->page()->networkAccessManager();
-     QNetworkRequest request(view->url());
-     QNetworkReply* reply = accessManager->get(request);
-     connect(reply, SIGNAL(finished()), this, SLOT(slotSourceDownloaded()));
- }
-
- void MainWindow::slotSourceDownloaded()
- {
-     QNetworkReply* reply = qobject_cast<QNetworkReply*>(const_cast<QObject*>(sender()));
-     QTextEdit* textEdit = new QTextEdit(NULL);
-     textEdit->setAttribute(Qt::WA_DeleteOnClose);
-     textEdit->show();
-     textEdit->setPlainText(reply->readAll());
-     reply->deleteLater();
  }
 
  void MainWindow::adjustLocation()
@@ -158,6 +93,18 @@
      view->page()->mainFrame()->evaluateJavaScript(code);
  }
 
+ void MainWindow::scrollUp()
+ {
+     QString code = "$('html, body').animate({ scrollTop: 0 }, 'slow');";
+     view->page()->mainFrame()->evaluateJavaScript(code);
+ }
+ 
+ void MainWindow::scrollDown()
+ {
+     QString code = "$('html, body').animate({ scrollTop: $(document).height() }, 'slow');";
+     view->page()->mainFrame()->evaluateJavaScript(code);
+ }
+ 
  void MainWindow::rotateImages(bool invert)
  {
      QString code;
