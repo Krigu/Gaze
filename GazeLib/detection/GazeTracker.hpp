@@ -28,11 +28,12 @@ private:
 
 	Point last_pupil_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 	Point last_glint_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 
 	bool isRunning;
 	bool isStopping;
 
-	void smoothSignal(Point &measured, Point &smoothed, Point data[], unsigned int framenumber);
+	void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
 
 	unsigned int framenumber;
 

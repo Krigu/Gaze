@@ -152,11 +152,11 @@ bool GazeTracker::startTracking() {
 			adjustRect(glintCenter, frameRegion);
 
 			// now calculate the gaze vector
-			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
+			Point2f gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
 					absoluteGlintCenter.y - pupilCenter.y);
-			Point smoothed_gace_vec;
+			Point2f smoothed_gace_vec;
 			this->smoothSignal(gaze_vec, smoothed_gace_vec,
-					this->last_pupil_centers, framenumber);
+					this->last_gaze_vectors, framenumber);
 			LOG_D("GazeVector: " << gaze_vec);
 			LOG_D("SmoothedVector: " << smoothed_gace_vec);
 
@@ -214,7 +214,7 @@ void GazeTracker::stopTracking() {
 	isStopping = true;
 }
 
-void GazeTracker::smoothSignal(Point &measured, Point &smoothed, Point data[],
+void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[],
 		unsigned int framenumber) {
 	if (framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES) {
 		// nothing to smooth here
