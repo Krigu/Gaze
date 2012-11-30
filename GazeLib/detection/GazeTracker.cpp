@@ -75,13 +75,13 @@ bool GazeTracker::startTracking() {
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
 	// TODO: return error?
 	if (!hasImage) {
-		LOG_D("No image");
+		LOG_W("No image");
 		return false;
 	}
 
 	bool foundRegion = initialize(currentFrame, frameRegion, glintCenter);
 	if (!foundRegion) {
-		LOG_D("No region found");
+		LOG_W("No region found");
 		return false;
 	}
 
@@ -136,6 +136,7 @@ bool GazeTracker::startTracking() {
 		} else {
 			noGlints++;
 			if (noGlints > 5) {
+				LOG_W("no glints found. need to reinitialize");
 				imageSrc.nextGrayFrame(currentFrame);
 				initialize(currentFrame, frameRegion, glintCenter);
 
