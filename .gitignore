@@ -17,3 +17,5 @@ Release/
 
 /UIPrototype/nbproject/qt-Debug.mk
 /UIPrototype/moc_*.cpp
+/UIPrototype/build/
+/UIPrototype/dist/

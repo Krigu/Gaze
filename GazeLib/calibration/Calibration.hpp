@@ -11,23 +11,36 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
-namespace std {
+class CalibrationData {
+private:
+	cv::Point pointOnScreen;
+	std::vector<cv::Point2f> measuredVectors;
+	cv::Point2f averageVector;
+public:
+	CalibrationData(cv::Point point, std::vector<cv::Point2f> & vectors);
+	cv::Point2f const& getAverageVector() const;
+	cv::Point const& getPointOnScreen() const;
+};
 
 class Calibration {
 private:
-	cv::Mat out;
-	cv::Mat vectorsX;
-	cv::Mat vectorsY;
-	vector<cv::Point> calibrationPoints;
-	vector<cv::Point> gazeVectors;
+	// TODO remove display and don't show image
+	cv::Mat display;
+	cv::vector<CalibrationData> calibrationData;
+
+	cv::Mat coefficientsX;
+	cv::Mat coefficientsY;
 
 public:
 	Calibration();
-	void createMatrix();
-	void printPoint(cv::Point vector);
-	void printBluePoint(cv::Point vector);
 	virtual ~Calibration();
+
+	void calcCoefficients();
+	void addCalibrationData(CalibrationData data);
+	void printCalibration();
+	cv::Point calculateCoordinates(cv::Point2f vector);
+
 };
 
-} /* namespace std */
+/* namespace std */
 #endif /* CALIBRATION_HPP_ */

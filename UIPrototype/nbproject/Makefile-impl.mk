@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=UiPrototype
+PROJECTNAME=UIPrototype
 
 # Active Configuration
 DEFAULTCONF=Debug
