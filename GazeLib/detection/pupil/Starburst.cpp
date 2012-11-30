@@ -36,47 +36,24 @@ Starburst::Starburst() {
  * 
  */
 bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
-		cv::Point2f startpoint, cv::Point2f &pupil_center, float & radius) {
+		cv::Point2f glintcenter, cv::Point2f &pupil_center, float & radius) {
 
+	Mat working_frame = frame.clone();
 	bool found = false;
+	Point2f startpoint(glintcenter.x,glintcenter.y);
 
-	// only search within a limited region
-	search_area = Rect(
-			startpoint.x - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
-			startpoint.y - GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
-			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT,
-			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT);
-
-	// get our working area of the image
-	Mat without_glnts = frame.clone();
-	Mat eye_area = without_glnts(search_area);
-
-	Point2f relative_new_center(
-			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2,
-			GazeConstants::PUPIL_SEARCH_AREA_WIDHT_HEIGHT / 2);
-
-#if __DEBUG_STARBURST == 1
-	imshow("with glints", eye_area);
-#endif
-
-	// the algorithm: blur image, remove glint and starburst
-	remove_glints(without_glnts, glint_centers, GazeConstants::GLINT_RADIUS);
-
-#if __DEBUG_STARBURST == 1
-	imshow("without glints", eye_area);
-#endif
-
-	medianBlur(eye_area, without_glnts, 3);
-#if __FINDPUPIL_STARBURST == 1
-	found = starburst(eye_area, relative_new_center, radius, 20);
-#else
-	pupil_threasholding(eye_area, relative_new_center, radius, 20, 1);
-#endif
+	remove_glints(working_frame, glint_centers, GazeConstants::GLINT_RADIUS);
+	medianBlur(working_frame, working_frame, 3);
+	found = starburst(working_frame, startpoint, radius, 20);
 
 	// display the center on the source image
 	if (found)
-		pupil_center = Point2f(search_area.x + relative_new_center.x,
-				search_area.y + relative_new_center.y);
+		pupil_center = startpoint;
+
+#if __DEBUG_STARBURST == 1
+	imshow("with glints", frame);
+	imshow("without glints", working_frame);
+#endif
 
 	return found;
 }
@@ -164,7 +141,7 @@ void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
  */
 bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {
-	const double angle = 2 * PI / num_of_lines; // in radiants!
+	const float angle = 2 * PI / num_of_lines; // in radiants!
 	const Scalar color = Scalar(255, 255, 255);
 
 	bool found=false;
@@ -186,7 +163,6 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			double dx, dy;
 			dx = dy = 0;
 
-			//TODO Herr cattin fragen (dx/dy rausgeben...)
 			vector<unsigned char> profile = IplExtractProfile(&gray,
 					start_point.x, start_point.y, 0, 50, current_angle, done,
 					dx, dy);
@@ -256,7 +232,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 #if __DEBUG_STARBURST == 1
 	Mat copy = gray.clone();
-	for (std::vector<Point>::iterator it = points.begin(); it != points.end();
+	for (std::vector<Point2f>::iterator it = points.begin(); it != points.end();
 			++it) {
 		cross(copy, *it, 3);
 		//line(gray, start, *it, color);

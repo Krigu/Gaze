@@ -108,52 +108,21 @@ bool GazeTracker::startTracking() {
 			break;
 		}
 
-		Mat orig = currentFrame.clone();
-#if __DEBUG_FINDGLINTS == 1
-		rectangle(orig, frameRegion, Scalar(255, 255, 255), 1);
-		imshow("Search region", orig);
-#endif
-
 		// Adjust rect
 		currentFrame = currentFrame(frameRegion);
 
 		if (glintFinder.findGlints(currentFrame, glints, glintCenter)) {
 
-			//TODO: worst fix ever,
-			for (vector<Point>::iterator it = glints.begin();
-					it != glints.end(); ++it) {
-
-				// the glint_centers are relative to the search region...
-				it->x = it->x + frameRegion.x;
-				it->y = it->y + frameRegion.y;
-
-			}
-			Point2f absoluteGlintCenter(glintCenter.x + frameRegion.x,
-					glintCenter.y + frameRegion.y);
-			//Point smoothedGlintCenter;
-			LOG_D(
-					"Before starburst. Absolute Glintcenter: " << absoluteGlintCenter);
-
-			// smooth the measured signal
-			//this->smoothSignal(absoluteGlintCenter, smoothedGlintCenter, this->last_glint_centers, framenumber);
-			//LOG_D("GlintCenter: " << absoluteGlintCenter << " Smoothed: " << smoothedGlintCenter);
-			//absoluteGlintCenter = smoothedGlintCenter; // TODO two points only for debugging
-
-			starburst.processImage(orig, glints, absoluteGlintCenter,
+			starburst.processImage(currentFrame, glints, glintCenter,
 					pupilCenter, radius);
 
-			//Point smoothedPupilCenter;
-			//this->smoothSignal(pupilCenter, smoothedPupilCenter, this->last_pupil_centers, framenumber);
-			//LOG_D("PupilCenter: " << pupilCenter << " Smoothed: " << smoothedPupilCenter);
-			//pupilCenter = smoothedPupilCenter; // TODO two points only for debugging
-
-			circle(orig, pupilCenter, radius, Scalar(255, 255, 255));
+			circle(currentFrame, pupilCenter, radius, Scalar(255, 255, 255));
 
 			adjustRect(glintCenter, frameRegion);
 
 			// now calculate the gaze vector
-			Point2f gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
-					absoluteGlintCenter.y - pupilCenter.y);
+			Point2f gaze_vec(glintCenter.x - pupilCenter.x,
+					glintCenter.y - pupilCenter.y);
 			Point2f smoothed_gace_vec;
 			this->smoothSignal(gaze_vec, smoothed_gace_vec,
 					this->last_gaze_vectors, framenumber);
@@ -163,9 +132,9 @@ bool GazeTracker::startTracking() {
 			c.printPoint(smoothed_gace_vec);
 
 //#if __DEBUG_TRACKER == 1
-			cross(orig, absoluteGlintCenter, 10);
-			cross(orig, pupilCenter, 5);
-			imshow("Tracker", orig);
+			cross(currentFrame, glintCenter, 10);
+			cross(currentFrame, pupilCenter, 5);
+			imshow("Tracker", currentFrame);
 //#endif
 		} else {
 			noGlints++;
@@ -181,17 +150,6 @@ bool GazeTracker::startTracking() {
 		if (keycode == 32) // space
 			while (waitKey(100) != 32)
 				;
-
-#if __DEBUG_FINDGLINTS == 1
-		cross(currentFrame, frameCenter, 5);
-		imshow("After calib", currentFrame);
-
-		// check the key and add some busy waiting
-		int keycode = waitKey(100);
-		if (keycode == 32)// space
-		while (waitKey(100) != 32)
-		;
-#endif
 
 		// TODO: check if it works
 		while (!isRunning) {

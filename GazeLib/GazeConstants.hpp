@@ -54,12 +54,6 @@ public:
 	// Max amount of tries to find eye region
 	static const short HAAR_FINDREGION_MAX_TRIES = 10;
 
-	//
-	// Pupilcenter
-	//
-	static const short PUPIL_SEARCH_AREA_WIDHT_HEIGHT = 90;
-
-
 	// RANSAC stuff
 	static const short PUPIL_MIN_RADIUS = 15;
 	static const short PUPIL_MAX_RADIUS = 17;

@@ -26,8 +26,6 @@ private:
 	Starburst starburst;
 	Calibration c;
 
-	Point last_pupil_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
-	Point last_glint_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 
 	bool isRunning;

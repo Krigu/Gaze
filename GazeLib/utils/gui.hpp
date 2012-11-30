@@ -14,7 +14,9 @@
 cv::Rect createRect(cv::Mat &frame, cv::Point &position, int width, int height);
 void cross(cv::Mat & im, cv::Point &center, short size);
 void cross(cv::Mat & im, cv::Point &center, short size, cv::Scalar color);
-void cross(cv::Mat & im, cv::Point2f &center, short size);
 
+// overloaded for Point2f
+void cross(cv::Mat & im, cv::Point2f &center, short size);
+void cross(cv::Mat & im, cv::Point2f &center, short size, cv::Scalar color);
 #endif /* GUI_HPP_ */
 

@@ -34,3 +34,8 @@ void cross(cv::Mat & im, cv::Point2f &center, short size) {
 	cv::Point p(center.x,center.y);
 	cross(im, p, size, cv::Scalar(255, 255, 255));
 }
+
+void cross(cv::Mat & im, cv::Point2f &center, short size, cv::Scalar color) {
+	cv::Point p(center.x,center.y);
+	cross(im, p, size, color);
+}
