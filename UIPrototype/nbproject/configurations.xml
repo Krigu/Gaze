@@ -39,6 +39,16 @@
         <modules>core gui network webkit</modules>
       </qt>
       <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../GazeLib</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <linkerLibItems>
+            <linkerLibFileItem>../GazeLib/Debug/libGazeLib.a</linkerLibFileItem>
+          </linkerLibItems>
+        </linkerTool>
       </compileType>
     </conf>
     <conf name="Release" type="4">
