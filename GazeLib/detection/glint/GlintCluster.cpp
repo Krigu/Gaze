@@ -46,7 +46,7 @@ int const GlintCluster::averageDistanceToCenter() const {
 /**
  * Calculates the center of the glint cluster
  */
-cv::Point GlintCluster::centerPoint() {
+cv::Point2f GlintCluster::centerPoint() {
 	int amount = glints.size();
 	int sumX = 0;
 	int sumY = 0;
@@ -59,7 +59,7 @@ cv::Point GlintCluster::centerPoint() {
 	float x = sumX / amount;
 	float y = sumY / amount;
 
-	return cv::Point(x, y);
+	return cv::Point2f(x, y);
 }
 
 /**

@@ -37,8 +37,8 @@ private:
 	unsigned int framenumber;
 
 protected:
-	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point& frameCenter);
-	void adjustRect(cv::Point& currentCenter, cv::Rect& frameRegion);
+	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
+	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
 public:
 	GazeTracker(ImageSource & imageSource);

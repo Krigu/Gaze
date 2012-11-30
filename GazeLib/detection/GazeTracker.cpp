@@ -25,7 +25,7 @@ GazeTracker::GazeTracker(ImageSource & imageSource) :
 }
 
 bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
-		cv::Point& frameCenter) {
+		cv::Point2f& frameCenter) {
 
 	bool foundEye = false;
 	short tries = 0;
@@ -43,7 +43,7 @@ bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
 	return true;
 }
 
-void GazeTracker::adjustRect(cv::Point& currentCenter, cv::Rect& frameRegion) {
+void GazeTracker::adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion) {
 	int width = frameRegion.width;
 	int height = frameRegion.height;
 
@@ -65,7 +65,7 @@ bool GazeTracker::startTracking() {
 
 	Mat currentFrame;
 	Rect frameRegion;
-	Point glintCenter;
+	Point2f glintCenter;
 	Point pupilCenter;
 	Point darkPupilCenter;
 	Point lastVector;
