@@ -128,7 +128,7 @@ bool GazeTracker::startTracking() {
 				it->y = it->y + frameRegion.y;
 
 			}
-			Point absoluteGlintCenter(glintCenter.x + frameRegion.x,
+			Point2f absoluteGlintCenter(glintCenter.x + frameRegion.x,
 					glintCenter.y + frameRegion.y);
 			//Point smoothedGlintCenter;
 			LOG_D(
