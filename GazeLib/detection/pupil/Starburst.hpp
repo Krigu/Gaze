@@ -19,7 +19,7 @@ private:
 public:
 	Starburst();
 	bool processImage(cv::Mat & image, std::vector<cv::Point> glint_centers,
-			cv::Point startpoint, cv::Point & pupil_center, float & radius);
+			cv::Point2f startpoint, cv::Point2f & pupil_center, float & radius);
 
 private:
 	bool starburst(cv::Mat &image, cv::Point2f &center, float &radius,
@@ -34,10 +34,10 @@ private:
 
 class Ransac {
 public:
-	bool ransac(float * x, float * y, float * radius, std::vector<cv::Point>);
+	bool ransac(float * x, float * y, float * radius, std::vector<cv::Point2f>);
 
 private:
-	void fitCircle(float * x, float * y, float * r, std::vector<cv::Point>);
+	void fitCircle(float * x, float * y, float * r, std::vector<cv::Point2f>);
 };
 
 #endif	/* STARBURST_HPP */

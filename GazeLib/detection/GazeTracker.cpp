@@ -66,7 +66,7 @@ bool GazeTracker::startTracking() {
 	Mat currentFrame;
 	Rect frameRegion;
 	Point2f glintCenter;
-	Point pupilCenter;
+	Point2f pupilCenter;
 	Point darkPupilCenter;
 	Point lastVector;
 	Point currentVector;

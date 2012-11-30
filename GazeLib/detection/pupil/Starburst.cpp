@@ -36,7 +36,7 @@ Starburst::Starburst() {
  * 
  */
 bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
-		cv::Point startpoint, cv::Point &pupil_center, float & radius) {
+		cv::Point2f startpoint, cv::Point2f &pupil_center, float & radius) {
 
 	bool found = false;
 
@@ -75,7 +75,7 @@ bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 
 	// display the center on the source image
 	if (found)
-		pupil_center = Point(search_area.x + relative_new_center.x,
+		pupil_center = Point2f(search_area.x + relative_new_center.x,
 				search_area.y + relative_new_center.y);
 
 	return found;
@@ -169,9 +169,9 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	bool found=false;
 
-	std::vector<Point> points;
+	std::vector<Point2f> points;
 
-	Point2f start_point = Point(center.x, center.y);
+	Point2f start_point = Point2f(center.x, center.y);
 
 	for(unsigned short iterations = 0; iterations < GazeConstants::MAX_RANSAC_ITERATIONS; ++iterations){
 
@@ -198,9 +198,9 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 					unsigned char last = profile.at(i - 3);
 
 					if (current > (last + 10)) {
-						double x = start_point.x + i * dx;
-						double y = start_point.y + i * dy;
-						Point p = Point(x, y);
+						float x = start_point.x + i * dx;
+						float y = start_point.y + i * dy;
+						Point2f p = Point2f(x, y);
 						points.push_back(p);
 						break;
 					}
@@ -210,7 +210,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 		// calculate the mean of all points
 		float mean_x = 0, mean_y = 0;
-		for (vector<Point>::iterator it = points.begin(); it != points.end();
+		for (vector<Point2f>::iterator it = points.begin(); it != points.end();
 				++it) {
 			mean_x += it->x;
 			mean_y += it->y;
@@ -279,7 +279,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 //
 
 bool Ransac::ransac(float * x, float * y, float * radius,
-		std::vector<cv::Point> points) {
+		std::vector<cv::Point2f> points) {
 	// N: num of iterations
 	const int N = 1000;
 	// T: distance in which
@@ -339,7 +339,7 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 		const float upper_bound = tmp_r + T;
 
 		// how many points lie within the lower/upper bound of the radius
-		for (std::vector<cv::Point>::iterator it = points.begin();
+		for (std::vector<cv::Point2f>::iterator it = points.begin();
 				it != points.end(); ++it) {
 			//TODO: opencv should do this with magnitude()
 			// calculate the magnitude between the point and the center
@@ -351,13 +351,11 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 			if (magnitude >= lower_bound && magnitude <= upper_bound) {
 				points_within_range++;
 #if __DEBUG_STARBURST == 1
-				Point p(it->x, it->y);
-				cross(debug, p, 5, Scalar(0, 255, 0));
+				cross(debug, *it, 5, Scalar(0, 255, 0));
 #endif
 			} else {
 #if __DEBUG_STARBURST == 1
-				Point p(it->x, it->y);
-				cross(debug, p, 5, Scalar(0, 0, 255));
+				cross(debug, *it, 5, Scalar(0, 0, 255));
 #endif
 			}
 
@@ -390,12 +388,12 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 //
 
 void Ransac::fitCircle(float * x, float * y, float * radius,
-		std::vector<cv::Point> points) {
+		std::vector<cv::Point2f> points) {
 	// http://www.exaflop.org/docs/cgafaq/cga1.html
 	// "Subject 1.04: How do I generate a circle through three points?"
-	cv::Point a = points.at(0);
-	cv::Point b = points.at(1);
-	cv::Point c = points.at(2);
+	cv::Point2f a = points.at(0);
+	cv::Point2f b = points.at(1);
+	cv::Point2f c = points.at(2);
 
 	float A = b.x - a.x;
 	float B = b.y - a.y;
