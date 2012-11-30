@@ -19,8 +19,6 @@ using namespace cv;
 GazeTracker::GazeTracker(ImageSource & imageSource) :
 		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(
 				0) {
-	c.createMatrix();
-
 
 }
 
@@ -90,12 +88,11 @@ bool GazeTracker::startTracking() {
 	LOG_D(
 			"glintCenter:" << glintCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
 
-	c.printBluePoint(Point(100,50));
 
 	int keycode = waitKey(50);
-		if (keycode == 32) // space
-			while (waitKey(100) != 32)
-				;
+	if (keycode == 32) // space
+		while (waitKey(100) != 32)
+			;
 
 	isRunning = true;
 	int noGlints = 0;
@@ -160,7 +157,7 @@ bool GazeTracker::startTracking() {
 			LOG_D("GazeVector: " << gaze_vec);
 			LOG_D("SmoothedVector: " << smoothed_gace_vec);
 
-			c.printPoint(smoothed_gace_vec);
+			//c.printPoint(smoothed_gace_vec);
 
 //#if __DEBUG_TRACKER == 1
 			cross(orig, absoluteGlintCenter, 10);

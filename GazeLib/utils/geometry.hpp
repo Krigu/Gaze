@@ -8,6 +8,8 @@
 #ifndef GEOMETRY_HPP_
 #define GEOMETRY_HPP_
 
+#include <vector>
+
 #include "opencv2/core/core.hpp"
 
 /**
@@ -22,6 +24,8 @@ int calcPointDistance(cv::Point point1, cv::Point point2);
 cv::Point calcRectBarycenter(cv::Rect& rect);
 
 double calcAngle(cv::Point start, cv::Point end);
+
+cv::Point2f calcAverage(std::vector<cv::Point2f> points);
 
 
 #endif /* GEOMETRY_HPP_ */

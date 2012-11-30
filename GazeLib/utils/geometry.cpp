@@ -5,6 +5,7 @@
  *      Author: krigu
  */
 
+#include <vector>
 #include "geometry.hpp"
 
 const double Rad2Deg = 180.0 / 3.1415;
@@ -32,4 +33,26 @@ cv::Point calcRectBarycenter(cv::Rect& rect) {
 double calcAngle(cv::Point start, cv::Point end)
 {
 	return atan2(start.y - end.y, end.x - start.x) * Rad2Deg;
+}
+
+cv::Point2f calcAverage(std::vector<cv::Point2f> points){
+	int amount = points.size();
+
+	// TODO: exception?
+	if (amount == 0){
+		return cv::Point(0,0);
+	}
+
+	int sumX = 0;
+	int sumY = 0;
+	for (std::vector<cv::Point2f>::iterator it = points.begin(); it != points.end();
+			++it) {
+		sumX += it->x;
+		sumY += it->y;
+	}
+
+	float x = sumX / amount;
+	float y = sumY / amount;
+
+	return cv::Point2f(x,y);
 }
