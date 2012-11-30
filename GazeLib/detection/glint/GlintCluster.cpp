@@ -56,8 +56,8 @@ cv::Point GlintCluster::centerPoint() {
 		sumY += it->y;
 	}
 
-	int x = sumX / amount;
-	int y = sumY / amount;
+	float x = sumX / amount;
+	float y = sumY / amount;
 
 	return cv::Point(x, y);
 }
