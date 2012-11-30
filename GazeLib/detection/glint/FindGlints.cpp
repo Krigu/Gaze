@@ -25,7 +25,7 @@ using namespace cv;
 bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 		cv::Point2f& lastMeasurement) {
 
-	Mat img = Mat(frame);
+	Mat img;
 
 	// Threshold image.
 	threshold(frame, img, GazeConstants::GLINT_THRESHOLD, 255,
