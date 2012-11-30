@@ -136,7 +136,7 @@ void std::Calibration::printPoint(cv::Point vector) {
 	float b0 = vectorsY.at<float>(0, 0);
 	float b1 = vectorsY.at<float>(0, 1);
 	float b2 = vectorsY.at<float>(0, 2);
-	float b3 = vectorsY.at<float>(0, 4);
+	float b3 = vectorsY.at<float>(0, 3);
 
 	float x = a0 + a1 * vector.x + a2 * vector.y + a3 * vector.x * vector.y;
 	float y = b0 + b1 * vector.x + b2 * vector.y + b3 * vector.y * vector.y;
@@ -146,7 +146,7 @@ void std::Calibration::printPoint(cv::Point vector) {
 	cout << vectorsX << endl;
 	cout << "GVec: " << vector.x << "y: " << vector.y << " Point x: " << x << " y: " << y << endl;
 
-	Point calcPoint(x,1050 - y);
+	Point calcPoint(x,y);
 	cross(out, calcPoint, 5, Scalar(0, 255, 0));
 
 	imshow("Config", out);
