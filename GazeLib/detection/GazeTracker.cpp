@@ -23,7 +23,7 @@ GazeTracker::GazeTracker(ImageSource & imageSource) :
 }
 
 bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
-		cv::Point& frameCenter) {
+		cv::Point2f& frameCenter) {
 
 	bool foundEye = false;
 	short tries = 0;
@@ -41,7 +41,7 @@ bool GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
 	return true;
 }
 
-void GazeTracker::adjustRect(cv::Point& currentCenter, cv::Rect& frameRegion) {
+void GazeTracker::adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion) {
 	int width = frameRegion.width;
 	int height = frameRegion.height;
 
@@ -63,8 +63,8 @@ bool GazeTracker::startTracking() {
 
 	Mat currentFrame;
 	Rect frameRegion;
-	Point glintCenter;
-	Point pupilCenter;
+	Point2f glintCenter;
+	Point2f pupilCenter;
 	Point darkPupilCenter;
 	Point lastVector;
 	Point currentVector;
@@ -125,7 +125,7 @@ bool GazeTracker::startTracking() {
 				it->y = it->y + frameRegion.y;
 
 			}
-			Point absoluteGlintCenter(glintCenter.x + frameRegion.x,
+			Point2f absoluteGlintCenter(glintCenter.x + frameRegion.x,
 					glintCenter.y + frameRegion.y);
 			//Point smoothedGlintCenter;
 			LOG_D(
@@ -149,11 +149,11 @@ bool GazeTracker::startTracking() {
 			adjustRect(glintCenter, frameRegion);
 
 			// now calculate the gaze vector
-			Point gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
+			Point2f gaze_vec(absoluteGlintCenter.x - pupilCenter.x,
 					absoluteGlintCenter.y - pupilCenter.y);
-			Point smoothed_gace_vec;
+			Point2f smoothed_gace_vec;
 			this->smoothSignal(gaze_vec, smoothed_gace_vec,
-					this->last_pupil_centers, framenumber);
+					this->last_gaze_vectors, framenumber);
 			LOG_D("GazeVector: " << gaze_vec);
 			LOG_D("SmoothedVector: " << smoothed_gace_vec);
 
@@ -211,7 +211,7 @@ void GazeTracker::stopTracking() {
 	isStopping = true;
 }
 
-void GazeTracker::smoothSignal(Point &measured, Point &smoothed, Point data[],
+void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[],
 		unsigned int framenumber) {
 	if (framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES) {
 		// nothing to smooth here

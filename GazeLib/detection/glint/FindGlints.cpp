@@ -23,7 +23,7 @@ using namespace cv;
  * to the variable lastMeasurement
  */
 bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
-		cv::Point& lastMeasurement) {
+		cv::Point2f& lastMeasurement) {
 
 	Mat img = Mat(frame);
 
@@ -128,7 +128,7 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
  * Removes all blobs with less than 3 neigbors
  */
 void FindGlints::findClusters(vector<cv::Point>& blobs,
-		vector<GlintCluster>& clusters, cv::Point& lastMeasurement) {
+		vector<GlintCluster>& clusters, cv::Point2f& lastMeasurement) {
 
 	// Get the distance Matrix
 	Mat nighbourMat = distanceMatrix(blobs);

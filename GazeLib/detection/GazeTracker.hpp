@@ -28,17 +28,18 @@ private:
 
 	Point last_pupil_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 	Point last_glint_centers[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 
 	bool isRunning;
 	bool isStopping;
 
-	void smoothSignal(Point &measured, Point &smoothed, Point data[], unsigned int framenumber);
+	void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
 
 	unsigned int framenumber;
 
 protected:
-	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point& frameCenter);
-	void adjustRect(cv::Point& currentCenter, cv::Rect& frameRegion);
+	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
+	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
 public:
 	GazeTracker(ImageSource & imageSource);
