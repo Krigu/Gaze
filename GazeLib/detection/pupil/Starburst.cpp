@@ -440,16 +440,16 @@ void Starburst::smooth_vector(std::vector<unsigned char>& vector) {
 
 unsigned char Starburst::calcRegionAverage(int index,
 		std::vector<unsigned char>& vector) {
-	int offset = 10;
-	int start = index - (offset / 2);
-	int end = index + (offset / 2);
+	unsigned int offset = 10;
+	unsigned start = index - (offset / 2);
+	unsigned int end = index + (offset / 2);
 
 	start = (start < 1) ? 0 : start;
 	end = (end >= vector.size() - 1) ? vector.size() : end;
 
 	int sum = 0;
 	int divisor = 0;
-	for (int i = start; i < end; i++) {
+	for (unsigned int i = start; i < end; i++) {
 		sum += vector.at(i);
 		divisor++;
 	}
