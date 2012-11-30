@@ -19,3 +19,7 @@ Release/
 /UIPrototype/moc_*.cpp
 /UIPrototype/build/
 /UIPrototype/dist/
+/UIPrototype/nbproject/Makefile-*
+/UIPrototype/nbproject/Package-*.bash
+/UIPrototype/nbproject/qt-*.pro
+/UIPrototype/nbproject/private/
