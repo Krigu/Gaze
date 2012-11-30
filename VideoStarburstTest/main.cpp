@@ -68,7 +68,7 @@ int main() {
 	long i = 0;
 	bool waiting = false;
 
-	Point start = calcRectBarycenter(eyeRegion);
+	Point2f start = calcRectBarycenter(eyeRegion);
 
 	// the main loop
 	while (capture.read(frame)) {
