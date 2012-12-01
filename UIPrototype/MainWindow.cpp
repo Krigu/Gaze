@@ -30,6 +30,8 @@
      effectMenu->addAction("Back", this, SLOT(back()));
      effectMenu->addAction("Forward", this, SLOT(forward()));
      effectMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
+     effectMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
+     
      
      setCentralWidget(view);
      
@@ -103,6 +105,23 @@
  }
  
  void MainWindow::toggle_eye_widget(){
-     eye_widget->setGeometry(0,this->height() - 90,90,90);
+     eye_widget->setGeometry(0,this->height() - 90,120,90);
      eye_widget->setVisible(!eye_widget->isVisible());
+ }
+ 
+ //TODO: remove this
+ void UICallback::imageProcessed(Mat& im){
+         widget->sendImage(&im);
+ }
+ 
+ TrackerCallback::~TrackerCallback(){
+     // I have no idea, why I had to declare this here...
+ }
+ 
+ void MainWindow::just_a_demo(){
+        UICallback myCallback(eye_widget);
+        string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
+ 	VideoSource videoSource(path);
+	GazeTracker tracker(videoSource, &myCallback);
+	tracker.startTracking();
  }

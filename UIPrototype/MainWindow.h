@@ -4,6 +4,13 @@
 
 #include "CVWidget.hpp"
  
+//TODO: just for demo purposes
+#include <string>
+#include <QtGui/qmacdefines_mac.h>
+#include "GazeConstants.hpp"
+#include "detection/GazeTracker.hpp"
+#include "video/VideoSource.hpp"
+
  class MainWindow : public QMainWindow
  {
      Q_OBJECT
@@ -24,6 +31,7 @@
      void back();
      void forward();
      void toggle_eye_widget();
+     void just_a_demo();
      
  private:
      QString jQuery;
@@ -31,4 +39,21 @@
      CVWidget *eye_widget;
      int progress; 
      void exec_webaction(QWebPage::WebAction action);
+ };
+
+ 
+class UICallback : public TrackerCallback{
+     
+ private:
+     CVWidget *widget;
+     
+ public:
+     UICallback(CVWidget *eye_widget) : widget(eye_widget){
+         
+     }
+     ~UICallback(){
+         
+     }
+     
+     void imageProcessed(Mat& result);
  };
