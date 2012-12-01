@@ -33,11 +33,10 @@
      
      setCentralWidget(view);
      
-     label = new QLabel(this);
-     label->setText("bla");
-     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-     label->setStyleSheet("QLabel { background-color : red; color : blue; }");
-     label->setVisible(false);
+     eye_widget = new CVWidget(this);
+     eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+     eye_widget->setStyleSheet("QLabel { background-color : red; color : blue; }");
+     eye_widget->setVisible(false);
      
      setUnifiedTitleAndToolBarOnMac(true);
  }
@@ -104,6 +103,6 @@
  }
  
  void MainWindow::toggle_eye_widget(){
-     label->setGeometry(0,this->height() - 90,90,90);
-     label->setVisible(!label->isVisible());
+     eye_widget->setGeometry(0,this->height() - 90,90,90);
+     eye_widget->setVisible(!eye_widget->isVisible());
  }

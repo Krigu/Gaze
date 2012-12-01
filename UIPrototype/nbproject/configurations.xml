@@ -12,6 +12,8 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>../UIPrototype/CVWidget.cpp</itemPath>
+      <itemPath>../UIPrototype/CVWidget.hpp</itemPath>
       <itemPath>/Users/fri/Documents/git-repos/Gaze/UiPrototype/MainWindow.cpp</itemPath>
       <itemPath>/Users/fri/Documents/git-repos/Gaze/UiPrototype/MainWindow.h</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -36,7 +38,7 @@
         <compilerSet>GNU|GNU</compilerSet>
       </toolsSet>
       <qt>
-        <modules>core gui network webkit</modules>
+        <modules>core gui network opengl webkit</modules>
       </qt>
       <compileType>
         <ccTool>

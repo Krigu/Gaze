@@ -1,6 +1,8 @@
 
  #include <QtGui>
  #include <QtWebKit>
+
+#include "CVWidget.hpp"
  
  class MainWindow : public QMainWindow
  {
@@ -26,8 +28,7 @@
  private:
      QString jQuery;
      QWebView *view;
-     //TODO: use a CvWidget instead of a label...
-     QLabel *label;
+     CVWidget *eye_widget;
      int progress; 
      void exec_webaction(QWebPage::WebAction action);
  };
