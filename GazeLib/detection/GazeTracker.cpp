@@ -16,8 +16,8 @@
 
 using namespace cv;
 
-GazeTracker::GazeTracker(ImageSource & imageSource) :
-		imageSrc(imageSource), isRunning(false), isStopping(false), framenumber(
+GazeTracker::GazeTracker(ImageSource & imageSource, TrackerCallback *callback) :
+		imageSrc(imageSource), tracker_callback(callback), isRunning(false), isStopping(false), framenumber(
 				0) {
 
 }
@@ -132,6 +132,11 @@ bool GazeTracker::startTracking() {
 			cross(currentFrame, glintCenter, 10);
 			cross(currentFrame, pupilCenter, 5);
 			imshow("Tracker", currentFrame);
+
+			// notify our callback about the processed frames...
+			if(this->tracker_callback != NULL)
+				tracker_callback->imageProcessed(currentFrame);
+
 //#endif
 		} else {
 			noGlints++;

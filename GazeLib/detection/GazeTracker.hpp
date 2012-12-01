@@ -18,6 +18,12 @@
 
 #include "../GazeConstants.hpp"
 
+class TrackerCallback{
+public:
+	virtual ~TrackerCallback() = 0;
+	virtual void imageProcessed(Mat &result) = 0;
+};
+
 class GazeTracker {
 private:
 	ImageSource& imageSrc;
@@ -25,6 +31,7 @@ private:
 	FindGlints glintFinder;
 	Starburst starburst;
 	Calibration c;
+	TrackerCallback *tracker_callback;
 
 	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
 
@@ -40,7 +47,7 @@ protected:
 	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
 public:
-	GazeTracker(ImageSource & imageSource);
+	GazeTracker(ImageSource & imageSource, TrackerCallback *callback=NULL);
 	virtual ~GazeTracker();
 
 	bool startTracking();
