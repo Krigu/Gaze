@@ -1,17 +1,14 @@
 
  #include <QtGui>
  #include <QtWebKit>
-
- class QWebView;
- class QLineEdit;
-
+ 
  class MainWindow : public QMainWindow
  {
      Q_OBJECT
 
  public:
      MainWindow(const QUrl& url);
-
+    
  protected slots:
 
      void adjustTitle();
@@ -24,10 +21,13 @@
      void rotateImages(bool invert);
      void back();
      void forward();
+     void toggle_eye_widget();
      
  private:
      QString jQuery;
      QWebView *view;
-     int progress;
+     //TODO: use a CvWidget instead of a label...
+     QLabel *label;
+     int progress; 
      void exec_webaction(QWebPage::WebAction action);
  };

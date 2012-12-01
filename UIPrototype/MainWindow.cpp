@@ -1,5 +1,6 @@
 
  #include <QtNetwork>
+#include <QtGui/qapplication.h>
  #include "mainwindow.h"
 
  MainWindow::MainWindow(const QUrl& url)
@@ -16,14 +17,10 @@
 
      view = new QWebView(this);
      view->load(url);
-     connect(view, SIGNAL(loadFinished(bool)), SLOT(adjustLocation()));
+     //connect(view, SIGNAL(loadFinished(bool)), SLOT(adjustLocation()));
      connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
      connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
      connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
-
-     /*locationEdit = new QLineEdit(this);
-     locationEdit->setSizePolicy(QSizePolicy::Expanding, locationEdit->sizePolicy().verticalPolicy());
-     connect(locationEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));*/
 
      QMenu *effectMenu = menuBar()->addMenu(tr("&Gaze Actions"));
      effectMenu->addAction("Calibration", this, SLOT(highlightAllLinks()));
@@ -32,8 +29,16 @@
      effectMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
      effectMenu->addAction("Back", this, SLOT(back()));
      effectMenu->addAction("Forward", this, SLOT(forward()));
-
+     effectMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
+     
      setCentralWidget(view);
+     
+     label = new QLabel(this);
+     label->setText("bla");
+     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+     label->setStyleSheet("QLabel { background-color : red; color : blue; }");
+     label->setVisible(false);
+     
      setUnifiedTitleAndToolBarOnMac(true);
  }
 
@@ -96,4 +101,9 @@
  
  void MainWindow::exec_webaction(QWebPage::WebAction action){
      view->pageAction(action);
+ }
+ 
+ void MainWindow::toggle_eye_widget(){
+     label->setGeometry(0,this->height() - 90,90,90);
+     label->setVisible(!label->isVisible());
  }
