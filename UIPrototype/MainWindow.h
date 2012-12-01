@@ -1,5 +1,6 @@
 
  #include <QtGui>
+ #include <QtWebKit>
 
  class QWebView;
  class QLineEdit;
@@ -13,8 +14,6 @@
 
  protected slots:
 
-     void adjustLocation();
-     void changeLocation();
      void adjustTitle();
      void setProgress(int p);
      void finishLoading(bool);
@@ -23,15 +22,12 @@
      void scrollUp();
      void scrollDown();
      void rotateImages(bool invert);
-     void removeGifImages();
-     void removeInlineFrames();
-     void removeObjectElements();
-     void removeEmbeddedElements();
-
+     void back();
+     void forward();
+     
  private:
      QString jQuery;
      QWebView *view;
-     QLineEdit *locationEdit;
-     QAction *rotateAction;
      int progress;
+     void exec_webaction(QWebPage::WebAction action);
  };
