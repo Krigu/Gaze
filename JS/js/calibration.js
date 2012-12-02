@@ -4,6 +4,7 @@ var calibrationCircle = {
 	imgMovingPath: "img/mario.gif", //url to moving image here
 	imgWidth: 40, //standard width
 	imgHeight: 40, //standard height
+	animationTime: 2500, // time for the animation
 		
 	init : function(posX, posY){
 		//create the image cloud
@@ -30,7 +31,7 @@ var calibrationCircle = {
 		$("#circleImg").animate({ 
 			top: posY + (calibrationCircle.imgHeight / 2),
 			left: posX + (calibrationCircle.imgWidth / 2)
-		}, 2500, function() {
+		}, calibrationCircle.animationTime, function() {
 			$("#circleImg").attr("src", calibrationCircle.imgPath);
 		 });
 	
