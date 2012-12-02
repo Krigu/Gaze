@@ -1,7 +1,7 @@
 var calibrationCircle = {
 	
 	imgPath: "img/circle_full.jpg", //url to image here
-	imgMovingPath: "img/circle.jpg", //url to moving image here
+	imgMovingPath: "img/mario.gif", //url to moving image here
 	imgWidth: 40, //standard width
 	imgHeight: 40, //standard height
 		
