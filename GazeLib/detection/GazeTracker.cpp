@@ -91,7 +91,7 @@ bool GazeTracker::startTracking() {
 		}
 
 		currentFrame = currentFrame(frameRegion);
-		MeasureResult result = measureFrame(currentFrame, gazeVector);
+		MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
 		Point2f smoothed_gace_vec;
 		switch (result) {
@@ -135,8 +135,7 @@ bool GazeTracker::startTracking() {
 	return true;
 }
 
-GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector){
-	Point2f glintCenter;
+GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter){
 	vector<cv::Point> glints;
 	float radius;
 	Point2f pupilCenter;
@@ -184,4 +183,50 @@ void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f dat
 		smoothed.y /= GazeConstants::NUM_OF_SMOOTHING_FRAMES;
 	}
 	data[framenumber % GazeConstants::NUM_OF_SMOOTHING_FRAMES] = measured;
+}
+
+CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen, unsigned int duration){
+
+	Mat currentFrame;
+	Point2f glintCenter;
+
+	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
+	// TODO: return error?
+	if (!hasImage) {
+		LOG_W("No image");
+		//return CalibrationData();
+	}
+
+	bool foundRegion = initialize(currentFrame, frameRegion, glintCenter);
+	if (!foundRegion) {
+		LOG_W("No region found");
+		//return CalibrationData;
+	}
+
+	vector<Point2f> measurements;
+	double totalTime = 0;
+	int duration_millis = duration * 1000;
+
+	double t = getTickCount();
+	while(totalTime < duration_millis){
+
+		Point2f gazeVector;
+
+		// Get next frame
+		if (!imageSrc.nextGrayFrame(currentFrame)) {
+			LOG_D("No more frames");
+			break;
+		}
+
+		currentFrame = currentFrame(frameRegion);
+		MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
+
+		if(result == MEASURE_OK)
+			measurements.push_back(gazeVector);
+
+		totalTime = ((double) getTickCount() - t) / getTickFrequency();
+	}
+
+	CalibrationData data(pointOnScreen, measurements);
+	return data;
 }

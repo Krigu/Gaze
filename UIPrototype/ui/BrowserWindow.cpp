@@ -19,6 +19,7 @@ MainWindow::MainWindow(const QUrl& url) {
     file.close();
 
     isCalibrating = false;
+    calibrator = NULL;
 
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 

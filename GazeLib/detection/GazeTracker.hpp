@@ -38,6 +38,15 @@ public:
 
 	bool startTracking();
 
+
+	/**
+	 * measures the GazeVector
+	 *
+	 * @return the average GazeVector measured for this point. the measure
+	 * takes int duration seconds
+	 */
+	CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
+
 private:
 	ImageSource& imageSrc;
 	FindEyeRegion eyeFinder;
@@ -51,7 +60,7 @@ private:
 	Rect frameRegion;
 
 	void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
-	MeasureResult measureFrame(Mat &frame, Point2f &gazeVector);
+	MeasureResult measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter);
 
 protected:
 	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
