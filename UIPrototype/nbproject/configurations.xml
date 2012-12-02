@@ -13,11 +13,11 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="ui" displayName="ui" projectFiles="true">
+        <itemPath>ui/BrowserWindow.cpp</itemPath>
+        <itemPath>ui/BrowserWindow.hpp</itemPath>
         <itemPath>ui/CVWidget.cpp</itemPath>
         <itemPath>ui/CVWidget.hpp</itemPath>
       </logicalFolder>
-      <itemPath>MainWindow.cpp</itemPath>
-      <itemPath>MainWindow.h</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"

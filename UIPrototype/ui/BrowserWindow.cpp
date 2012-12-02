@@ -2,7 +2,8 @@
 #include <QtNetwork>
 #include <QtWebKit>
 #include <QtGui/qapplication.h>
-#include "MainWindow.h"
+
+#include "BrowserWindow.hpp"
 
  MainWindow::MainWindow(const QUrl& url)
  {

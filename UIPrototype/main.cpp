@@ -1,6 +1,6 @@
 
  #include <QtGui>
- #include "MainWindow.h"
+ #include "ui/BrowserWindow.hpp"
 
  int main(int argc, char * argv[])
  {

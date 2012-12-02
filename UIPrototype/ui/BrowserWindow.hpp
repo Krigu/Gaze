@@ -2,7 +2,7 @@
  #include <QtGui>
  #include <QtWebKit>
 
-#include "ui/CVWidget.hpp"
+#include "CVWidget.hpp"
  
 //TODO: just for demo purposes
 #include <string>
