@@ -4,6 +4,8 @@
 
 #include "CVWidget.hpp"
  
+#include "tracking/CalibrationThread.hpp"
+
 //TODO: just for demo purposes
 #include <string>
 #include "GazeConstants.hpp"
@@ -17,6 +19,9 @@
  public:
      MainWindow(const QUrl& url);
     
+public slots:
+    void execJsCommand(QString command);
+     
  protected slots:
 
      void adjustTitle();
@@ -43,6 +48,7 @@
      QString jQuery;
      QWebView *view;
      CVWidget *eye_widget;
+     CalibrationThread *calibrator;
      int progress; 
      bool isCalibrating;
      void exec_webaction(QWebPage::WebAction action);

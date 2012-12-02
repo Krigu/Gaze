@@ -12,6 +12,7 @@
             <sourceRootList>
                 <sourceRootElem>ui</sourceRootElem>
                 <sourceRootElem>html</sourceRootElem>
+                <sourceRootElem>tracking</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
