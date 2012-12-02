@@ -17,7 +17,7 @@
 using namespace cv;
 
 GazeTracker::GazeTracker(ImageSource & imageSource, TrackerCallback *callback) :
-		imageSrc(imageSource), tracker_callback(callback), isRunning(false), isStopping(false), framenumber(
+		imageSrc(imageSource), tracker_callback(callback), isRunning(false), framenumber(
 				0) {
 
 }
@@ -62,15 +62,8 @@ GazeTracker::~GazeTracker() {
 bool GazeTracker::startTracking() {
 
 	Mat currentFrame;
-	Rect frameRegion;
 	Point2f glintCenter;
-	Point2f pupilCenter;
-	Point darkPupilCenter;
-	Point lastVector;
-	Point currentVector;
-	float radius;
-	vector<cv::Point> glints;
-	int frames;
+	Point2f gazeVector;
 
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
 	// TODO: return error?
@@ -85,94 +78,92 @@ bool GazeTracker::startTracking() {
 		return false;
 	}
 
-	LOG_D(
-			"glintCenter:" << glintCenter << "x: " << frameRegion.x << "y: " << frameRegion.y);
-
-
-	int keycode = waitKey(50);
-	if (keycode == 32) // space
-		while (waitKey(100) != 32)
-			;
-
 	isRunning = true;
 	int noGlints = 0;
+
 	// main loop
-	while (true) {
-		frames++;
+	while (isRunning) {
+
 		// Get next frame
 		if (!imageSrc.nextGrayFrame(currentFrame)) {
 			LOG_D("No more frames");
 			break;
 		}
 
-		// Adjust rect
 		currentFrame = currentFrame(frameRegion);
+		MeasureResult result = measureFrame(currentFrame, gazeVector);
 
-		if (glintFinder.findGlints(currentFrame, glints, glintCenter)) {
+		Point2f smoothed_gace_vec;
+		switch (result) {
+			case MEASURE_OK:
 
-			starburst.processImage(currentFrame, glints, glintCenter,
-					pupilCenter, radius);
+				this->smoothSignal(gazeVector, smoothed_gace_vec,
+						this->last_gaze_vectors, framenumber);
+				//c.printPoint(smoothed_gace_vec);
 
-			circle(currentFrame, pupilCenter, radius, Scalar(255, 255, 255));
+				LOG_D("Current GazeVector: " << gazeVector);
 
-			adjustRect(glintCenter, frameRegion);
+				++framenumber;
+				break;
 
-			// now calculate the gaze vector
-			Point2f gaze_vec(glintCenter.x - pupilCenter.x,
-					glintCenter.y - pupilCenter.y);
-			Point2f smoothed_gace_vec;
-			this->smoothSignal(gaze_vec, smoothed_gace_vec,
-					this->last_gaze_vectors, framenumber);
-			LOG_D("GazeVector: " << gaze_vec);
-			LOG_D("SmoothedVector: " << smoothed_gace_vec);
+			case FINDGLINT_FAILED:
+				noGlints++;
+				if (noGlints > 5) {
+					LOG_W("no glints found. need to reinitialize");
+					imageSrc.nextGrayFrame(currentFrame);
+					initialize(currentFrame, frameRegion, glintCenter);
 
-			//c.printPoint(smoothed_gace_vec);
+					noGlints = 0;
+					framenumber = 0; // restart the smoothing
+				}
+				break;
 
-//#if __DEBUG_TRACKER == 1
-			cross(currentFrame, glintCenter, 10);
-			cross(currentFrame, pupilCenter, 5);
-			imshow("Tracker", currentFrame);
-
-			// notify our callback about the processed frames...
-			if(this->tracker_callback != NULL)
-				tracker_callback->imageProcessed(currentFrame);
-
-//#endif
-		} else {
-			noGlints++;
-			if (noGlints > 5) {
-				LOG_W("no glints found. need to reinitialize");
-				imageSrc.nextGrayFrame(currentFrame);
-				initialize(currentFrame, frameRegion, glintCenter);
-
-				noGlints = 0;
-			}
+			case FINDPUPIL_FAILED:
+				//TODO
+				break;
 		}
+
+		// notify our callback about the processed frames...
+		if(this->tracker_callback != NULL)
+			tracker_callback->imageProcessed(currentFrame);
 
 		int keycode = waitKey(50);
 		if (keycode == 32) // space
 			while (waitKey(100) != 32)
 				;
-
-		// TODO: check if it works
-		while (!isRunning) {
-			sleep(1);
-		}
-
-		if (isStopping)
-			break;
-
-		++framenumber;
 	}
 	return true;
 }
 
-void GazeTracker::pauseTacking() {
-	isRunning = false;
-}
+GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector){
+	Point2f glintCenter;
+	vector<cv::Point> glints;
+	float radius;
+	Point2f pupilCenter;
 
-void GazeTracker::stopTracking() {
-	isStopping = true;
+	if (glintFinder.findGlints(frame, glints, glintCenter)) {
+
+		if(!starburst.processImage(frame, glints, glintCenter,
+				pupilCenter, radius)){
+			return FINDPUPIL_FAILED;
+		}
+
+		adjustRect(glintCenter, frameRegion);
+
+	} else {
+		return FINDGLINT_FAILED;
+	}
+
+	circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
+	cross(frame, glintCenter, 10);
+	cross(frame, pupilCenter, 5);
+	imshow("Tracker", frame);
+
+	// now calculate the gaze vector
+	gazeVector.x = glintCenter.x - pupilCenter.x;
+	gazeVector.y = glintCenter.y - pupilCenter.y;
+
+	return MEASURE_OK;
 }
 
 void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[],

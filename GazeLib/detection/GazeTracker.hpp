@@ -25,6 +25,19 @@ public:
 };
 
 class GazeTracker {
+
+public:
+	enum MeasureResult{
+		MEASURE_OK,
+		FINDPUPIL_FAILED,
+		FINDGLINT_FAILED,
+	};
+
+	GazeTracker(ImageSource & imageSource, TrackerCallback *callback=NULL);
+	virtual ~GazeTracker();
+
+	bool startTracking();
+
 private:
 	ImageSource& imageSrc;
 	FindEyeRegion eyeFinder;
@@ -32,27 +45,18 @@ private:
 	Starburst starburst;
 	Calibration c;
 	TrackerCallback *tracker_callback;
-
 	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
-
 	bool isRunning;
-	bool isStopping;
+	unsigned int framenumber;
+	Rect frameRegion;
 
 	void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
-
-	unsigned int framenumber;
+	MeasureResult measureFrame(Mat &frame, Point2f &gazeVector);
 
 protected:
 	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
 	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
-public:
-	GazeTracker(ImageSource & imageSource, TrackerCallback *callback=NULL);
-	virtual ~GazeTracker();
-
-	bool startTracking();
-	void pauseTacking();
-	void stopTracking();
 };
 
 #endif /* GAZETRACKER_H_ */
