@@ -1,8 +1,15 @@
 
  #include <QtGui>
+ #include <QtWebKit>
 
- class QWebView;
- class QLineEdit;
+#include "CVWidget.hpp"
+ 
+//TODO: just for demo purposes
+#include <string>
+#include <QtGui/qmacdefines_mac.h>
+#include "GazeConstants.hpp"
+#include "detection/GazeTracker.hpp"
+#include "video/VideoSource.hpp"
 
  class MainWindow : public QMainWindow
  {
@@ -10,11 +17,9 @@
 
  public:
      MainWindow(const QUrl& url);
-
+    
  protected slots:
 
-     void adjustLocation();
-     void changeLocation();
      void adjustTitle();
      void setProgress(int p);
      void finishLoading(bool);
@@ -23,15 +28,32 @@
      void scrollUp();
      void scrollDown();
      void rotateImages(bool invert);
-     void removeGifImages();
-     void removeInlineFrames();
-     void removeObjectElements();
-     void removeEmbeddedElements();
-
+     void back();
+     void forward();
+     void toggle_eye_widget();
+     void just_a_demo();
+     
  private:
      QString jQuery;
      QWebView *view;
-     QLineEdit *locationEdit;
-     QAction *rotateAction;
-     int progress;
+     CVWidget *eye_widget;
+     int progress; 
+     void exec_webaction(QWebPage::WebAction action);
+ };
+
+ 
+class UICallback : public TrackerCallback{
+     
+ private:
+     CVWidget *widget;
+     
+ public:
+     UICallback(CVWidget *eye_widget) : widget(eye_widget){
+         
+     }
+     ~UICallback(){
+         
+     }
+     
+     void imageProcessed(Mat& result);
  };

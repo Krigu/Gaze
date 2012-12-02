@@ -1,10 +1,9 @@
 
- #include <QtGui>
- #include <QtNetwork>
- #include <QtWebKit>
- #include "MainWindow.h"
+#include <QtNetwork>
+#include <QtWebKit>
+#include <QtGui/qapplication.h>
+#include "MainWindow.h"
 
- 
  MainWindow::MainWindow(const QUrl& url)
  {
      progress = 0;
@@ -19,49 +18,30 @@
 
      view = new QWebView(this);
      view->load(url);
-     connect(view, SIGNAL(loadFinished(bool)), SLOT(adjustLocation()));
+     //connect(view, SIGNAL(loadFinished(bool)), SLOT(adjustLocation()));
      connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
      connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
      connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
-
-     locationEdit = new QLineEdit(this);
-     locationEdit->setSizePolicy(QSizePolicy::Expanding, locationEdit->sizePolicy().verticalPolicy());
-     connect(locationEdit, SIGNAL(returnPressed()), SLOT(changeLocation()));
 
      QMenu *effectMenu = menuBar()->addMenu(tr("&Gaze Actions"));
      effectMenu->addAction("Calibration", this, SLOT(highlightAllLinks()));
      effectMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
      effectMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
      effectMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
-     //effectMenu->addAction("Scroll Up", this, SLOT(highlightAllLinks()));
-
-     rotateAction = new QAction(this);
-     rotateAction->setIcon(style()->standardIcon(QStyle::SP_FileDialogDetailedView));
-     rotateAction->setCheckable(true);
-     rotateAction->setText(tr("Turn images upside down"));
-     connect(rotateAction, SIGNAL(toggled(bool)), this, SLOT(rotateImages(bool)));
-     effectMenu->addAction(rotateAction);
-
-     /*QMenu *toolsMenu = menuBar()->addMenu(tr("&Tools"));
-     toolsMenu->addAction(tr("Remove GIF images"), this, SLOT(removeGifImages()));
-     toolsMenu->addAction(tr("Remove all inline frames"), this, SLOT(removeInlineFrames()));
-     toolsMenu->addAction(tr("Remove all object elements"), this, SLOT(removeObjectElements()));
-     toolsMenu->addAction(tr("Remove all embedded elements"), this, SLOT(removeEmbeddedElements()));
-    */
+     effectMenu->addAction("Back", this, SLOT(back()));
+     effectMenu->addAction("Forward", this, SLOT(forward()));
+     effectMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
+     effectMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
+     
+     
      setCentralWidget(view);
+     
+     eye_widget = new CVWidget(this);
+     eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+     eye_widget->setStyleSheet("QLabel { background-color : red; color : blue; }");
+     eye_widget->setVisible(false);
+     
      setUnifiedTitleAndToolBarOnMac(true);
- }
-
- void MainWindow::adjustLocation()
- {
-     locationEdit->setText(view->url().toString());
- }
-
- void MainWindow::changeLocation()
- {
-     QUrl url = QUrl(locationEdit->text());
-     view->load(url);
-     view->setFocus();
  }
 
  void MainWindow::adjustTitle()
@@ -83,8 +63,6 @@
      progress = 100;
      adjustTitle();
      view->page()->mainFrame()->evaluateJavaScript(jQuery);
-
-     rotateImages(rotateAction->isChecked());
  }
 
  void MainWindow::highlightAllLinks()
@@ -95,13 +73,13 @@
 
  void MainWindow::scrollUp()
  {
-     QString code = "$('html, body').animate({ scrollTop: 0 }, 'slow');";
+     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() - $(window).height() }, 800);";
      view->page()->mainFrame()->evaluateJavaScript(code);
  }
  
  void MainWindow::scrollDown()
  {
-     QString code = "$('html, body').animate({ scrollTop: $(document).height() }, 'slow');";
+     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() + $(window).height() }, 800);";
      view->page()->mainFrame()->evaluateJavaScript(code);
  }
  
@@ -115,26 +93,36 @@
      view->page()->mainFrame()->evaluateJavaScript(code);
  }
 
- void MainWindow::removeGifImages()
- {
-     QString code = "$('[src*=gif]').remove()";
-     view->page()->mainFrame()->evaluateJavaScript(code);
+ void MainWindow::forward(){
+     this->exec_webaction(QWebPage::Forward);
  }
-
- void MainWindow::removeInlineFrames()
- {
-     QString code = "$('iframe').remove()";
-     view->page()->mainFrame()->evaluateJavaScript(code);
+ 
+ void MainWindow::back(){
+     this->exec_webaction(QWebPage::Back);
  }
-
- void MainWindow::removeObjectElements()
- {
-     QString code = "$('object').remove()";
-     view->page()->mainFrame()->evaluateJavaScript(code);
+ 
+ void MainWindow::exec_webaction(QWebPage::WebAction action){
+     view->pageAction(action);
  }
-
- void MainWindow::removeEmbeddedElements()
- {
-     QString code = "$('embed').remove()";
-     view->page()->mainFrame()->evaluateJavaScript(code);
+ 
+ void MainWindow::toggle_eye_widget(){
+     eye_widget->setGeometry(0,this->height() - 90,120,90);
+     eye_widget->setVisible(!eye_widget->isVisible());
+ }
+ 
+ //TODO: remove this
+ void UICallback::imageProcessed(Mat& im){
+         widget->sendImage(&im);
+ }
+ 
+ TrackerCallback::~TrackerCallback(){
+     // I have no idea, why I had to declare this here...
+ }
+ 
+ void MainWindow::just_a_demo(){
+        UICallback myCallback(eye_widget);
+        string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
+ 	VideoSource videoSource(path);
+	GazeTracker tracker(videoSource, &myCallback);
+	tracker.startTracking();
  }
