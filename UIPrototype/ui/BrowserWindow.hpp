@@ -23,6 +23,7 @@
      void setProgress(int p);
      void finishLoading(bool);
 
+     // Gaze actions
      void highlightAllLinks();
      void scrollUp();
      void scrollDown();
@@ -33,6 +34,10 @@
      void start_calibration();
      void just_a_demo();
      void quit_gazebrowser();
+     
+     // View actions
+     void zoomIn();
+     void zoomOut();
      
  private:
      QString jQuery;

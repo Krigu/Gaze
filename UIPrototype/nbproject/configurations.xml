@@ -47,7 +47,6 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>ui</Elem>
-    <Elem>JS</Elem>
     <Elem>html</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
@@ -75,6 +74,8 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
+            <linkerLibLibItem>GLU</linkerLibLibItem>
+            <linkerLibLibItem>GL</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>

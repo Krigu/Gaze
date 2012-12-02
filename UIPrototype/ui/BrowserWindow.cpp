@@ -40,6 +40,12 @@ using namespace std;
      gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
      //gazeMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
      
+     QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
+     // Zoom
+     QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));     
+     zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
+     zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
+     
      setCentralWidget(view);
      
      eye_widget = new CVWidget(this);
@@ -135,7 +141,6 @@ using namespace std;
 	GazeTracker tracker(videoSource, &myCallback);
 	tracker.startTracking();
  }
-
  void MainWindow::quit_gazebrowser(){
      //this-
      QApplication::exit(0);
@@ -154,4 +159,16 @@ using namespace std;
      //TODO calibrate here...
      QString code = "calibrationCircle.move(200,200);";
      view->page()->mainFrame()->evaluateJavaScript(code);
+ }
+ void MainWindow::zoomIn(){
+     qreal zoomFactor = view->zoomFactor();
+     zoomFactor++;
+     view->setZoomFactor(zoomFactor);
+ }
+ 
+ void MainWindow::zoomOut(){
+     qreal zoomFactor = view->zoomFactor();
+     zoomFactor--;
+     view->setZoomFactor(zoomFactor);
+ 
  }
