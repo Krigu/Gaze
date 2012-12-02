@@ -11,6 +11,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>ui</sourceRootElem>
+                <sourceRootElem>html</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

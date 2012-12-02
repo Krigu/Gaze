@@ -30,14 +30,18 @@
      void back();
      void forward();
      void toggle_eye_widget();
+     void start_calibration();
      void just_a_demo();
+     void quit_gazebrowser();
      
  private:
      QString jQuery;
      QWebView *view;
      CVWidget *eye_widget;
      int progress; 
+     bool isCalibrating;
      void exec_webaction(QWebPage::WebAction action);
+     void calibrate();
  };
 
  

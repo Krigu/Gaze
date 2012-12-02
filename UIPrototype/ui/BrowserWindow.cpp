@@ -5,15 +5,20 @@
 
 #include "BrowserWindow.hpp"
 
+#include <iostream>
+using namespace std;
+
  MainWindow::MainWindow(const QUrl& url)
  {
      progress = 0;
 
      QFile file;
-     file.setFileName(":/jquery.min.js");
+     file.setFileName(":js/jquery-1.8.3.min.js");
      file.open(QIODevice::ReadOnly);
      jQuery = file.readAll();
      file.close();
+     
+     isCalibrating = false;
      
      QNetworkProxyFactory::setUseSystemConfiguration(true);
 
@@ -24,16 +29,16 @@
      connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
      connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
-     QMenu *effectMenu = menuBar()->addMenu(tr("&Gaze Actions"));
-     effectMenu->addAction("Calibration", this, SLOT(highlightAllLinks()));
-     effectMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
-     effectMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
-     effectMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
-     effectMenu->addAction("Back", this, SLOT(back()));
-     effectMenu->addAction("Forward", this, SLOT(forward()));
-     effectMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
-     effectMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
-     
+     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
+     gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
+     gazeMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
+     gazeMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
+     gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
+     gazeMenu->addAction("Back", this, SLOT(back()));
+     gazeMenu->addAction("Forward", this, SLOT(forward()));
+     gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
+     gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
+     //gazeMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
      
      setCentralWidget(view);
      
@@ -64,6 +69,9 @@
      progress = 100;
      adjustTitle();
      view->page()->mainFrame()->evaluateJavaScript(jQuery);
+     
+     if(isCalibrating)
+         this->calibrate();
  }
 
  void MainWindow::highlightAllLinks()
@@ -126,4 +134,24 @@
  	VideoSource videoSource(path);
 	GazeTracker tracker(videoSource, &myCallback);
 	tracker.startTracking();
+ }
+
+ void MainWindow::quit_gazebrowser(){
+     //this-
+     QApplication::exit(0);
+ }
+ 
+ void MainWindow::start_calibration(){
+     isCalibrating = true;
+     QFile file;
+     file.setFileName(":/calibration.html");
+     file.open(QIODevice::ReadOnly);    
+     view->setHtml(file.readAll(), QUrl("qrc:/"));
+     file.close();
+ }
+ 
+ void MainWindow::calibrate(){
+     //TODO calibrate here...
+     QString code = "calibrationCircle.move(200,200);";
+     view->page()->mainFrame()->evaluateJavaScript(code);
  }

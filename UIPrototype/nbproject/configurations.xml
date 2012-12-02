@@ -8,6 +8,19 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <logicalFolder name="html" displayName="html" projectFiles="true">
+        <logicalFolder name="img" displayName="img" projectFiles="true">
+          <itemPath>html/img/circle.jpg</itemPath>
+          <itemPath>html/img/circle_full.jpg</itemPath>
+          <itemPath>html/img/mario.gif</itemPath>
+        </logicalFolder>
+        <logicalFolder name="js" displayName="js" projectFiles="true">
+          <itemPath>html/js/calibration.js</itemPath>
+          <itemPath>html/js/jquery-1.8.3.min.js</itemPath>
+        </logicalFolder>
+        <itemPath>html/calibration.html</itemPath>
+      </logicalFolder>
+      <itemPath>gaze_js.qrc</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -34,6 +47,8 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>ui</Elem>
+    <Elem>JS</Elem>
+    <Elem>html</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -60,8 +75,6 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
-            <linkerLibLibItem>GLU</linkerLibLibItem>
-            <linkerLibLibItem>GL</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
