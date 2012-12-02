@@ -11,6 +11,6 @@
      else
          url = QUrl("http://www.heise.de");
      MainWindow *browser = new MainWindow(url);
-     browser->showMaximized();
+     browser->showFullScreen();
      return app.exec();
  }
