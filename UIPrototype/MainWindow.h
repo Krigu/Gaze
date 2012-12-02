@@ -2,11 +2,10 @@
  #include <QtGui>
  #include <QtWebKit>
 
-#include "CVWidget.hpp"
+#include "ui/CVWidget.hpp"
  
 //TODO: just for demo purposes
 #include <string>
-#include <QtGui/qmacdefines_mac.h>
 #include "GazeConstants.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/VideoSource.hpp"

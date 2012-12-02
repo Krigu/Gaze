@@ -12,8 +12,10 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>../UIPrototype/CVWidget.cpp</itemPath>
-      <itemPath>../UIPrototype/CVWidget.hpp</itemPath>
+      <logicalFolder name="ui" displayName="ui" projectFiles="true">
+        <itemPath>ui/CVWidget.cpp</itemPath>
+        <itemPath>ui/CVWidget.hpp</itemPath>
+      </logicalFolder>
       <itemPath>MainWindow.cpp</itemPath>
       <itemPath>MainWindow.h</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -30,6 +32,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>ui</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="4">
