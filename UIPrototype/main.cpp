@@ -1,6 +1,6 @@
 
  #include <QtGui>
- #include "MainWindow.h"
+ #include "ui/BrowserWindow.hpp"
 
  int main(int argc, char * argv[])
  {
@@ -11,6 +11,6 @@
      else
          url = QUrl("http://www.heise.de");
      MainWindow *browser = new MainWindow(url);
-     browser->showMaximized();
+     browser->showFullScreen();
      return app.exec();
  }

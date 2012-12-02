@@ -12,10 +12,12 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>../UIPrototype/CVWidget.cpp</itemPath>
-      <itemPath>../UIPrototype/CVWidget.hpp</itemPath>
-      <itemPath>MainWindow.cpp</itemPath>
-      <itemPath>MainWindow.h</itemPath>
+      <logicalFolder name="ui" displayName="ui" projectFiles="true">
+        <itemPath>ui/BrowserWindow.cpp</itemPath>
+        <itemPath>ui/BrowserWindow.hpp</itemPath>
+        <itemPath>ui/CVWidget.cpp</itemPath>
+        <itemPath>ui/CVWidget.hpp</itemPath>
+      </logicalFolder>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -30,6 +32,9 @@
       <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>ui</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="Debug" type="4">
@@ -55,7 +60,8 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
-            <linkerOptionItem>`pkg-config --libs glu`</linkerOptionItem>
+            <linkerLibLibItem>GLU</linkerLibLibItem>
+            <linkerLibLibItem>GL</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
