@@ -12,11 +12,10 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-
-      <itemPath>MainWindow.cpp</itemPath>
-      <itemPath>MainWindow.h</itemPath>
       <itemPath>../UIPrototype/CVWidget.cpp</itemPath>
       <itemPath>../UIPrototype/CVWidget.hpp</itemPath>
+      <itemPath>MainWindow.cpp</itemPath>
+      <itemPath>MainWindow.h</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -56,6 +55,7 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
+            <linkerOptionItem>`pkg-config --libs glu`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
