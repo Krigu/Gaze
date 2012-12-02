@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RCC version="1.0">
     <qresource>
+        <!-- the following js snippets are injected into EVERY page //-->
         <file alias="js/jquery-1.8.3.min.js">html/js/jquery-1.8.3.min.js</file>
-        <file alias="js/calibration.js">html/js/calibration.js</file>
+        
+        <!-- this file is displayed when the calibration is started//-->
         <file alias="/calibration.html">html/calibration.html</file>
+        
+        <!-- these files are used within the calibration page
+             and are accessed using the qrc:// url //-->
+        <file alias="js/calibration.js">html/js/calibration.js</file>
         <file alias="img/circle.jpg">html/img/circle.jpg</file>
         <file alias="img/circle_full.jpg">html/img/circle_full.jpg</file>
         <file alias="img/mario.gif">html/img/mario.gif</file>

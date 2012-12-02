@@ -21,16 +21,16 @@ var calibrationCircle = {
 	},
 	
 	display : function(posX, posY) {
-		$("#circleImg").css("top", posY + (calibrationCircle.imgHeight / 2));
-		$("#circleImg").css("left", posX + (calibrationCircle.imgWidth / 2));
+		$("#circleImg").css("top", posY - (calibrationCircle.imgHeight / 2));
+		$("#circleImg").css("left", posX - (calibrationCircle.imgWidth / 2));
 		$("#circleImg").show(0);
 	},
 
 	move : function(posX, posY){
 		$("#circleImg").attr("src", calibrationCircle.imgMovingPath);
 		$("#circleImg").animate({ 
-			top: posY + (calibrationCircle.imgHeight / 2),
-			left: posX + (calibrationCircle.imgWidth / 2)
+			top: posY - (calibrationCircle.imgHeight / 2),
+			left: posX - (calibrationCircle.imgWidth / 2)
 		}, calibrationCircle.animationTime, function() {
 			$("#circleImg").attr("src", calibrationCircle.imgPath);
 		 });
