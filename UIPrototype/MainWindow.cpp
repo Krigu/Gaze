@@ -2,7 +2,7 @@
  #include <QtGui>
  #include <QtNetwork>
  #include <QtWebKit>
- #include "mainwindow.h"
+ #include "MainWindow.h"
 
  
  MainWindow::MainWindow(const QUrl& url)
