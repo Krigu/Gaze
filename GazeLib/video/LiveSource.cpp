@@ -19,7 +19,7 @@ LiveSource::LiveSource(int channel) {
 }
 
 LiveSource::~LiveSource() {
-	// TODO Auto-generated destructor stub
+	videoCapture.release();
 }
 
 bool LiveSource::nextGrayFrame(cv::Mat& frame) {
