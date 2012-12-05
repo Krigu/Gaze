@@ -38,7 +38,7 @@ MainWindow::MainWindow(const QUrl& url) {
     gazeMenu->addAction("Forward", this, SLOT(forward()));
     gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
     gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
-    //gazeMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
+    gazeMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
 
     QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
     // Zoom
