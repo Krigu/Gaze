@@ -30,16 +30,21 @@ MainWindow::MainWindow(const QUrl& url) {
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
+
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
     gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
+    gazeMenu->addSeparator();
     gazeMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
     gazeMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
     gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
     gazeMenu->addAction("Back", this, SLOT(back()));
     gazeMenu->addAction("Forward", this, SLOT(forward()));
+    gazeMenu->addSeparator();
     gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
     gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
-    //gazeMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
+
 
     QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
     // Zoom
