@@ -34,6 +34,8 @@
         <itemPath>ui/BrowserWindow.hpp</itemPath>
         <itemPath>ui/CVWidget.cpp</itemPath>
         <itemPath>ui/CVWidget.hpp</itemPath>
+        <itemPath>ui/MessageWindow.cpp</itemPath>
+        <itemPath>ui/MessageWindow.hpp</itemPath>
       </logicalFolder>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
