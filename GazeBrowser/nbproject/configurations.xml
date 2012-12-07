@@ -92,6 +92,7 @@
                             OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libgazelib.a">
               </makeArtifact>
             </linkerLibProjectItem>
+            <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
