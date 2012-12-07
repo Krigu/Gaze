@@ -15,15 +15,15 @@
 Debug/
 Release/
 
-/UIPrototype/nbproject/qt-Debug.mk
-/UIPrototype/moc_*.cpp
-/UIPrototype/build/
-/UIPrototype/dist/
-/UIPrototype/nbproject/Makefile-*
-/UIPrototype/nbproject/Package-*.bash
-/UIPrototype/nbproject/qt-*.pro
-/UIPrototype/nbproject/private/
-/UIPrototype/qrc_gaze_js.cpp
+/GazeBrowser/nbproject/qt-Debug.mk
+/GazeBrowser/moc_*.cpp
+/GazeBrowser/build/
+/GazeBrowser/dist/
+/GazeBrowser/nbproject/Makefile-*
+/GazeBrowser/nbproject/Package-*.bash
+/GazeBrowser/nbproject/qt-*.pro
+/GazeBrowser/nbproject/private/
+/GazeBrowser/qrc_gaze_js.cpp
 /GazeLib/build/
 /GazeLib/dist/
 /GazeLib/nbproject/private/
