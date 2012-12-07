@@ -6,6 +6,7 @@
 #include <QtGui/qapplication.h>
 
 #include "BrowserWindow.hpp"
+#include "video/LiveSource.hpp"
 
 using namespace std;
 
@@ -21,6 +22,8 @@ MainWindow::MainWindow(const QUrl& url) {
     isCalibrating = false;
     calibrator = NULL;
 
+    myCam = new LiveSource;
+    
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     view = new QWebView(this);
@@ -156,7 +159,7 @@ void MainWindow::start_calibration() {
 }
 
 void MainWindow::calibrate() {
-    calibrator = new CalibrationThread(view->width(), view->height());
+    calibrator = new CalibrationThread(view->width(), view->height(), myCam);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     calibrator->start();
 }

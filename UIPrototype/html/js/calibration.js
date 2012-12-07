@@ -4,7 +4,7 @@ var calibrationCircle = {
 	imgMovingPath: "img/mario.gif", //url to moving image here
 	imgWidth: 40, //standard width
 	imgHeight: 40, //standard height
-	animationTime: 2500, // time for the animation
+	animationTime: 2000, // time for the animation
 		
 	init : function(posX, posY){
 		//create the image cloud

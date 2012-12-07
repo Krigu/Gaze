@@ -190,41 +190,44 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen, unsigned int du
 	Mat currentFrame;
 	Point2f glintCenter;
 
+	vector<Point2f> measurements;
+	double totalTime = 0;
+	int duration_time = duration * getTickFrequency();
+
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
 	// TODO: return error?
 	if (!hasImage) {
 		LOG_W("No image");
-		//return CalibrationData();
+		return CalibrationData(glintCenter, measurements);
 	}
 
 	bool foundRegion = initialize(currentFrame, frameRegion, glintCenter);
-	if (!foundRegion) {
-		LOG_W("No region found");
-		//return CalibrationData;
-	}
-
-	vector<Point2f> measurements;
-	double totalTime = 0;
-	int duration_millis = duration * 1000;
 
 	double t = getTickCount();
-	while(totalTime < duration_millis){
+	while(totalTime < duration_time){
 
-		Point2f gazeVector;
+		if (!foundRegion) {
+			LOG_W("No region found");
+			foundRegion = initialize(currentFrame, frameRegion, glintCenter);
+		} else {
 
-		// Get next frame
-		if (!imageSrc.nextGrayFrame(currentFrame)) {
-			LOG_D("No more frames");
-			break;
+			Point2f gazeVector;
+
+			// Get next frame
+			if (!imageSrc.nextGrayFrame(currentFrame)) {
+				LOG_D("No more frames");
+				break;
+			}
+
+			currentFrame = currentFrame(frameRegion);
+			MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
+
+			if(result == MEASURE_OK)
+				measurements.push_back(gazeVector);
+
 		}
 
-		currentFrame = currentFrame(frameRegion);
-		MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
-
-		if(result == MEASURE_OK)
-			measurements.push_back(gazeVector);
-
-		totalTime = ((double) getTickCount() - t) / getTickFrequency();
+		totalTime = (double) getTickCount() - t;
 	}
 
 	CalibrationData data(pointOnScreen, measurements);

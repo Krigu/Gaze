@@ -50,7 +50,8 @@ public slots:
      CVWidget *eye_widget;
      CalibrationThread *calibrator;
      int progress; 
-     bool isCalibrating;
+     bool isCalibrating;    
+     LiveSource *myCam;
      void exec_webaction(QWebPage::WebAction action);
      void calibrate();
  };

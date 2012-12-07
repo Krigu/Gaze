@@ -4,6 +4,7 @@
  #include <QtGui>
 #include <QtWebKit>
 
+#include "video/LiveSource.hpp"
 
  class CalibrationThread : public QThread
  {
@@ -12,13 +13,14 @@
      private:
          int width;
          int height;
+         LiveSource *source;
      
 public:
-    CalibrationThread(int width, int height);
- 
+    CalibrationThread(int width, int height, LiveSource *source);
+    
 signals:
     void jsCommand(QString);
-    
+
  protected:
      void run();
  };
