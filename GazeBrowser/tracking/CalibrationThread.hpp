@@ -22,6 +22,7 @@ public:
 
 signals:
     void jsCommand(QString);
+    void error(QString);
 
 protected:
     void run();

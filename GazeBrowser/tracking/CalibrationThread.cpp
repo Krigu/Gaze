@@ -22,8 +22,7 @@ void CalibrationThread::run()
         // todo: now start/continue the tracker fred
         //calib.calculateCoordinates();
     } catch(GazeException e) {
-        //TODO: show krigus popup here
-        qDebug(e.what());
+        emit error(e.what());
     }
 }
 

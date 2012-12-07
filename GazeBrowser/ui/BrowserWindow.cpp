@@ -139,6 +139,7 @@ void MainWindow::calibrate() {
         source = new LiveSource;
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
+    connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
     calibrator->start();
 }
 
@@ -185,4 +186,9 @@ void MainWindow::setupMenus() {
     QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
     zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
     zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
+}
+
+void MainWindow::alertMessage(QString message){
+    MessageWindow m;
+    m.showException(message);
 }

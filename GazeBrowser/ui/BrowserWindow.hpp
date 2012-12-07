@@ -21,6 +21,7 @@
     
 public slots:
     void execJsCommand(QString command);
+    void alertMessage(QString message);
      
  protected slots:
 
