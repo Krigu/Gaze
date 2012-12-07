@@ -13,7 +13,7 @@
 #include "../../utils/log.hpp"
 #include "../../utils/geometry.hpp"
 #include "../../utils/gui.hpp"
-#include "../../GazeConstants.hpp"
+#include "../../config/GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;

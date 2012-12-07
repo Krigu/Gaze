@@ -121,7 +121,6 @@ void MainWindow::just_a_demo() {
 }
 
 void MainWindow::quit_gazebrowser() {
-    //this-
     QApplication::exit(0);
 }
 

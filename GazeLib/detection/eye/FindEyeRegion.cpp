@@ -7,7 +7,7 @@
 
 #include "FindEyeRegion.hpp"
 #include "../../utils/log.hpp"
-#include "../../GazeConstants.hpp"
+#include "../../config/GazeConstants.hpp"
 
 using namespace std;
 using namespace cv;

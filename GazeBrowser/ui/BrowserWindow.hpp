@@ -8,7 +8,7 @@
 
 //TODO: just for demo purposes
 #include <string>
-#include "GazeConstants.hpp"
+#include "config/GazeConstants.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/VideoSource.hpp"
 

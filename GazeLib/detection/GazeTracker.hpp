@@ -16,7 +16,7 @@
 #include "../detection/pupil/Starburst.hpp"
 #include "../calibration/Calibration.hpp"
 
-#include "../GazeConstants.hpp"
+#include "../config/GazeConstants.hpp"
 
 class TrackerCallback{
 public:

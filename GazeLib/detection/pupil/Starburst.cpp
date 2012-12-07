@@ -1,6 +1,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "../../GazeConstants.hpp"
+#include "../../config/GazeConstants.hpp"
 #include "Starburst.hpp"
 
 #include "../../cattin/IplExtractProfile.h"

@@ -10,7 +10,7 @@
 #include <opencv2/features2d/features2d.hpp>
 
 #include "Blobs.hpp"
-#include "../../GazeConstants.hpp"
+#include "../../config/GazeConstants.hpp"
 #include "../../utils/log.hpp"
 
 using namespace std;

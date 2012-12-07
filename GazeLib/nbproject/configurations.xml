@@ -23,6 +23,10 @@
         <itemPath>cattin/IplExtractProfile.cpp</itemPath>
         <itemPath>cattin/IplExtractProfile.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="f1" displayName="config" projectFiles="true">
+        <itemPath>config/GazeConstants.cpp</itemPath>
+        <itemPath>config/GazeConstants.hpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="detection" displayName="detection" projectFiles="true">
         <logicalFolder name="eye" displayName="eye" projectFiles="true">
           <itemPath>detection/eye/FindEyeRegion.cpp</itemPath>
@@ -57,8 +61,6 @@
         <itemPath>video/VideoSource.cpp</itemPath>
         <itemPath>video/VideoSource.hpp</itemPath>
       </logicalFolder>
-      <itemPath>GazeConstants.cpp</itemPath>
-      <itemPath>GazeConstants.hpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
