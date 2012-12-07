@@ -33,10 +33,10 @@ private:
     eyeCompareFunction rightEyeCompareFunc;
     cv::CascadeClassifier eye_region_classifier;
     cv::CascadeClassifier eye_classifier;
-    void findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc);
+    bool findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc);
 
 public:
     FindEyeRegion();
-    void findLeftEye(Mat &image, Rect& eyeRect);
-    void findRightEye(Mat &image, Rect& eyeRect);
+    bool findLeftEye(Mat &image, Rect& eyeRect);
+    bool findRightEye(Mat &image, Rect& eyeRect);
 };

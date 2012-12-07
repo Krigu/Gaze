@@ -63,7 +63,7 @@ private:
 	MeasureResult measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter);
 
 protected:
-	bool initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
+	void initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
 	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
 };
