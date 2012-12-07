@@ -8,6 +8,7 @@
 #include "FindEyeRegion.hpp"
 #include "../../utils/log.hpp"
 #include "../../config/GazeConstants.hpp"
+#include "../../exception/GazeExceptions.hpp"
 
 using namespace std;
 using namespace cv;
@@ -44,7 +45,7 @@ FindEyeRegion::FindEyeRegion() {
 	leftEyeCompareFunc = &takeLeftEye;
 }
 
-bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
+void FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 		eyeCompareFunction& compareFunc) {
 	vector<Rect> faces;
 	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
@@ -54,7 +55,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 
 	if (faces.size() < 1) {
 		LOG_W("No face detected!");
-		return false;
+		throw FaceRegionNotFoundException();
 	}
 
 	// TODO: What to do with multiple detections?
@@ -72,7 +73,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 
 	// No eye detected
 	if (eyes.size() == 0) {
-		return false;
+		throw EyeRegionNotFoundException();
 	}
 	// One eye detected
 	else if (eyes.size() == 1) {
@@ -107,14 +108,12 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 	// Add offset
 	eyeRect.x += eyeRegion.x;
 	eyeRect.y += eyeRegion.y;
-
-	return true;
 }
 
-bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
+void FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
 	return findEye(image, eyeRect, rightEyeCompareFunc);
 }
 
-bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
+void FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 	return findEye(image, eyeRect, leftEyeCompareFunc);
 }
