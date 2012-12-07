@@ -47,6 +47,10 @@
         <itemPath>detection/GazeTracker.cpp</itemPath>
         <itemPath>detection/GazeTracker.hpp</itemPath>
       </logicalFolder>
+      <logicalFolder name="f2" displayName="exception" projectFiles="true">
+        <itemPath>exception/GazeExceptions.cpp</itemPath>
+        <itemPath>exception/GazeExceptions.hpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
         <itemPath>utils/geometry.cpp</itemPath>
         <itemPath>utils/geometry.hpp</itemPath>
