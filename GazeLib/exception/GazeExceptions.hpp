@@ -38,5 +38,10 @@ public:
     FaceRegionNotFoundException();
 };
 
+
+class NoImageSourceException : public GazeException{
+public:
+    NoImageSourceException();
+};
 #endif	/* GAZEEXCEPTIONS_HPP */
 

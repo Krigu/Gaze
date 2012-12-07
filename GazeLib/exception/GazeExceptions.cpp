@@ -22,4 +22,6 @@ EyeRegionNotFoundException::EyeRegionNotFoundException() {
 
 };
 
-
+NoImageSourceException::NoImageSourceException(){
+      
+};
