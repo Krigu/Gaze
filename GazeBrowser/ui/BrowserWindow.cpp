@@ -7,6 +7,7 @@
 
 #include "BrowserWindow.hpp"
 #include "video/LiveSource.hpp"
+#include "MessageWindow.hpp"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ MainWindow::MainWindow(const QUrl& url) {
 
     view = new QWebView(this);
     view->load(url);
-    
+
     connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
@@ -134,7 +135,7 @@ void MainWindow::start_calibration() {
 }
 
 void MainWindow::calibrate() {
-    if(!source)
+    if (!source)
         source = new LiveSource;
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
@@ -158,7 +159,7 @@ void MainWindow::execJsCommand(QString command) {
     view->page()->mainFrame()->evaluateJavaScript(command);
 }
 
-void MainWindow::setupMenus(){
+void MainWindow::setupMenus() {
     // Add the Slot to the quit button
     // on mac this will be showed in the unified menu bar
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -166,7 +167,7 @@ void MainWindow::setupMenus(){
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
     fileMenu->addAction(quitAction);
-    
+
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
     gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addSeparator();
@@ -178,7 +179,7 @@ void MainWindow::setupMenus(){
     gazeMenu->addSeparator();
     gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
     gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
-    
+
     QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
     // Zoom
     QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
