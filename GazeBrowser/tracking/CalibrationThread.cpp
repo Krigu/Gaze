@@ -4,13 +4,12 @@
 #include "CalibrationThread.hpp"
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"
-#include "video/VideoSource.hpp"
 #include "video/LiveSource.hpp"
 
 using namespace std;
 
-CalibrationThread::CalibrationThread(int width, int height) : width(width), 
-       height(height){
+CalibrationThread::CalibrationThread(int width, int height, LiveSource *camera) 
+       : width(width), height(height), camera(camera){
 }
 
 void CalibrationThread::run()
@@ -22,12 +21,8 @@ void CalibrationThread::run()
      int width =  this->width - 2 * x_offset;
      
      Calibration calibration;
-     //string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
-     //VideoSource videoSource(path);
-     LiveSource myCam;
      
-     GazeTracker tracker(myCam);
-     //tracker.startTracking();
+     GazeTracker tracker(*camera);
      
      for(unsigned short i=0;i<3;i++){
          for(unsigned short j=0;j<3;j++){

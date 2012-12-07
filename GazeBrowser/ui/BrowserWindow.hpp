@@ -49,6 +49,7 @@ public slots:
      QWebView *view;
      CVWidget *eye_widget;
      CalibrationThread *calibrator;
+     LiveSource *source;
      int progress; 
      bool isCalibrating;
      void exec_webaction(QWebPage::WebAction action);
