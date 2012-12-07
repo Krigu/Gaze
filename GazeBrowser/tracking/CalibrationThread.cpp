@@ -33,7 +33,9 @@ void CalibrationThread::run()
             
             QString code = QString("calibrationCircle.move(%1,%2);")
                     .arg(point_x).arg(point_y);
+            
             emit jsCommand(code);
+            msleep(2000);
             
             Point2f p(point_x, point_y);
             CalibrationData data = tracker.measurePoint(p, 5);
