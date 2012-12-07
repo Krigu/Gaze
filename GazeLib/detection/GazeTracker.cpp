@@ -181,16 +181,17 @@ void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f dat
 	data[framenumber % GazeConstants::NUM_OF_SMOOTHING_FRAMES] = measured;
 }
 
-CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen, unsigned int duration){
+CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen, 
+        unsigned int duration) {
 
 	Mat currentFrame;
 	Point2f glintCenter;
 
 	bool hasImage = imageSrc.nextGrayFrame(currentFrame);
-	// TODO: return error?
+
 	if (!hasImage) {
 		LOG_W("No image");
-		//return CalibrationData();
+		throw NoImageSourceException();
 	}
 
 	initialize(currentFrame, frameRegion, glintCenter);

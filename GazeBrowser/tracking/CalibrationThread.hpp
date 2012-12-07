@@ -5,6 +5,7 @@
 #include <QtWebKit>
 
 class LiveSource;
+class Calibration;
 
 class CalibrationThread : public QThread {
     Q_OBJECT
@@ -13,6 +14,8 @@ private:
     int width;
     int height;
     LiveSource *camera;
+    
+    void calibrate(Calibration & calibration);
 
 public:
     CalibrationThread(int width, int height, LiveSource *camera);

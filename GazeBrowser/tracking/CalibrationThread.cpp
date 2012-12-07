@@ -5,6 +5,7 @@
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
+#include "exception/GazeExceptions.hpp"
 
 using namespace std;
 
@@ -14,14 +15,25 @@ CalibrationThread::CalibrationThread(int width, int height, LiveSource *camera)
 
 void CalibrationThread::run()
 {
+    try{
+        Calibration calib;
+        calibrate(calib);
+        
+        // todo: now start/continue the tracker fred
+        //calib.calculateCoordinates();
+    } catch(GazeException e) {
+        //TODO: show krigus popup here
+        qDebug(e.what());
+    }
+}
+
+void CalibrationThread::calibrate(Calibration & calibration){
      int x_offset = 40;
      int y_offset = 40;
      
      int height = this->height - 2 * y_offset;
      int width =  this->width - 2 * x_offset;
-     
-     Calibration calibration;
-     
+
      GazeTracker tracker(*camera);
      
      for(unsigned short i=0;i<3;i++){
@@ -38,12 +50,11 @@ void CalibrationThread::run()
             msleep(3000);
             
             Point2f p(point_x, point_y);
-            //CalibrationData data = tracker.measurePoint(p, 5);
-            //calibration.addCalibrationData(data);
-            //cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
+            CalibrationData data = tracker.measurePoint(p, 5);
+            calibration.addCalibrationData(data);
+            cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
          }
      }
      
      calibration.calcCoefficients();
-     //calibration.calculateCoordinates()
 }
