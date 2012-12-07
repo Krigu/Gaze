@@ -10,14 +10,13 @@
 using namespace std;
 
 MainWindow::MainWindow(const QUrl& url) {
-    progress = 0;
-
     QFile file;
     file.setFileName(":js/jquery-1.8.3.min.js");
     file.open(QIODevice::ReadOnly);
     jQuery = file.readAll();
     file.close();
 
+    progress = 0;
     isCalibrating = false;
     calibrator = NULL;
 
@@ -25,40 +24,18 @@ MainWindow::MainWindow(const QUrl& url) {
 
     view = new QWebView(this);
     view->load(url);
-    //connect(view, SIGNAL(loadFinished(bool)), SLOT(adjustLocation()));
+    
     connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
-    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction("Quit Browser", this, SLOT(quit_gazebrowser()));
-
-    QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
-    gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
-    gazeMenu->addSeparator();
-    gazeMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
-    gazeMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
-    gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
-    gazeMenu->addAction("Back", this, SLOT(back()));
-    gazeMenu->addAction("Forward", this, SLOT(forward()));
-    gazeMenu->addSeparator();
-    gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
-    gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
-
-
-    QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
-    // Zoom
-    QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
-    zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
-    zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
+    setupMenus();
 
     setCentralWidget(view);
 
     eye_widget = new CVWidget(this);
     eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     eye_widget->setVisible(false);
-
-    setUnifiedTitleAndToolBarOnMac(true);
 }
 
 void MainWindow::adjustTitle() {
@@ -176,4 +153,32 @@ void MainWindow::zoomOut() {
 
 void MainWindow::execJsCommand(QString command) {
     view->page()->mainFrame()->evaluateJavaScript(command);
+}
+
+void MainWindow::setupMenus(){
+    // Add the Slot to the quit button
+    // on mac this will be showed in the unified menu bar
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    QAction *quitAction = new QAction("Quit Browser", this);
+    quitAction->setMenuRole(QAction::QuitRole);
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
+    fileMenu->addAction(quitAction);
+    
+    QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
+    gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
+    gazeMenu->addSeparator();
+    gazeMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
+    gazeMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
+    gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
+    gazeMenu->addAction("Back", this, SLOT(back()));
+    gazeMenu->addAction("Forward", this, SLOT(forward()));
+    gazeMenu->addSeparator();
+    gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
+    gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
+    
+    QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
+    // Zoom
+    QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
+    zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
+    zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
 }

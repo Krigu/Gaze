@@ -53,6 +53,7 @@ public slots:
      bool isCalibrating;
      void exec_webaction(QWebPage::WebAction action);
      void calibrate();
+     void setupMenus();
  };
 
  
