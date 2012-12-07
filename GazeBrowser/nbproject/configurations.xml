@@ -81,12 +81,12 @@
             <linkerLibLibItem>GLU</linkerLibLibItem>
             <linkerLibLibItem>GL</linkerLibLibItem>
             <linkerLibProjectItem>
-              <makeArtifact PL="/Users/fri/Documents/git-repos/Gaze/GazeLib"
+              <makeArtifact PL="../GazeLib"
                             CT="3"
                             CN="Debug"
                             AC="true"
                             BL="true"
-                            WD="/Users/fri/Documents/git-repos/Gaze/GazeLib"
+                            WD="../GazeLib"
                             BC="${MAKE}  -f Makefile CONF=Debug"
                             CC="${MAKE}  -f Makefile CONF=Debug clean"
                             OP="${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libgazelib.a">
