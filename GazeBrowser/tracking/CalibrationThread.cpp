@@ -35,12 +35,12 @@ void CalibrationThread::run()
                     .arg(point_x).arg(point_y);
             
             emit jsCommand(code);
-            msleep(2000);
+            msleep(3000);
             
             Point2f p(point_x, point_y);
-            CalibrationData data = tracker.measurePoint(p, 5);
-            calibration.addCalibrationData(data);
-            cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
+            //CalibrationData data = tracker.measurePoint(p, 5);
+            //calibration.addCalibrationData(data);
+            //cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
          }
      }
      
