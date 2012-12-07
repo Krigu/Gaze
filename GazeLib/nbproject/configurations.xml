@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+      <itemPath>README.txt</itemPath>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="calibration" displayName="calibration" projectFiles="true">
+        <itemPath>calibration/Calibration.cpp</itemPath>
+        <itemPath>calibration/Calibration.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="cattin" displayName="cattin" projectFiles="true">
+        <itemPath>cattin/IplClipLineToImage.cpp</itemPath>
+        <itemPath>cattin/IplClipLineToImage.h</itemPath>
+        <itemPath>cattin/IplExtractProfile.cpp</itemPath>
+        <itemPath>cattin/IplExtractProfile.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="detection" displayName="detection" projectFiles="true">
+        <logicalFolder name="eye" displayName="eye" projectFiles="true">
+          <itemPath>detection/eye/FindEyeRegion.cpp</itemPath>
+          <itemPath>detection/eye/FindEyeRegion.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="glint" displayName="glint" projectFiles="true">
+          <itemPath>detection/glint/Blobs.cpp</itemPath>
+          <itemPath>detection/glint/Blobs.hpp</itemPath>
+          <itemPath>detection/glint/FindGlints.cpp</itemPath>
+          <itemPath>detection/glint/FindGlints.hpp</itemPath>
+          <itemPath>detection/glint/GlintCluster.cpp</itemPath>
+          <itemPath>detection/glint/GlintCluster.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="pupil" displayName="pupil" projectFiles="true">
+          <itemPath>detection/pupil/Starburst.cpp</itemPath>
+          <itemPath>detection/pupil/Starburst.hpp</itemPath>
+        </logicalFolder>
+        <itemPath>detection/GazeTracker.cpp</itemPath>
+        <itemPath>detection/GazeTracker.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>utils/geometry.cpp</itemPath>
+        <itemPath>utils/geometry.hpp</itemPath>
+        <itemPath>utils/gui.cpp</itemPath>
+        <itemPath>utils/gui.hpp</itemPath>
+        <itemPath>utils/log.hpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="video" displayName="video" projectFiles="true">
+        <itemPath>video/ImageSource.hpp</itemPath>
+        <itemPath>video/LiveSource.cpp</itemPath>
+        <itemPath>video/LiveSource.hpp</itemPath>
+        <itemPath>video/VideoSource.cpp</itemPath>
+        <itemPath>video/VideoSource.hpp</itemPath>
+      </logicalFolder>
+      <itemPath>GazeConstants.cpp</itemPath>
+      <itemPath>GazeConstants.hpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <preprocessorList>
+            <Elem>__DEBUG=1</Elem>
+            <Elem>__DEBUG_FINDGLINTS=0</Elem>
+            <Elem>__DEBUG_STARBURST=1</Elem>
+            <Elem>__DEBUG_TRACKER=0</Elem>
+          </preprocessorList>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="3">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>

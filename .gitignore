@@ -24,3 +24,8 @@ Release/
 /UIPrototype/nbproject/qt-*.pro
 /UIPrototype/nbproject/private/
 /UIPrototype/qrc_gaze_js.cpp
+/GazeLib/build/
+/GazeLib/dist/
+/GazeLib/nbproject/private/
+/GazeLib/nbproject/Makefile-*
+/GazeLib/nbproject/Package-*.bash
