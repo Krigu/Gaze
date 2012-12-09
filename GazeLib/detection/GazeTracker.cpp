@@ -227,13 +227,7 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
     Mat currentFrame;
     Point2f glintCenter;
 
-    bool hasImage = imageSrc.nextGrayFrame(currentFrame);
-
-    if (!hasImage) {
-        LOG_W("No image");
-        throw NoImageSourceException();
-    }
-
+    getNextFrame(currentFrame);
     findEyeRegion(currentFrame, frameRegion, glintCenter);
 
     vector<Point2f> measurements;
@@ -245,12 +239,7 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
 
         Point2f gazeVector;
 
-        // Get next frame
-        if (!imageSrc.nextGrayFrame(currentFrame)) {
-            LOG_D("No more frames");
-            break;
-        }
-
+        getNextFrame(currentFrame);
         currentFrame = currentFrame(frameRegion);
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
