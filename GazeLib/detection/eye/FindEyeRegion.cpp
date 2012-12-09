@@ -7,7 +7,7 @@
 
 #include "FindEyeRegion.hpp"
 #include "../../utils/log.hpp"
-#include "../../config/GazeConstants.hpp"
+#include "../../config/GazeConfig.hpp"
 
 using namespace std;
 using namespace cv;
@@ -28,13 +28,13 @@ Rect* takeRightEye(Rect* r1, Rect* r2) {
 FindEyeRegion::FindEyeRegion() {
 	// TODO exit when classiefier can0t be loaded
 	if (!eye_region_classifier.load(
-			GazeConstants::inHomeDirectory(
+			GazeConfig::inHomeDirectory(
 					"/Dropbox/gaze/haar/parojosG.xml"))) {
 		LOG_W("ERROR: Could not load left eye classifier cascade");
 	}
 
 	if (!eye_classifier.load(
-			GazeConstants::inHomeDirectory(
+			GazeConfig::inHomeDirectory(
 					"/Dropbox/gaze/haar/haar_left_eye.xml"))) {
 		LOG_W("ERROR: Could not load left eyes classifier cascade");
 	}
@@ -49,8 +49,8 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 	vector<Rect> faces;
 	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
 			0 | CV_HAAR_SCALE_IMAGE,
-			Size(GazeConstants::HAAR_EYEREGION_MAX_WIDTH,
-					GazeConstants::HAAR_EYEREGION_MAX_HEIGHT));
+			Size(GazeConfig::HAAR_EYEREGION_MAX_WIDTH,
+					GazeConfig::HAAR_EYEREGION_MAX_HEIGHT));
 
 	if (faces.size() < 1) {
 		LOG_W("No face detected!");
@@ -65,10 +65,10 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 	Mat region = image(eyeRegion);
 	eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
 			0 | CV_HAAR_SCALE_IMAGE,
-			Size(GazeConstants::HAAR_EYE_MIN_WIDTH,
-					GazeConstants::HAAR_EYE_MIN_HEIGHT),
-			Size(GazeConstants::HAAR_EYE_MAX_WIDTH,
-					GazeConstants::HAAR_EYE_MAX_HEIGHT));
+			Size(GazeConfig::HAAR_EYE_MIN_WIDTH,
+					GazeConfig::HAAR_EYE_MIN_HEIGHT),
+			Size(GazeConfig::HAAR_EYE_MAX_WIDTH,
+					GazeConfig::HAAR_EYE_MAX_HEIGHT));
 
 	// No eye detected
 	if (eyes.size() == 0) {

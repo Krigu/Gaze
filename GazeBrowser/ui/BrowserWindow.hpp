@@ -8,7 +8,7 @@
 
 //TODO: just for demo purposes
 #include <string>
-#include "config/GazeConstants.hpp"
+#include "config/GazeConfig.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/ImageSource.hpp"
 
@@ -40,6 +40,7 @@ public slots:
      void start_calibration();
      void just_a_demo();
      void quit_gazebrowser();
+     void preferences();
      
      // View actions
      void zoomIn();

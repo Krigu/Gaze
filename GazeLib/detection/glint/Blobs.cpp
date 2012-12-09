@@ -10,7 +10,7 @@
 #include <opencv2/features2d/features2d.hpp>
 
 #include "Blobs.hpp"
-#include "../../config/GazeConstants.hpp"
+#include "../../config/GazeConfig.hpp"
 #include "../../utils/log.hpp"
 
 using namespace std;
@@ -39,8 +39,8 @@ void Blobs::removeInvalidSize() {
 
 	std::vector<Blob>::iterator iter;
 	for (iter = blobs.begin(); iter != blobs.end();) {
-		if (iter->size < GazeConstants::GLINT_MIN_PIXEL
-				|| iter->size > GazeConstants::GLINT_MAX_PIXEL)
+		if (iter->size < GazeConfig::GLINT_MIN_PIXEL
+				|| iter->size > GazeConfig::GLINT_MAX_PIXEL)
 			iter = blobs.erase(iter);
 		else
 			++iter;
