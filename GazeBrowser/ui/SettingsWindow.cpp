@@ -45,8 +45,74 @@ SettingsWindow::SettingsWindow() {
 
     glintGroup->setLayout(glintLayout);
 
+    //
+    // haar
+    //
+    haarGroup = new QGroupBox(tr("Haar Cascade Configuration"));
+    QGridLayout *haarLayout = new QGridLayout;
+
+    lHaarEyeRegMaxHeight = new QLabel(tr("Max Height of Eye Region"));
+    sHaarEyeRegMaxHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYEREGION_MAX_HEIGHT);
+    haarLayout->addWidget(lHaarEyeRegMaxHeight, 0,0);
+    haarLayout->addWidget(sHaarEyeRegMaxHeight, 0,1);
+
+    lHaarEyeRegMaxWidth = new QLabel(tr("Max Width of Eye Region"));
+    sHaarEyeRegMaxWidth = setUpSpinBox(0, 500, 1, GazeConfig::HAAR_EYEREGION_MAX_WIDTH);
+    haarLayout->addWidget(lHaarEyeRegMaxWidth, 1,0);
+    haarLayout->addWidget(sHaarEyeRegMaxWidth, 1,1);
+    
+    lHaarEyeMinHeight = new QLabel(tr("Min eye height"));
+    sHaarEyeMinHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MIN_HEIGHT);
+    haarLayout->addWidget(lHaarEyeMinHeight, 2,0);
+    haarLayout->addWidget(sHaarEyeMinHeight, 2,1);
+    
+    lHaarEyeMinWidth = new QLabel(tr("Min eye width"));
+    sHaarEyeMinWidth = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MIN_WIDTH);
+    haarLayout->addWidget(lHaarEyeMinWidth, 3,0);
+    haarLayout->addWidget(sHaarEyeMinWidth, 3,1);
+    
+    lHaarEyeMaxHeight = new QLabel(tr("Max eye height"));
+    sHaarEyeMaxHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MAX_HEIGHT);
+    haarLayout->addWidget(lHaarEyeMaxHeight, 4,0);
+    haarLayout->addWidget(sHaarEyeMaxHeight, 4,1);
+    
+    lHaarEyeMaxWidth = new QLabel(tr("Max eye width"));
+    sHaarEyeMaxWidth = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MAX_WIDTH);
+    haarLayout->addWidget(lHaarEyeMaxWidth, 5,0);
+    haarLayout->addWidget(sHaarEyeMaxWidth, 5,1);
+    
+    lHaarMaxTries = new QLabel(tr("Max tries to find eye region"));
+    sHaarMaxTries = setUpSpinBox(0, 10, 1, GazeConfig::HAAR_FINDREGION_MAX_TRIES);
+    haarLayout->addWidget(lHaarMaxTries, 6,0);
+    haarLayout->addWidget(sHaarMaxTries, 6,1);
+    
+    haarGroup->setLayout(haarLayout);
+    
+    //
+    // RANSAC stuff
+    //
+    pupilGroup = new QGroupBox(tr("Pupil Settings"));
+    QGridLayout *pupilLayout = new QGridLayout;
+    
+    lPupilMinRadius = new QLabel("Min Pupil Radius");
+    sPupilMinRadius = setUpSpinBox(0, 255, 1, GazeConfig::PUPIL_MIN_RADIUS);
+    pupilLayout->addWidget(lPupilMinRadius,0,0);
+    pupilLayout->addWidget(sPupilMinRadius,0,1);
+    
+    lPupilMaxRadius = new QLabel("Max Pupil Radius");
+    sPupilMaxRadius = setUpSpinBox(0, 255, 1, GazeConfig::PUPIL_MAX_RADIUS);
+    pupilLayout->addWidget(lPupilMaxRadius,1,0);
+    pupilLayout->addWidget(sPupilMaxRadius,1,1);
+    pupilGroup->setLayout(pupilLayout);
+    
+    //
+    //
+    //
+    
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(glintGroup);
+    layout->addWidget(haarGroup);
+    layout->addWidget(pupilGroup);
     setLayout(layout);
 }
 
