@@ -10,7 +10,7 @@
 #include <string>
 #include "config/GazeConstants.hpp"
 #include "detection/GazeTracker.hpp"
-#include "video/VideoSource.hpp"
+#include "video/ImageSource.hpp"
 
  class MainWindow : public QMainWindow
  {
@@ -50,7 +50,7 @@ public slots:
      QWebView *view;
      CVWidget *eye_widget;
      CalibrationThread *calibrator;
-     LiveSource *source;
+     ImageSource *source;
      int progress; 
      bool isCalibrating;
      void exec_webaction(QWebPage::WebAction action);

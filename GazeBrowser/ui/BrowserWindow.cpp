@@ -7,6 +7,7 @@
 
 #include "BrowserWindow.hpp"
 #include "video/LiveSource.hpp"
+#include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
 
 using namespace std;
@@ -114,11 +115,11 @@ TrackerCallback::~TrackerCallback() {
 }
 
 void MainWindow::just_a_demo() {
-    UICallback myCallback(eye_widget);
+    /*UICallback myCallback(eye_widget);
     string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
     VideoSource videoSource(path);
     GazeTracker tracker(videoSource, &myCallback);
-    tracker.startTracking();
+    tracker.startTracking();*/
 }
 
 void MainWindow::quit_gazebrowser() {
@@ -137,6 +138,8 @@ void MainWindow::start_calibration() {
 void MainWindow::calibrate() {
     if (!source)
         source = new LiveSource;
+    //if(!source)
+    //    source = new VideoSource(GazeConstants::inHomeDirectory("Dropbox/gaze/videos/k2.webm"));
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));

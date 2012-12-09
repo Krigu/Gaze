@@ -9,7 +9,7 @@
 
 using namespace std;
 
-CalibrationThread::CalibrationThread(int width, int height, LiveSource *camera) 
+CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera) 
        : width(width), height(height), camera(camera){
 }
 

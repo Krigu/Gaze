@@ -3,8 +3,8 @@
 
 #include <QtGui>
 #include <QtWebKit>
+#include "video/ImageSource.hpp"
 
-class LiveSource;
 class Calibration;
 
 class CalibrationThread : public QThread {
@@ -13,12 +13,12 @@ class CalibrationThread : public QThread {
 private:
     int width;
     int height;
-    LiveSource *camera;
+    ImageSource *camera;
     
     void calibrate(Calibration & calibration);
 
 public:
-    CalibrationThread(int width, int height, LiveSource *camera);
+    CalibrationThread(int width, int height, ImageSource *camera);
 
 signals:
     void jsCommand(QString);
