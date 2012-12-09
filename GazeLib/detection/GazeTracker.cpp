@@ -72,8 +72,19 @@ bool GazeTracker::startTracking() {
 		LOG_W("No image");
 		return false;
 	}
-
+         
 	initialize(currentFrame, frameRegion, glintCenter);
+    
+#if __DEBUG_HAAR == 1
+    Mat originalImage = currentFrame.clone();    
+    
+    rectangle(originalImage, frameRegion, Scalar(255,255,255), 3);
+    imshow("Detect eye region", originalImage);        
+#endif   
+    
+#if __DEBUG_STEP_BY_STEP == 1    
+    waitKey(0);
+#endif    
 
 	int noGlints = 0;
 
@@ -86,7 +97,20 @@ bool GazeTracker::startTracking() {
 			break;
 		}
 
+#if __DEBUG_HAAR == 1
+    Mat f1 = currentFrame.clone();    
+    
+    rectangle(f1, frameRegion, Scalar(255,255,255), 3);
+    imshow("Frame from source", f1);   
+#endif        
 		currentFrame = currentFrame(frameRegion);
+        
+#if __DEBUG_HAAR == 1
+    Mat f2 = currentFrame.clone();    
+    
+    rectangle(f2, frameRegion, Scalar(255,255,255), 3);
+    imshow("Current clipped frame", f2);   
+#endif        
 		MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
 		Point2f smoothed_gace_vec;
@@ -123,7 +147,11 @@ bool GazeTracker::startTracking() {
 		if(this->tracker_callback != NULL)
 			tracker_callback->imageProcessed(currentFrame);
 
-		int keycode = waitKey(50);
+#if __DEBUG_STEP_BY_STEP == 1    
+    int keycode = waitKey(0);
+#else
+    int keycode = waitKey(50);
+#endif        
 		if (keycode == 32) // space
 			while (waitKey(100) != 32)
 				;
