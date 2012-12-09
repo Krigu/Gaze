@@ -25,6 +25,27 @@ public:
 };
 
 class GazeTracker {
+public:
+    enum MeasureResult {
+        MEASURE_OK,
+        FINDPUPIL_FAILED,
+        FINDGLINT_FAILED,
+    };
+
+    GazeTracker(ImageSource & imageSource, TrackerCallback *callback = NULL);
+    virtual ~GazeTracker();
+
+    void track();
+    void initializeCalibration();
+
+
+    /**
+     * measures the GazeVector
+     *
+     * @return the average GazeVector measured for this point. the measure
+     * takes int duration seconds
+     */
+    CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
 
 private:
     ImageSource& imageSrc;
@@ -49,28 +70,7 @@ private:
 protected:
     void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
-public:
 
-    enum MeasureResult {
-        MEASURE_OK,
-        FINDPUPIL_FAILED,
-        FINDGLINT_FAILED,
-    };
-
-    GazeTracker(ImageSource & imageSource, TrackerCallback *callback = NULL);
-    virtual ~GazeTracker();
-
-    void track();
-    void initializeCalibration();
-
-
-    /**
-     * measures the GazeVector
-     *
-     * @return the average GazeVector measured for this point. the measure
-     * takes int duration seconds
-     */
-    CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
 
 };
 

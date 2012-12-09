@@ -49,8 +49,8 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 	vector<Rect> faces;
 	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
 			0 | CV_HAAR_SCALE_IMAGE,
-			Size(GazeConfig::HAAR_EYEREGION_MAX_WIDTH,
-					GazeConfig::HAAR_EYEREGION_MAX_HEIGHT));
+			Size(GazeConfig::HAAR_EYEREGION_MIN_WIDTH,
+					GazeConfig::HAAR_EYEREGION_MIN_HEIGHT));
 
 	if (faces.size() < 1) {
 		LOG_W("No face detected!");

@@ -51,9 +51,9 @@ public:
 	//
 
 	// Max height of eyeregion
-	static short HAAR_EYEREGION_MAX_HEIGHT;
+	static short HAAR_EYEREGION_MIN_HEIGHT;
 	// Max width of eyeregion
-	static short HAAR_EYEREGION_MAX_WIDTH;
+	static short HAAR_EYEREGION_MIN_WIDTH;
 	// Max height of eye
 	static short HAAR_EYE_MIN_HEIGHT;
 	// Max width of eye
@@ -99,13 +99,12 @@ public:
         //
         // Haar configuration
         //
-
-        GazeConfig::HAAR_EYEREGION_MAX_HEIGHT = 100;
-        GazeConfig::HAAR_EYEREGION_MAX_WIDTH = 400;
-        GazeConfig::HAAR_EYE_MIN_HEIGHT = 20;
-        GazeConfig::HAAR_EYE_MIN_WIDTH = 20;
-        GazeConfig::HAAR_EYE_MAX_HEIGHT = 200;
-        GazeConfig::HAAR_EYE_MAX_WIDTH = 200;
+        GazeConfig::HAAR_EYEREGION_MIN_HEIGHT = 100;
+        GazeConfig::HAAR_EYEREGION_MIN_WIDTH = 200;
+        GazeConfig::HAAR_EYE_MIN_HEIGHT = 100;
+        GazeConfig::HAAR_EYE_MIN_WIDTH = 150;
+        GazeConfig::HAAR_EYE_MAX_HEIGHT = 300;
+        GazeConfig::HAAR_EYE_MAX_WIDTH = 600;
         GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
         
         //

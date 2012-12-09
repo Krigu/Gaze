@@ -34,8 +34,8 @@ short GazeConfig::GLINT_MAX_DISTANCE;
 // Haar configuration
 //
 
-short GazeConfig::HAAR_EYEREGION_MAX_HEIGHT;
-short GazeConfig::HAAR_EYEREGION_MAX_WIDTH;
+short GazeConfig::HAAR_EYEREGION_MIN_HEIGHT;
+short GazeConfig::HAAR_EYEREGION_MIN_WIDTH;
 short GazeConfig::HAAR_EYE_MIN_HEIGHT;
 short GazeConfig::HAAR_EYE_MIN_WIDTH;
 short GazeConfig::HAAR_EYE_MAX_HEIGHT;
