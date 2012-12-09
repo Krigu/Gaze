@@ -18,53 +18,58 @@
 
 #include "../config/GazeConstants.hpp"
 
-class TrackerCallback{
+class TrackerCallback {
 public:
-	virtual ~TrackerCallback() = 0;
-	virtual void imageProcessed(Mat &result) = 0;
+    virtual ~TrackerCallback() = 0;
+    virtual void imageProcessed(Mat &result) = 0;
 };
 
 class GazeTracker {
-
 public:
-	enum MeasureResult{
-		MEASURE_OK,
-		FINDPUPIL_FAILED,
-		FINDGLINT_FAILED,
-	};
 
-	GazeTracker(ImageSource & imageSource, TrackerCallback *callback=NULL);
-	virtual ~GazeTracker();
+    enum MeasureResult {
+        MEASURE_OK,
+        FINDPUPIL_FAILED,
+        FINDGLINT_FAILED,
+    };
 
-	bool startTracking();
+    GazeTracker(ImageSource & imageSource, TrackerCallback *callback = NULL);
+    virtual ~GazeTracker();
+
+    bool startTracking();
+    void initializeCalibration();
 
 
-	/**
-	 * measures the GazeVector
-	 *
-	 * @return the average GazeVector measured for this point. the measure
-	 * takes int duration seconds
-	 */
-	CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
+    /**
+     * measures the GazeVector
+     *
+     * @return the average GazeVector measured for this point. the measure
+     * takes int duration seconds
+     */
+    CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
 
 private:
-	ImageSource& imageSrc;
-	FindEyeRegion eyeFinder;
-	FindGlints glintFinder;
-	Starburst starburst;
-	Calibration c;
-	TrackerCallback *tracker_callback;
-	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
-	bool isRunning;
-	unsigned int framenumber;
-	Rect frameRegion;
+    ImageSource& imageSrc;
+    FindEyeRegion eyeFinder;
+    FindGlints glintFinder;
+    Starburst starburst;
+    Calibration c;
+    TrackerCallback *tracker_callback;
+    Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+    bool isRunning;
+    unsigned int framenumber;
+    Rect frameRegion;
 
-	void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
-	MeasureResult measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter);
+    void getNextFrame(Mat & frame);
+    void findEyeRegion(Mat & frame, cv::Rect& frameRegion, cv::Point2f& frameCenter, bool calibrationMode = false);
+
+    void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
+    MeasureResult measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter);
+
 
 protected:
-	void initialize(cv::Mat& frame, cv::Rect& frameRegion, cv::Point2f& frameCenter);
-	void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
+
+    void adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion);
 
 };
 
