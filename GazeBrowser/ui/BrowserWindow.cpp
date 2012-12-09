@@ -9,6 +9,7 @@
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
+#include "SettingsWindow.hpp"
 
 using namespace std;
 
@@ -171,6 +172,7 @@ void MainWindow::setupMenus() {
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
     fileMenu->addAction(quitAction);
+    fileMenu->addAction("Preferences", this, SLOT(preferences()));
 
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
     gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
@@ -194,4 +196,11 @@ void MainWindow::setupMenus() {
 void MainWindow::alertMessage(QString message){
     MessageWindow m;
     m.showException(message);
+}
+
+void MainWindow::preferences(){
+    //TODO huge memery leak here
+    SettingsWindow *settings = new SettingsWindow();
+    settings->setWindowModality(Qt::WindowModal);
+    settings->show();
 }

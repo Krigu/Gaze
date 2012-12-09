@@ -123,6 +123,7 @@ public:
 	static std::string inHomeDirectory(std::string suffix);
 };
 
+// create an instance and make sure, that "initConfiguration()" is run once
 static GazeConfig GAZE_CONSTANTS;
 
 #endif /* GAZECONFIG_HPP_ */

@@ -40,6 +40,7 @@ public slots:
      void start_calibration();
      void just_a_demo();
      void quit_gazebrowser();
+     void preferences();
      
      // View actions
      void zoomIn();
