@@ -22,13 +22,6 @@ public:
     SettingsWindow();
     virtual ~SettingsWindow();
     
-    /*
-short GazeConfig::GLINT_MIN_DIAMETER;
-short GazeConfig::GLINT_MAX_DIAMETER;
-short GazeConfig::GLINT_MIN_PIXEL;
-short GazeConfig::GLINT_MAX_PIXEL;
-short GazeConfig::GLINT_MIN_DISTANCE;
-short GazeConfig::GLINT_MAX_DISTANCE;*/
 private:
     
     //
@@ -56,6 +49,43 @@ private:
     
     QLabel *lGlintMaxDistance;
     QSpinBox *sGlintMaxDistance;
+    
+    //
+    // Haar configuration
+    //
+    QGroupBox *haarGroup;
+    
+    QLabel *lHaarEyeRegMaxHeight;
+    QSpinBox *sHaarEyeRegMaxHeight;
+    
+    QLabel *lHaarEyeRegMaxWidth;
+    QSpinBox *sHaarEyeRegMaxWidth;
+    
+    QLabel *lHaarEyeMinHeight;
+    QSpinBox *sHaarEyeMinHeight;
+    
+    QLabel *lHaarEyeMinWidth;
+    QSpinBox *sHaarEyeMinWidth;
+    
+    QLabel *lHaarEyeMaxHeight;
+    QSpinBox *sHaarEyeMaxHeight;
+    
+    QLabel *lHaarEyeMaxWidth;
+    QSpinBox *sHaarEyeMaxWidth;
+    
+    QLabel *lHaarMaxTries;
+    QSpinBox *sHaarMaxTries;
+    
+    //
+    // RANSAC stuff
+    //
+    QGroupBox *pupilGroup;
+    
+    QLabel *lPupilMinRadius;
+    QSpinBox *sPupilMinRadius;
+    
+    QLabel *lPupilMaxRadius;
+    QSpinBox *sPupilMaxRadius;
     
     QSpinBox * setUpSpinBox(int min, int max, int step, int default_value);
 };
