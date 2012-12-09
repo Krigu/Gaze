@@ -35,18 +35,20 @@ void GazeTracker::getNextFrame(Mat& frame) {
 void GazeTracker::initializeCalibration() {
     // TODO possiblilty to exit method
     Mat frame;
+    // Copy for displaying image
     Mat fullFrame;
+    Rect eyeRegion;
+    Point2f glintCenter;
 
-    Point2f glintCenter(0, 0);
     vector<cv::Point> glints;
 
     do {
         getNextFrame(frame);
         fullFrame = frame.clone();
         // Endless search for eye region
-        findEyeRegion(frame, frameRegion, glintCenter, true);
+        findEyeRegion(frame, eyeRegion, glintCenter, true);
 
-        rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
+        rectangle(fullFrame, eyeRegion, Scalar(255, 255, 255), 3);
     } while (!glintFinder.findGlints(frame, glints, glintCenter));
 
     // TODO more output
@@ -98,54 +100,38 @@ GazeTracker::~GazeTracker() {
     // TODO Auto-generated destructor stub
 }
 
-bool GazeTracker::startTracking() {
+void GazeTracker::track() {
 
     Mat currentFrame;
     Point2f glintCenter;
     Point2f gazeVector;
 
-    bool hasImage = imageSrc.nextGrayFrame(currentFrame);
-    // TODO: return error?
-    if (!hasImage) {
-        LOG_W("No image");
-        return false;
-    }
-
-    // Find eye position and clip
-    findEyeRegion(currentFrame, frameRegion, glintCenter);
     
+    // Find eye 
+    getNextFrame(currentFrame);
+    findEyeRegion(currentFrame, frameRegion, glintCenter);
+
     int noGlints = 0;
 
     // main loop
-    while (true) {
-
+    do {
         // Get next frame
-        if (!imageSrc.nextGrayFrame(currentFrame)) {
-            LOG_D("No more frames");
-            break;
-        }
-
+        getNextFrame(currentFrame);
 #if __DEBUG_HAAR == 1
         Mat f1 = currentFrame.clone();
 
         rectangle(f1, frameRegion, Scalar(255, 255, 255), 3);
         imshow("Frame from source", f1);
-#endif        
+#endif      
         currentFrame = currentFrame(frameRegion);
-
-#if __DEBUG_HAAR == 1
-        Mat f2 = currentFrame.clone();
-
-        rectangle(f2, frameRegion, Scalar(255, 255, 255), 3);
-        imshow("Current clipped frame", f2);
-#endif        
+        
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
-        Point2f smoothed_gace_vec;
+        Point2f smoothed_gaze_vec;
         switch (result) {
             case MEASURE_OK:
 
-                this->smoothSignal(gazeVector, smoothed_gace_vec,
+                this->smoothSignal(gazeVector, smoothed_gaze_vec,
                         this->last_gaze_vectors, framenumber);
                 //c.printPoint(smoothed_gace_vec);
 
@@ -158,7 +144,7 @@ bool GazeTracker::startTracking() {
                 noGlints++;
                 if (noGlints > 5) {
                     LOG_W("no glints found. need to reinitialize");
-                    imageSrc.nextGrayFrame(currentFrame);
+                    getNextFrame(currentFrame);
                     findEyeRegion(currentFrame, frameRegion, glintCenter);
 
                     noGlints = 0;
@@ -183,8 +169,7 @@ bool GazeTracker::startTracking() {
         if (keycode == 32) // space
             while (waitKey(100) != 32)
                 ;
-    }
-    return true;
+    } while (true);
 }
 
 GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter) {
@@ -205,6 +190,7 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
         return FINDGLINT_FAILED;
     }
 
+    // TODO: Does this code always executes?
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);

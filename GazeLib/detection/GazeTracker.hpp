@@ -36,7 +36,7 @@ public:
     GazeTracker(ImageSource & imageSource, TrackerCallback *callback = NULL);
     virtual ~GazeTracker();
 
-    bool startTracking();
+    void track();
     void initializeCalibration();
 
 
