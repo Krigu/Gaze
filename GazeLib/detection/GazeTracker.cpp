@@ -78,7 +78,7 @@ bool GazeTracker::startTracking() {
 	int noGlints = 0;
 
 	// main loop
-	while (isRunning) {
+	while (true) {
 
 		// Get next frame
 		if (!imageSrc.nextGrayFrame(currentFrame)) {
