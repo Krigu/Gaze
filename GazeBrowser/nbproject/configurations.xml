@@ -36,6 +36,8 @@
         <itemPath>ui/CVWidget.hpp</itemPath>
         <itemPath>ui/MessageWindow.cpp</itemPath>
         <itemPath>ui/MessageWindow.hpp</itemPath>
+        <itemPath>ui/SettingsWindow.cpp</itemPath>
+        <itemPath>ui/SettingsWindow.hpp</itemPath>
       </logicalFolder>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>

@@ -55,11 +55,11 @@ private:
     //
     QGroupBox *haarGroup;
     
-    QLabel *lHaarEyeRegMaxHeight;
-    QSpinBox *sHaarEyeRegMaxHeight;
+    QLabel *lHaarEyeRegMinHeight;
+    QSpinBox *sHaarEyeRegMinHeight;
     
-    QLabel *lHaarEyeRegMaxWidth;
-    QSpinBox *sHaarEyeRegMaxWidth;
+    QLabel *lHaarEyeRegMinWidth;
+    QSpinBox *sHaarEyeRegMinWidth;
     
     QLabel *lHaarEyeMinHeight;
     QSpinBox *sHaarEyeMinHeight;
