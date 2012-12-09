@@ -13,7 +13,7 @@
 #include "../../utils/log.hpp"
 #include "../../utils/geometry.hpp"
 #include "../../utils/gui.hpp"
-#include "../../config/GazeConstants.hpp"
+#include "../../config/GazeConfig.hpp"
 
 using namespace std;
 using namespace cv;
@@ -32,7 +32,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 #endif
 
     // Threshold image.
-    threshold(frame, img, GazeConstants::GLINT_THRESHOLD, 255,
+    threshold(frame, img, GazeConfig::GLINT_THRESHOLD, 255,
             cv::THRESH_TOZERO);
 
 #if __DEBUG_FINDGLINTS == 1
@@ -119,8 +119,8 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
         for (int j = i; j < n; j++) {
             //for (int j = 0; j < n; j++) {
             int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
-            if (dist >= GazeConstants::GLINT_MIN_DISTANCE
-                    && dist <= GazeConstants::GLINT_MAX_DISTANCE) {
+            if (dist >= GazeConfig::GLINT_MIN_DISTANCE
+                    && dist <= GazeConfig::GLINT_MAX_DISTANCE) {
                 distanceMat.at<char>(i, j) = 1;
             }
         }
@@ -150,7 +150,7 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
     // with at least 4 glints (3 nightbours). Those line creates a new cluster of glints.
     for (int row = 0; row < nighbourMat.rows; ++row) {
         uchar* p = nighbourMat.ptr(row);
-        if (column_sum.at<char>(row, 0) >= GazeConstants::GLINT_COUNT) {
+        if (column_sum.at<char>(row, 0) >= GazeConfig::GLINT_COUNT) {
             std::vector<cv::Point> glints;
             for (int col = 0; col < nighbourMat.cols; ++col) {
                 if (*p++ == 1) {

@@ -1,6 +1,6 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "../../config/GazeConstants.hpp"
+#include "../../config/GazeConfig.hpp"
 #include "Starburst.hpp"
 
 #include "../../cattin/IplExtractProfile.h"
@@ -42,7 +42,7 @@ bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 	bool found = false;
 	Point2f startpoint(glintcenter.x,glintcenter.y);
 
-	remove_glints(working_frame, glint_centers, GazeConstants::GLINT_RADIUS);
+	remove_glints(working_frame, glint_centers, GazeConfig::GLINT_RADIUS);
 	medianBlur(working_frame, working_frame, 3);
 	found = starburst(working_frame, startpoint, radius, 20);
 
@@ -150,7 +150,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	Point2f start_point = Point2f(center.x, center.y);
 
-	for(unsigned short iterations = 0; iterations < GazeConstants::MAX_RANSAC_ITERATIONS; ++iterations){
+	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
 
 		points.clear();
 
@@ -288,8 +288,8 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 		fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
 
 		//TODO: pupil size should be configurable
-		if (tmp_r < GazeConstants::PUPIL_MIN_RADIUS
-				|| tmp_r > GazeConstants::PUPIL_MAX_RADIUS)
+		if (tmp_r < GazeConfig::PUPIL_MIN_RADIUS
+				|| tmp_r > GazeConfig::PUPIL_MAX_RADIUS)
 			continue;
 
 #if __DEBUG_STARBURST == 1

@@ -33,7 +33,7 @@ void GazeTracker::initialize(cv::Mat& frame, cv::Rect& frameRegion,
 		tries++;
 
         // No eye region found
-		if (tries > GazeConstants::HAAR_FINDREGION_MAX_TRIES)         
+		if (tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)         
 			throw EyeRegionNotFoundException();
 	}
 
@@ -191,22 +191,22 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
 
 void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[],
 		unsigned int framenumber) {
-	if (framenumber < GazeConstants::NUM_OF_SMOOTHING_FRAMES) {
+	if (framenumber < GazeConfig::NUM_OF_SMOOTHING_FRAMES) {
 		// nothing to smooth here
 		smoothed.x = measured.x;
 		smoothed.y = measured.y;
 	} else {
 		smoothed.x = 0;
 		smoothed.y = 0;
-		for (unsigned short i = 0; i < GazeConstants::NUM_OF_SMOOTHING_FRAMES;
+		for (unsigned short i = 0; i < GazeConfig::NUM_OF_SMOOTHING_FRAMES;
 				++i) {
 			smoothed.x += data[i].x;
 			smoothed.y += data[i].y;
 		}
-		smoothed.x /= GazeConstants::NUM_OF_SMOOTHING_FRAMES;
-		smoothed.y /= GazeConstants::NUM_OF_SMOOTHING_FRAMES;
+		smoothed.x /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
+		smoothed.y /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
 	}
-	data[framenumber % GazeConstants::NUM_OF_SMOOTHING_FRAMES] = measured;
+	data[framenumber % GazeConfig::NUM_OF_SMOOTHING_FRAMES] = measured;
 }
 
 CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen, 

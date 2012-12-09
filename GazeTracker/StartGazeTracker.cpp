@@ -10,14 +10,14 @@
 #include "detection/GazeTracker.hpp"
 #include "detection/pupil/Starburst.hpp"
 #include "video/VideoSource.hpp"
-#include "GazeConstants.hpp"
+#include "config/GazeConfig.hpp"
 
 
 using namespace std;
 
 int main(){
 
-	string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
+	string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
 
 
 	cout << path << endl;

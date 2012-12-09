@@ -1,16 +1,16 @@
 /*
- * GazeConstants.hpp
+ * GazeConfig.hpp
  *
  *  Created on: Nov 9, 2012
  *      Author: fri
  */
 
-#ifndef GAZECONSTANTS_HPP_
-#define GAZECONSTANTS_HPP_
+#ifndef GAZECONFIG_HPP_
+#define GAZECONFIG_HPP_
 
 #include <string>
 
-class GazeConstants {
+class GazeConfig {
 public:
     
     //
@@ -71,11 +71,11 @@ public:
     static short PUPIL_MIN_RADIUS;
 	static short PUPIL_MAX_RADIUS;
 
-	GazeConstants(){
+	GazeConfig(){
         initConiguration();
     }
 
-    ~GazeConstants(){
+    ~GazeConfig(){
         
     }
     
@@ -85,34 +85,34 @@ public:
         // Glints Configuration
         //
 
-        GazeConstants::GLINT_THRESHOLD = 230;
-        GazeConstants::GLINT_MIN_DIAMETER = 2;
-        GazeConstants::GLINT_MAX_DIAMETER = 6;
+        GazeConfig::GLINT_THRESHOLD = 230;
+        GazeConfig::GLINT_MIN_DIAMETER = 2;
+        GazeConfig::GLINT_MAX_DIAMETER = 6;
 
         //static const short GLINT_RADIUS = 6;
 
-        GazeConstants::GLINT_MIN_PIXEL = 1;
-        GazeConstants::GLINT_MAX_PIXEL = 50;
-        GazeConstants::GLINT_MIN_DISTANCE = 1;
-        GazeConstants::GLINT_MAX_DISTANCE = 40;
+        GazeConfig::GLINT_MIN_PIXEL = 1;
+        GazeConfig::GLINT_MAX_PIXEL = 50;
+        GazeConfig::GLINT_MIN_DISTANCE = 1;
+        GazeConfig::GLINT_MAX_DISTANCE = 40;
         
         //
         // Haar configuration
         //
 
-        GazeConstants::HAAR_EYEREGION_MAX_HEIGHT = 100;
-        GazeConstants::HAAR_EYEREGION_MAX_WIDTH = 400;
-        GazeConstants::HAAR_EYE_MIN_HEIGHT = 20;
-        GazeConstants::HAAR_EYE_MIN_WIDTH = 20;
-        GazeConstants::HAAR_EYE_MAX_HEIGHT = 200;
-        GazeConstants::HAAR_EYE_MAX_WIDTH = 200;
-        GazeConstants::HAAR_FINDREGION_MAX_TRIES = 10;
+        GazeConfig::HAAR_EYEREGION_MAX_HEIGHT = 100;
+        GazeConfig::HAAR_EYEREGION_MAX_WIDTH = 400;
+        GazeConfig::HAAR_EYE_MIN_HEIGHT = 20;
+        GazeConfig::HAAR_EYE_MIN_WIDTH = 20;
+        GazeConfig::HAAR_EYE_MAX_HEIGHT = 200;
+        GazeConfig::HAAR_EYE_MAX_WIDTH = 200;
+        GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
         
         //
         // RANSAC stuff
         //
-        GazeConstants::PUPIL_MIN_RADIUS = 15;
-        GazeConstants::PUPIL_MAX_RADIUS = 17;
+        GazeConfig::PUPIL_MIN_RADIUS = 15;
+        GazeConfig::PUPIL_MAX_RADIUS = 17;
     }
     
 	/**
@@ -123,6 +123,6 @@ public:
 	static std::string inHomeDirectory(std::string suffix);
 };
 
-static GazeConstants GAZE_CONSTANTS;
+static GazeConfig GAZE_CONSTANTS;
 
-#endif /* GAZECONSTANTS_HPP_ */
+#endif /* GAZECONFIG_HPP_ */

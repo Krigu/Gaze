@@ -16,7 +16,7 @@
 #include "../detection/pupil/Starburst.hpp"
 #include "../calibration/Calibration.hpp"
 
-#include "../config/GazeConstants.hpp"
+#include "../config/GazeConfig.hpp"
 
 class TrackerCallback{
 public:
@@ -54,7 +54,7 @@ private:
 	Starburst starburst;
 	Calibration c;
 	TrackerCallback *tracker_callback;
-	Point2f last_gaze_vectors[GazeConstants::NUM_OF_SMOOTHING_FRAMES];
+	Point2f last_gaze_vectors[GazeConfig::NUM_OF_SMOOTHING_FRAMES];
 	bool isRunning;
 	unsigned int framenumber;
 	Rect frameRegion;
