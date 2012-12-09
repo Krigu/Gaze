@@ -33,7 +33,7 @@ public:
 	// Min distance between two glints
 	static const short GLINT_MIN_DISTANCE = 1;
 	// Max distance between two glints
-	static const short GLINT_MAX_DISTANCE = 25;
+	static const short GLINT_MAX_DISTANCE = 40;
 
 	//
 	// Haar configuration
