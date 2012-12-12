@@ -40,7 +40,7 @@ MainWindow::MainWindow(const QUrl& url) {
 
     eye_widget = new CVWidget(this);
     eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    eye_widget->setVisible(false);
+    eye_widget->setVisible(true);
 }
 
 void MainWindow::adjustTitle() {
