@@ -24,8 +24,8 @@
         <itemPath>cattin/IplExtractProfile.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f1" displayName="config" projectFiles="true">
-        <itemPath>config/GazeConstants.cpp</itemPath>
-        <itemPath>config/GazeConstants.hpp</itemPath>
+        <itemPath>config/GazeConfig.cpp</itemPath>
+        <itemPath>config/GazeConfig.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="detection" displayName="detection" projectFiles="true">
         <logicalFolder name="eye" displayName="eye" projectFiles="true">

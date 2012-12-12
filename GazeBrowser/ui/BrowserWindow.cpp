@@ -105,16 +105,6 @@ void MainWindow::toggle_eye_widget() {
     eye_widget->setVisible(!eye_widget->isVisible());
 }
 
-//TODO: remove this
-
-void UICallback::imageProcessed(Mat& im) {
-    widget->sendImage(&im);
-}
-
-TrackerCallback::~TrackerCallback() {
-    // I have no idea, why I had to declare this here...
-}
-
 void MainWindow::just_a_demo() {
     /*UICallback myCallback(eye_widget);
     string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
@@ -141,9 +131,11 @@ void MainWindow::calibrate() {
         source = new LiveSource;
     //if(!source)
     //    source = new VideoSource(GazeConstants::inHomeDirectory("Dropbox/gaze/videos/k2.webm"));
+    qRegisterMetaType< cv::Mat >("cv::Mat");
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
+    connect(calibrator, SIGNAL(cvImage(cv::Mat)), this, SLOT(showCvImage(cv::Mat)));
     calibrator->start();
 }
 
@@ -204,4 +196,8 @@ void MainWindow::preferences(){
     SettingsWindow *settings = new SettingsWindow();
     settings->setWindowModality(Qt::WindowModal);
     settings->show();
+}
+
+void MainWindow::showCvImage(cv::Mat mat){
+    eye_widget->sendImage(&mat);
 }

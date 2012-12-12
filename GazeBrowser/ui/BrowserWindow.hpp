@@ -9,7 +9,6 @@
 //TODO: just for demo purposes
 #include <string>
 #include "config/GazeConfig.hpp"
-#include "detection/GazeTracker.hpp"
 #include "video/ImageSource.hpp"
 
  class MainWindow : public QMainWindow
@@ -22,6 +21,7 @@
 public slots:
     void execJsCommand(QString command);
     void alertMessage(QString message);
+    void showCvImage(cv::Mat mat);
      
  protected slots:
 
@@ -57,21 +57,4 @@ public slots:
      void exec_webaction(QWebPage::WebAction action);
      void calibrate();
      void setupMenus();
- };
-
- 
-class UICallback : public TrackerCallback{
-     
- private:
-     CVWidget *widget;
-     
- public:
-     UICallback(CVWidget *eye_widget) : widget(eye_widget){
-         
-     }
-     ~UICallback(){
-         
-     }
-     
-     void imageProcessed(Mat& result);
  };
