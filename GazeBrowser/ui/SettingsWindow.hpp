@@ -87,7 +87,7 @@ private:
     QLabel *lPupilMaxRadius;
     QSpinBox *sPupilMaxRadius;
     
-    QSpinBox * setUpSpinBox(int min, int max, int step, int default_value);
+    QSpinBox * setUpSpinBox(int min, int max, int step, int& default_value);
 };
 
 #endif	/* SETTINGSWINDOW_HPP */

@@ -15,38 +15,38 @@ using namespace std;
 // global constants
 //
 const char GazeConfig::GLINT_COUNT;
-const unsigned short GazeConfig::MAX_RANSAC_ITERATIONS;
-const unsigned short GazeConfig::NUM_OF_SMOOTHING_FRAMES;
+const unsigned int GazeConfig::MAX_RANSAC_ITERATIONS;
+const unsigned int GazeConfig::NUM_OF_SMOOTHING_FRAMES;
 
 //
 // Glints Configuration
 //
 
-double GazeConfig::GLINT_THRESHOLD;
-short GazeConfig::GLINT_MIN_DIAMETER;
-short GazeConfig::GLINT_MAX_DIAMETER;
-short GazeConfig::GLINT_MIN_PIXEL;
-short GazeConfig::GLINT_MAX_PIXEL;
-short GazeConfig::GLINT_MIN_DISTANCE;
-short GazeConfig::GLINT_MAX_DISTANCE;
+int GazeConfig::GLINT_THRESHOLD;
+int GazeConfig::GLINT_MIN_DIAMETER;
+int GazeConfig::GLINT_MAX_DIAMETER;
+int GazeConfig::GLINT_MIN_PIXEL;
+int GazeConfig::GLINT_MAX_PIXEL;
+int GazeConfig::GLINT_MIN_DISTANCE;
+int GazeConfig::GLINT_MAX_DISTANCE;
 
 //
 // Haar configuration
 //
 
-short GazeConfig::HAAR_EYEREGION_MIN_HEIGHT;
-short GazeConfig::HAAR_EYEREGION_MIN_WIDTH;
-short GazeConfig::HAAR_EYE_MIN_HEIGHT;
-short GazeConfig::HAAR_EYE_MIN_WIDTH;
-short GazeConfig::HAAR_EYE_MAX_HEIGHT;
-short GazeConfig::HAAR_EYE_MAX_WIDTH;
-short GazeConfig::HAAR_FINDREGION_MAX_TRIES;
+int GazeConfig::HAAR_EYEREGION_MIN_HEIGHT;
+int GazeConfig::HAAR_EYEREGION_MIN_WIDTH;
+int GazeConfig::HAAR_EYE_MIN_HEIGHT;
+int GazeConfig::HAAR_EYE_MIN_WIDTH;
+int GazeConfig::HAAR_EYE_MAX_HEIGHT;
+int GazeConfig::HAAR_EYE_MAX_WIDTH;
+int GazeConfig::HAAR_FINDREGION_MAX_TRIES;
 
 //
 // RANSAC stuff
 //
-short GazeConfig::PUPIL_MIN_RADIUS;
-short GazeConfig::PUPIL_MAX_RADIUS;
+int GazeConfig::PUPIL_MIN_RADIUS;
+int GazeConfig::PUPIL_MAX_RADIUS;
 
 string GazeConfig::inHomeDirectory(string suffix) {
 	string home(getenv("HOME"));
