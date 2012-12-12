@@ -33,7 +33,7 @@ var calibrationCircle = {
         var y = posY - (calibrationCircle.imgHeight / 2);
         
         // Dont show animation if position stays the same
-        if (x + "px" == $("#circleImg").css("left") || 
+        if (x + "px" == $("#circleImg").css("left") && 
             y + "px" == $("#circleImg").css("top"))
             return;
         

@@ -19,7 +19,7 @@ using namespace std;
 
 int main(){
 
-	string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/k2.webm");
+	string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/k.webm");
 
 
 
@@ -29,7 +29,7 @@ int main(){
     
     LiveSource liveSource;
 
-	GazeTracker tracker(videoSource);
+	GazeTracker tracker(liveSource);
 
 	tracker.initializeCalibration();    
     tracker.track();

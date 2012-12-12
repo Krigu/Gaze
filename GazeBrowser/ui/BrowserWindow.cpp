@@ -171,8 +171,9 @@ void MainWindow::setupMenus() {
     QAction *quitAction = new QAction("Quit Browser", this);
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
-    fileMenu->addAction(quitAction);
     fileMenu->addAction("Preferences", this, SLOT(preferences()));
+    fileMenu->addAction(quitAction);
+
 
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
     gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));

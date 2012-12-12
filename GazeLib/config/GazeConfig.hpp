@@ -20,56 +20,56 @@ public:
 	// Amounts of glints (per eye)
 	static const char GLINT_COUNT = 4;
 
-	static const unsigned short MAX_RANSAC_ITERATIONS = 10;
+	static const unsigned int MAX_RANSAC_ITERATIONS = 10;
 
 	// how many frames should we use to smooth the signal?
-	static const unsigned short NUM_OF_SMOOTHING_FRAMES = 5;
+	static const unsigned int NUM_OF_SMOOTHING_FRAMES = 5;
     
-	static const short GLINT_RADIUS = 6;
+	static const int GLINT_RADIUS = 6;
 
 	//
 	// Glints Configuration
 	//
     
     // fasch ds wichtigschte
-	static double GLINT_THRESHOLD;
+	static int GLINT_THRESHOLD;
     
-	static short GLINT_MIN_DIAMETER;
-	static short GLINT_MAX_DIAMETER;
+	static int GLINT_MIN_DIAMETER;
+	static int GLINT_MAX_DIAMETER;
 	
     // TODO calculate from diameter
-	static short GLINT_MIN_PIXEL;
+	static int GLINT_MIN_PIXEL;
 	// TODO calculate from diameter
-	static short GLINT_MAX_PIXEL;
+	static int GLINT_MAX_PIXEL;
 	// Min distance between two glints
-	static short GLINT_MIN_DISTANCE;
+	static int GLINT_MIN_DISTANCE;
 	// Max distance between two glints
-	static short GLINT_MAX_DISTANCE;
+	static int GLINT_MAX_DISTANCE;
 
 	//
 	// Haar configuration
 	//
 
 	// Max height of eyeregion
-	static short HAAR_EYEREGION_MIN_HEIGHT;
+	static int HAAR_EYEREGION_MIN_HEIGHT;
 	// Max width of eyeregion
-	static short HAAR_EYEREGION_MIN_WIDTH;
+	static int HAAR_EYEREGION_MIN_WIDTH;
 	// Max height of eye
-	static short HAAR_EYE_MIN_HEIGHT;
+	static int HAAR_EYE_MIN_HEIGHT;
 	// Max width of eye
-	static short HAAR_EYE_MIN_WIDTH;
+	static int HAAR_EYE_MIN_WIDTH;
 	// Max height of eye
-	static short HAAR_EYE_MAX_HEIGHT;
+	static int HAAR_EYE_MAX_HEIGHT;
 	// Max width of eye
-	static short HAAR_EYE_MAX_WIDTH;
+	static int HAAR_EYE_MAX_WIDTH;
 	// Max amount of tries to find eye region
-	static short HAAR_FINDREGION_MAX_TRIES;
+	static int HAAR_FINDREGION_MAX_TRIES;
 
     //
 	// RANSAC stuff
 	//
-    static short PUPIL_MIN_RADIUS;
-	static short PUPIL_MAX_RADIUS;
+    static int PUPIL_MIN_RADIUS;
+	static int PUPIL_MAX_RADIUS;
 
 	GazeConfig(){
         initConiguration();
@@ -89,7 +89,7 @@ public:
         GazeConfig::GLINT_MIN_DIAMETER = 2;
         GazeConfig::GLINT_MAX_DIAMETER = 6;
 
-        //static const short GLINT_RADIUS = 6;
+        //static const int GLINT_RADIUS = 6;
 
         GazeConfig::GLINT_MIN_PIXEL = 1;
         GazeConfig::GLINT_MAX_PIXEL = 50;

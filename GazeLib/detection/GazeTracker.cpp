@@ -32,6 +32,8 @@ void GazeTracker::getNextFrame(Mat& frame) {
 }
 
 void GazeTracker::initializeCalibration() {
+    namedWindow("frame", CV_WINDOW_AUTOSIZE);
+
     // TODO possiblilty to exit method
     Mat frame;
     // Copy for displaying image
@@ -42,6 +44,7 @@ void GazeTracker::initializeCalibration() {
 
     do {
         getNextFrame(frame);
+        cout << "Got next frame" << frame.size << endl;
         fullFrame = frame.clone();
         // Endless search for eye region
         findEyeRegion(frame, eyeRegion, glintCenter, true);
@@ -59,17 +62,20 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
     short tries = 0;
     while (!foundEye) {
         getNextFrame(frame);
+        cout << "Got next frame" << frame.size << endl;
+        usleep(20);
 
         foundEye = eyeFinder.findLeftEye(frame, frameRegion);
         tries++;
 
         // TODO init one window for whole calibration process
         if (calibrationMode) {
-            imshow("Current frame", frame);
+            imshow("frame", frame);
         }
 
         // TODO: Global var for waitkey?
-        waitKey(50);
+        //        waitKey(20);
+        //        QThread::msleep(20);
 
         // No eye region found
         if (!calibrationMode && tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)
@@ -104,7 +110,7 @@ void GazeTracker::track() {
     Point2f glintCenter;
     Point2f gazeVector;
 
-    
+
     // Find eye 
     getNextFrame(currentFrame);
     findEyeRegion(currentFrame, frameRegion, glintCenter);
@@ -122,7 +128,7 @@ void GazeTracker::track() {
         imshow("Frame from source", f1);
 #endif      
         currentFrame = currentFrame(frameRegion);
-        
+
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
         Point2f smoothed_gaze_vec;
@@ -202,23 +208,23 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
 }
 
 void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[],
-		unsigned int framenumber) {
-	if (framenumber < GazeConfig::NUM_OF_SMOOTHING_FRAMES) {
-		// nothing to smooth here
-		smoothed.x = measured.x;
-		smoothed.y = measured.y;
-	} else {
-		smoothed.x = 0;
-		smoothed.y = 0;
-		for (unsigned short i = 0; i < GazeConfig::NUM_OF_SMOOTHING_FRAMES;
-				++i) {
-			smoothed.x += data[i].x;
-			smoothed.y += data[i].y;
-		}
-		smoothed.x /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
-		smoothed.y /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
-	}
-	data[framenumber % GazeConfig::NUM_OF_SMOOTHING_FRAMES] = measured;
+        unsigned int framenumber) {
+    if (framenumber < GazeConfig::NUM_OF_SMOOTHING_FRAMES) {
+        // nothing to smooth here
+        smoothed.x = measured.x;
+        smoothed.y = measured.y;
+    } else {
+        smoothed.x = 0;
+        smoothed.y = 0;
+        for (unsigned short i = 0; i < GazeConfig::NUM_OF_SMOOTHING_FRAMES;
+                ++i) {
+            smoothed.x += data[i].x;
+            smoothed.y += data[i].y;
+        }
+        smoothed.x /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
+        smoothed.y /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
+    }
+    data[framenumber % GazeConfig::NUM_OF_SMOOTHING_FRAMES] = measured;
 }
 
 CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
@@ -231,11 +237,12 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
     findEyeRegion(currentFrame, frameRegion, glintCenter);
 
     vector<Point2f> measurements;
-    double totalTime = 0;
-    int duration_millis = duration * 1000;
+    double ticks = 0;
+    double maxTicks = duration * getTickFrequency();
 
-    double t = getTickCount();
-    while (totalTime < duration_millis) {
+    double startTick = getTickCount();
+
+    while (ticks < maxTicks) {
 
         Point2f gazeVector;
 
@@ -246,7 +253,7 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
         if (result == MEASURE_OK)
             measurements.push_back(gazeVector);
 
-        totalTime = ((double) getTickCount() - t) / getTickFrequency();
+        ticks = getTickCount() - startTick;
     }
 
     CalibrationData data(pointOnScreen, measurements);
