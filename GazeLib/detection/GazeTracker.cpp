@@ -70,7 +70,9 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
 
         // TODO init one window for whole calibration process
         if (calibrationMode) {
-            imshow("frame", frame);
+            //imshow("frame", frame);
+            if(tracker_callback!=NULL)
+                tracker_callback->imageProcessed(frame);
         }
 
         // TODO: Global var for waitkey?
@@ -200,6 +202,7 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
     cross(frame, pupilCenter, 5);
     imshow("Tracker", frame);
 
+    
     // now calculate the gaze vector
     gazeVector.x = glintCenter.x - pupilCenter.x;
     gazeVector.y = glintCenter.y - pupilCenter.y;
@@ -250,6 +253,10 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
         currentFrame = currentFrame(frameRegion);
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
 
+        // notify our callback about the processed frames...
+        if (this->tracker_callback != NULL)
+            tracker_callback->imageProcessed(currentFrame);
+        
         if (result == MEASURE_OK)
             measurements.push_back(gazeVector);
 

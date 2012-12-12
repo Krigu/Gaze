@@ -33,7 +33,7 @@ void CalibrationThread::calibrate(Calibration & calibration){
      int height = this->height - 2 * y_offset;
      int width =  this->width - 2 * x_offset;
 
-     GazeTracker tracker(*camera);
+     GazeTracker tracker(*camera, this);
      cout << "Begin calib" << endl;
      tracker.initializeCalibration();
      cout << "After calib" << endl;
@@ -64,5 +64,8 @@ void CalibrationThread::calibrate(Calibration & calibration){
      cout << "Calibrationdata:" << endl;
      calibration.printCalibration();
      
-     
+}
+
+void CalibrationThread::imageProcessed(Mat& result){
+    emit cvImage(result);
 }

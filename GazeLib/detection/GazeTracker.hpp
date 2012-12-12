@@ -20,7 +20,9 @@
 
 class TrackerCallback {
 public:
-    virtual ~TrackerCallback() = 0;
+    virtual ~TrackerCallback(){
+        
+    };
     virtual void imageProcessed(Mat &result) = 0;
 };
 

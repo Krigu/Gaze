@@ -105,12 +105,12 @@ SettingsWindow::SettingsWindow() {
     haarGroup = new QGroupBox(tr("Haar Cascade Configuration"));
     QGridLayout *haarLayout = new QGridLayout;
 
-    lHaarEyeRegMinHeight = new QLabel(tr("Max Height of Eye Region"));
+    lHaarEyeRegMinHeight = new QLabel(tr("Min Height of Eye Region"));
     sHaarEyeRegMinHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYEREGION_MIN_HEIGHT);
     haarLayout->addWidget(lHaarEyeRegMinHeight, 0, 0);
     haarLayout->addWidget(sHaarEyeRegMinHeight, 0, 1);
 
-    lHaarEyeRegMinWidth = new QLabel(tr("Max Width of Eye Region"));
+    lHaarEyeRegMinWidth = new QLabel(tr("Min Width of Eye Region"));
     sHaarEyeRegMinWidth = setUpSpinBox(0, 500, 1, GazeConfig::HAAR_EYEREGION_MIN_WIDTH);
     haarLayout->addWidget(lHaarEyeRegMinWidth, 1, 0);
     haarLayout->addWidget(sHaarEyeRegMinWidth, 1, 1);
