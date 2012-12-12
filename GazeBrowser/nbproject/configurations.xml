@@ -30,6 +30,8 @@
         <itemPath>tracking/CalibrationThread.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="ui" displayName="ui" projectFiles="true">
+        <itemPath>ui/AutoSaveSpinbox.cpp</itemPath>
+        <itemPath>ui/AutoSaveSpinbox.hpp</itemPath>
         <itemPath>ui/BrowserWindow.cpp</itemPath>
         <itemPath>ui/BrowserWindow.hpp</itemPath>
         <itemPath>ui/CVWidget.cpp</itemPath>

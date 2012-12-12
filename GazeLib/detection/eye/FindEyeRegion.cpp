@@ -46,24 +46,25 @@ FindEyeRegion::FindEyeRegion() {
 
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 		eyeCompareFunction& compareFunc) {
-	vector<Rect> faces;
-	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
-			0 | CV_HAAR_SCALE_IMAGE,
-			Size(GazeConfig::HAAR_EYEREGION_MIN_WIDTH,
-					GazeConfig::HAAR_EYEREGION_MIN_HEIGHT));
-
-	if (faces.size() < 1) {
-		LOG_W("No face detected!");
-		return false;
-	}
-
-	// TODO: What to do with multiple detections?
-	Rect eyeRegion = faces.at(0);
+//	vector<Rect> faces;
+//	eye_region_classifier.detectMultiScale(image, faces, 1.1, 0,
+//			0 | CV_HAAR_SCALE_IMAGE,
+//			Size(GazeConfig::HAAR_EYEREGION_MIN_WIDTH,
+//					GazeConfig::HAAR_EYEREGION_MIN_HEIGHT));
+//
+//	if (faces.size() < 1) {
+//		LOG_W("No face detected!");
+//		return false;
+//	}
+//
+//	// TODO: What to do with multiple detections?
+//	Rect eyeRegion = faces.at(0);
 
 	// TODO extract min and maxsize to constants
 	vector<Rect> eyes;
-	Mat region = image(eyeRegion);
-	eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
+//	Mat region = image(eyeRegion);
+    // was region instead of image
+	eye_classifier.detectMultiScale(image, eyes, 1.1, 2,
 			0 | CV_HAAR_SCALE_IMAGE,
 			Size(GazeConfig::HAAR_EYE_MIN_WIDTH,
 					GazeConfig::HAAR_EYE_MIN_HEIGHT),
@@ -105,9 +106,10 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 	}
 
 	// Add offset
-	eyeRect.x += eyeRegion.x;
-	eyeRect.y += eyeRegion.y;
-
+    // TODO reimplement
+//	eyeRect.x += eyeRegion.x;
+//	eyeRect.y += eyeRegion.y;
+    
 	return true;
 }
 

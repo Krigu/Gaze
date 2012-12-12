@@ -57,7 +57,7 @@ private:
     Point2f last_gaze_vectors[GazeConfig::NUM_OF_SMOOTHING_FRAMES];
     bool isRunning;
     unsigned int framenumber;
-    Rect frameRegion;
+    Rect frameRegion;     
 
     void getNextFrame(Mat & frame);
     void findEyeRegion(Mat & frame, cv::Rect& frameRegion, cv::Point2f& frameCenter, bool calibrationMode = false);

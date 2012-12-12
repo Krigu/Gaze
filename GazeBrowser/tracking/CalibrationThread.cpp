@@ -34,7 +34,9 @@ void CalibrationThread::calibrate(Calibration & calibration){
      int width =  this->width - 2 * x_offset;
 
      GazeTracker tracker(*camera);
-     
+     cout << "Begin calib" << endl;
+     tracker.initializeCalibration();
+     cout << "After calib" << endl;
      for(unsigned short i=0;i<3;i++){
          for(unsigned short j=0;j<3;j++){
             int point_x = width / 2 * j + x_offset; 
@@ -55,5 +57,12 @@ void CalibrationThread::calibrate(Calibration & calibration){
          }
      }
      
+     
+     
      calibration.calcCoefficients();
+     
+     cout << "Calibrationdata:" << endl;
+     calibration.printCalibration();
+     
+     
 }

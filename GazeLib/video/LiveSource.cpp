@@ -23,6 +23,9 @@ LiveSource::~LiveSource() {
 }
 
 bool LiveSource::nextGrayFrame(cv::Mat& frame) {
+    
+//    waitKey(10);
+    
 	// Check if capture is open
 	if (!videoCapture.isOpened())
 		return false;
