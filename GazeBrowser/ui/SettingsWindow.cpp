@@ -63,21 +63,21 @@ SettingsWindow::SettingsWindow() {
 
     generalGroup->setLayout(generalLayout);
 
-    glintGroup = new QGroupBox(tr("Glints Configuration"));
-    lGlintThreshold = new QLabel(tr("Glint Threshold"));
-    sGlintThreshold = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_THRESHOLD);
-    lGlintMinDiameter = new QLabel(tr("Min Diameter"));
-    sGlintMinDiameter = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MIN_DIAMETER);
-    lGlintMaxDiameter = new QLabel(tr("Max Diameter"));
-    sGlintMaxDiameter = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MAX_DIAMETER);
-    lGlintMinPixel = new QLabel(tr("Min number of Pixels"));
-    sGlintMinPixel = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MIN_PIXEL);
-    lGlintMaxPixel = new QLabel(tr("Max number of Pixels"));
-    sGlintMaxPixel = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MAX_PIXEL);
-    lGlintMinDistance = new QLabel(tr("Min Distance"));
-    sGlintMinDistance = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MIN_DISTANCE);
-    lGlintMaxDistance = new QLabel(tr("Max Distance"));
-    sGlintMaxDistance = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MAX_DISTANCE);
+    QGroupBox *glintGroup = new QGroupBox(tr("Glints Configuration"));
+    QLabel *lGlintThreshold = new QLabel(tr("threshold for binarization"));
+    QSpinBox *sGlintThreshold = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_THRESHOLD);
+    QLabel *lGlintMinDiameter = new QLabel(tr("Min blob diameter"));
+    QSpinBox *sGlintMinDiameter = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MIN_DIAMETER);
+    QLabel *lGlintMaxDiameter = new QLabel(tr("Max blob diameter"));
+    QSpinBox *sGlintMaxDiameter = setUpSpinBox(0, 1000, 1, GazeConfig::GLINT_MAX_DIAMETER);
+    QLabel *lGlintMinPixel = new QLabel(tr("Min pixels in blob"));
+    QSpinBox *sGlintMinPixel = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MIN_PIXEL);
+    QLabel *lGlintMaxPixel = new QLabel(tr("Max pixels in blob"));
+    QSpinBox *sGlintMaxPixel = setUpSpinBox(0, 1000, 1, GazeConfig::GLINT_MAX_PIXEL);
+    QLabel *lGlintMinDistance = new QLabel(tr("Min blob distance"));
+    QSpinBox *sGlintMinDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MIN_DISTANCE);
+    QLabel *lGlintMaxDistance = new QLabel(tr("Max blob distance"));
+    QSpinBox *sGlintMaxDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MAX_DISTANCE);
 
 
     QGridLayout *glintLayout = new QGridLayout;
@@ -102,41 +102,41 @@ SettingsWindow::SettingsWindow() {
     //
     // haar
     //
-    haarGroup = new QGroupBox(tr("Haar Cascade Configuration"));
+    QGroupBox *haarGroup = new QGroupBox(tr("Haar Cascade Configuration"));
     QGridLayout *haarLayout = new QGridLayout;
 
-    lHaarEyeRegMinHeight = new QLabel(tr("Min Height of Eye Region"));
-    sHaarEyeRegMinHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYEREGION_MIN_HEIGHT);
+    QLabel *lHaarEyeRegMinHeight = new QLabel(tr("Min height of eye region"));
+    QSpinBox *sHaarEyeRegMinHeight = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYEREGION_MIN_HEIGHT);
     haarLayout->addWidget(lHaarEyeRegMinHeight, 0, 0);
     haarLayout->addWidget(sHaarEyeRegMinHeight, 0, 1);
 
-    lHaarEyeRegMinWidth = new QLabel(tr("Min Width of Eye Region"));
-    sHaarEyeRegMinWidth = setUpSpinBox(0, 500, 1, GazeConfig::HAAR_EYEREGION_MIN_WIDTH);
+    QLabel *lHaarEyeRegMinWidth = new QLabel(tr("Min width of eye region"));
+    QSpinBox *sHaarEyeRegMinWidth = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYEREGION_MIN_WIDTH);
     haarLayout->addWidget(lHaarEyeRegMinWidth, 1, 0);
     haarLayout->addWidget(sHaarEyeRegMinWidth, 1, 1);
 
-    lHaarEyeMinHeight = new QLabel(tr("Min eye height"));
-    sHaarEyeMinHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MIN_HEIGHT);
+    QLabel *lHaarEyeMinHeight = new QLabel(tr("Min eye height"));
+    QSpinBox *sHaarEyeMinHeight = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYE_MIN_HEIGHT);
     haarLayout->addWidget(lHaarEyeMinHeight, 2, 0);
     haarLayout->addWidget(sHaarEyeMinHeight, 2, 1);
 
-    lHaarEyeMinWidth = new QLabel(tr("Min eye width"));
-    sHaarEyeMinWidth = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MIN_WIDTH);
+    QLabel *lHaarEyeMinWidth = new QLabel(tr("Min eye width"));
+    QSpinBox *sHaarEyeMinWidth = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYE_MIN_WIDTH);
     haarLayout->addWidget(lHaarEyeMinWidth, 3, 0);
     haarLayout->addWidget(sHaarEyeMinWidth, 3, 1);
 
-    lHaarEyeMaxHeight = new QLabel(tr("Max eye height"));
-    sHaarEyeMaxHeight = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MAX_HEIGHT);
+    QLabel *lHaarEyeMaxHeight = new QLabel(tr("Max eye height"));
+    QSpinBox *sHaarEyeMaxHeight = setUpSpinBox(0, 1280, 1, GazeConfig::HAAR_EYE_MAX_HEIGHT);
     haarLayout->addWidget(lHaarEyeMaxHeight, 4, 0);
     haarLayout->addWidget(sHaarEyeMaxHeight, 4, 1);
 
-    lHaarEyeMaxWidth = new QLabel(tr("Max eye width"));
-    sHaarEyeMaxWidth = setUpSpinBox(0, 255, 1, GazeConfig::HAAR_EYE_MAX_WIDTH);
+    QLabel *lHaarEyeMaxWidth = new QLabel(tr("Max eye width"));
+    QSpinBox *sHaarEyeMaxWidth = setUpSpinBox(0, 1280, 1, GazeConfig::HAAR_EYE_MAX_WIDTH);
     haarLayout->addWidget(lHaarEyeMaxWidth, 5, 0);
     haarLayout->addWidget(sHaarEyeMaxWidth, 5, 1);
 
-    lHaarMaxTries = new QLabel(tr("Max tries to find eye region"));
-    sHaarMaxTries = setUpSpinBox(0, 10, 1, GazeConfig::HAAR_FINDREGION_MAX_TRIES);
+    QLabel *lHaarMaxTries = new QLabel(tr("Max tries to find eye region"));
+    QSpinBox *sHaarMaxTries = setUpSpinBox(0, 100, 1, GazeConfig::HAAR_FINDREGION_MAX_TRIES);
     haarLayout->addWidget(lHaarMaxTries, 6, 0);
     haarLayout->addWidget(sHaarMaxTries, 6, 1);
 
@@ -145,16 +145,16 @@ SettingsWindow::SettingsWindow() {
     //
     // RANSAC stuff
     //
-    pupilGroup = new QGroupBox(tr("Pupil Settings"));
+    QGroupBox *pupilGroup = new QGroupBox(tr("Pupil Settings"));
     QGridLayout *pupilLayout = new QGridLayout;
 
-    lPupilMinRadius = new QLabel("Min Pupil Radius");
-    sPupilMinRadius = setUpSpinBox(0, 255, 1, GazeConfig::PUPIL_MIN_RADIUS);
+    QLabel *lPupilMinRadius = new QLabel("Min Pupil Radius");
+    QSpinBox *sPupilMinRadius = setUpSpinBox(0, 1000, 1, GazeConfig::PUPIL_MIN_RADIUS);
     pupilLayout->addWidget(lPupilMinRadius, 0, 0);
     pupilLayout->addWidget(sPupilMinRadius, 0, 1);
 
-    lPupilMaxRadius = new QLabel("Max Pupil Radius");
-    sPupilMaxRadius = setUpSpinBox(0, 255, 1, GazeConfig::PUPIL_MAX_RADIUS);
+    QLabel *lPupilMaxRadius = new QLabel("Max Pupil Radius");
+    QSpinBox *sPupilMaxRadius = setUpSpinBox(0, 1000, 1, GazeConfig::PUPIL_MAX_RADIUS);
     pupilLayout->addWidget(lPupilMaxRadius, 1, 0);
     pupilLayout->addWidget(sPupilMaxRadius, 1, 1);
     pupilGroup->setLayout(pupilLayout);
