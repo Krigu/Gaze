@@ -14,11 +14,12 @@ var calibrationCircle = {
         $(circle).attr("class", "circle");
         $(circle).attr("id", "circleImg");
         $(circle).css("top", "20px");
-        $(circle).css("left", "20px");
+        $(circle).css("left", "-20px");
+        $(circle).hide();
 
         $(document.body).append($(circle));
 
-        calibrationCircle.display(posX, posY);		
+        //calibrationCircle.display(posX, posY);		
 
     },
 	
@@ -36,7 +37,7 @@ var calibrationCircle = {
         if (x + "px" == $("#circleImg").css("left") && 
             y + "px" == $("#circleImg").css("top"))
             return;
-        
+        $("#circleImg").show();
         $("#circleImg").attr("src", calibrationCircle.imgMovingPath);
         $("#circleImg").animate({ 
             top: y,
