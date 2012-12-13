@@ -66,11 +66,11 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
     LOG_D("Countours size: " << contours.size());
 
     Blobs blobs = Blobs(contours);
-    LOG_D("Blobs size 1: " << blobs.blobSize());
+    LOG_D("Blobs size after thresholding: " << blobs.blobSize());
     blobs.removeInvalidSize();
-    LOG_D("Blobs size 2: " << blobs.blobSize());
+    LOG_D("Blobs size after removing invalid size: " << blobs.blobSize());
     blobs.removeInvalidShape();
-    LOG_D("Blobs size 3: " << blobs.blobSize());
+    LOG_D("Blobs size after removing invalid size: " << blobs.blobSize());
 
     blobs.blobCenters(glintCenters);
 
