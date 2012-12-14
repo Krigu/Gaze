@@ -124,10 +124,10 @@ void Calibration::printCalibration() {
 		// calulated point
 		Point calcPoint = calculateCoordinates(it->getAverageVector());
         cout << "Calculated Point: " << calcPoint << endl;
-		//cross(display, calcPoint, 5, Scalar(0, 0, 255));
+		cross(display, calcPoint, 5, Scalar(0, 0, 255));
 		Point actualPoint = it->getPointOnScreen();
         cout << "Actual Point: " << actualPoint << endl; 
-		//cross(display, actualPoint, 5, Scalar(0, 255, 0));
+		cross(display, actualPoint, 5, Scalar(0, 255, 0));
 	}
 
 	imshow("Calibration", display);

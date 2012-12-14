@@ -32,8 +32,6 @@ void GazeTracker::getNextFrame(Mat& frame) {
 }
 
 void GazeTracker::initializeCalibration() {
-    namedWindow("frame", CV_WINDOW_AUTOSIZE);
-
     // TODO possiblilty to exit method
     Mat frame;
     // Copy for displaying image
@@ -44,12 +42,9 @@ void GazeTracker::initializeCalibration() {
 
     do {
         getNextFrame(frame);
-        cout << "Got next frame" << frame.size << endl;
-        fullFrame = frame.clone();
         // Endless search for eye region
         findEyeRegion(frame, eyeRegion, glintCenter, true);
-
-        rectangle(fullFrame, eyeRegion, Scalar(255, 255, 255), 3);
+        
     } while (!glintFinder.findGlints(frame, glints, glintCenter));
 
     // TODO more output
@@ -62,17 +57,21 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
     short tries = 0;
     while (!foundEye) {
         getNextFrame(frame);
-        cout << "Got next frame" << frame.size << endl;
+
         usleep(20);
 
         foundEye = eyeFinder.findLeftEye(frame, frameRegion);
         tries++;
 
         // TODO init one window for whole calibration process
+        // TODO init one window for whole calibration process
         if (calibrationMode) {
             //imshow("frame", frame);
-            if(tracker_callback!=NULL)
-                tracker_callback->imageProcessed(frame);
+            if (tracker_callback != NULL) {
+                Mat fullFrame = frame.clone();
+                rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
+                tracker_callback->imageProcessed(fullFrame);
+            }
         }
 
         // TODO: Global var for waitkey?
@@ -196,13 +195,13 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
         return FINDGLINT_FAILED;
     }
 
-    // TODO: Does this code always executes?
+    //    // TODO: Does this code always executes?
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);
-    imshow("Tracker", frame);
+    //    imshow("Tracker", frame);
 
-    
+
     // now calculate the gaze vector
     gazeVector.x = glintCenter.x - pupilCenter.x;
     gazeVector.y = glintCenter.y - pupilCenter.y;
@@ -256,7 +255,7 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
         // notify our callback about the processed frames...
         if (this->tracker_callback != NULL)
             tracker_callback->imageProcessed(currentFrame);
-        
+
         if (result == MEASURE_OK)
             measurements.push_back(gazeVector);
 
