@@ -12,6 +12,7 @@
 #include "video/VideoSource.hpp"
 #include "video/LiveSource.hpp"
 #include "config/GazeConfig.hpp"
+#include "TCallback.hpp"
 
 
 
@@ -28,11 +29,23 @@ int main(){
 	VideoSource videoSource(path);
     
     LiveSource liveSource;
+    
+    TrackerCallback* callback;
+            callback = new TCallback();
+    
+	GazeTracker tracker(liveSource, callback);
+    
+    
 
-	GazeTracker tracker(liveSource);
-
-	tracker.initializeCalibration();    
+	tracker.initializeCalibration(); 
+    
+    
     tracker.track();
-
+    cout << "----------------- " << endl;
+    cout << "----------------- " << endl;
+    cout << "Done initializing " << endl;
+    cout << "----------------- " << endl;
+    cout << "----------------- " << endl;
+    delete callback;
 
 }
