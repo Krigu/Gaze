@@ -91,27 +91,27 @@ public:
 
         //static const int GLINT_RADIUS = 6;
 
-        GazeConfig::GLINT_MIN_PIXEL = 1;
-        GazeConfig::GLINT_MAX_PIXEL = 50;
+        GazeConfig::GLINT_MIN_PIXEL = 25;
+        GazeConfig::GLINT_MAX_PIXEL = 160;
         GazeConfig::GLINT_MIN_DISTANCE = 1;
-        GazeConfig::GLINT_MAX_DISTANCE = 40;
+        GazeConfig::GLINT_MAX_DISTANCE = 60;
         
         //
         // Haar configuration
         //
-        GazeConfig::HAAR_EYEREGION_MIN_HEIGHT = 100;
-        GazeConfig::HAAR_EYEREGION_MIN_WIDTH = 200;
+        GazeConfig::HAAR_EYEREGION_MIN_HEIGHT = 200;
+        GazeConfig::HAAR_EYEREGION_MIN_WIDTH = 600;
         GazeConfig::HAAR_EYE_MIN_HEIGHT = 100;
         GazeConfig::HAAR_EYE_MIN_WIDTH = 150;
-        GazeConfig::HAAR_EYE_MAX_HEIGHT = 300;
-        GazeConfig::HAAR_EYE_MAX_WIDTH = 600;
+        GazeConfig::HAAR_EYE_MAX_HEIGHT = 500;
+        GazeConfig::HAAR_EYE_MAX_WIDTH = 700;
         GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
         
         //
         // RANSAC stuff
         //
         GazeConfig::PUPIL_MIN_RADIUS = 15;
-        GazeConfig::PUPIL_MAX_RADIUS = 17;
+        GazeConfig::PUPIL_MAX_RADIUS = 80;
     }
     
 	/**
