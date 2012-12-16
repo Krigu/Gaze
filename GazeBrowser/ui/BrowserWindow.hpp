@@ -5,10 +5,6 @@
 #include "CVWidget.hpp"
  
 #include "tracking/CalibrationThread.hpp"
-
-//TODO: just for demo purposes
-#include <string>
-#include "config/GazeConfig.hpp"
 #include "video/ImageSource.hpp"
 
  class MainWindow : public QMainWindow
@@ -38,7 +34,7 @@ public slots:
      void forward();
      void toggle_eye_widget();
      void start_calibration();
-     void just_a_demo();
+     
      void quit_gazebrowser();
      void preferences();
      

@@ -7,16 +7,16 @@
 
 #include <vector>
 #include "geometry.hpp"
+#include "../exception/GazeExceptions.hpp"
 
 const double Rad2Deg = 180.0 / 3.1415;
 const double Deg2Rad = 3.1415 / 180.0;
 
-int calcPointDistance(cv::Point point1, cv::Point point2) {
-	int distX = point1.x - point2.x;
-	int distY = point1.y - point2.y;
+int calcPointDistance(cv::Point *point1, cv::Point *point2) {
+	int distX = point1->x - point2->x;
+	int distY = point1->y - point2->y;
 	int sum = distX * distX + distY * distY;
-
-	// Use Pythagoras to calc distance between two points
+    
 	return sqrt(sum);
 }
 
@@ -38,9 +38,8 @@ double calcAngle(cv::Point start, cv::Point end)
 cv::Point2f calcAverage(std::vector<cv::Point2f> points){
 	int amount = points.size();
 
-	// TODO: exception?
 	if (amount == 0){
-		return cv::Point(0,0);
+        throw new WrongArgumentException("Cannot calc the average of 0 Points!");
 	}
 
 	int sumX = 0;

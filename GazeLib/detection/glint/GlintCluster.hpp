@@ -13,7 +13,6 @@
 class GlintCluster {
 
 private:
-	// TODO: There was a &
 	std::vector<cv::Point> glints;
 	int distanceToLastMeasurement;
 

@@ -194,11 +194,9 @@ GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVe
         return FINDGLINT_FAILED;
     }
 
-    //    // TODO: Does this code always executes?
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);
-    //    imshow("Tracker", frame);
 
 
     // now calculate the gaze vector
