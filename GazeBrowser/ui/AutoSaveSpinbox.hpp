@@ -11,7 +11,6 @@
 #include <QtGui>
 
 class AutoSaveSpinbox : public QSpinBox {
-    // TODO: WTF?
     Q_OBJECT
 public:
     AutoSaveSpinbox(int& value);

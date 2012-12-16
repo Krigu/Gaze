@@ -47,5 +47,11 @@ class NoImageSourceException : public GazeException {
 public:
     NoImageSourceException();
 };
+
+class WrongArgumentException : public GazeException {
+public:
+    WrongArgumentException(std::string msg);
+    WrongArgumentException();
+};
 #endif	/* GAZEEXCEPTIONS_HPP */
 

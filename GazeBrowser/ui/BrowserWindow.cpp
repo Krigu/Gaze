@@ -105,14 +105,6 @@ void MainWindow::toggle_eye_widget() {
     eye_widget->setVisible(!eye_widget->isVisible());
 }
 
-void MainWindow::just_a_demo() {
-    /*UICallback myCallback(eye_widget);
-    string path = GazeConstants::inHomeDirectory("Dropbox/gaze/videos/osx/krigu_cut.mov");
-    VideoSource videoSource(path);
-    GazeTracker tracker(videoSource, &myCallback);
-    tracker.startTracking();*/
-}
-
 void MainWindow::quit_gazebrowser() {
     QApplication::exit(0);
 }
@@ -177,7 +169,6 @@ void MainWindow::setupMenus() {
     gazeMenu->addAction("Forward", this, SLOT(forward()));
     gazeMenu->addSeparator();
     gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
-    gazeMenu->addAction("Show me a Demo!", this, SLOT(just_a_demo()));
 
     QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
     // Zoom

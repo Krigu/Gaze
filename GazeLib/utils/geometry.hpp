@@ -14,9 +14,8 @@
 
 /**
  * Calculate to absolute distance between to points
- * TODO: Use pointers?
  */
-int calcPointDistance(cv::Point point1, cv::Point point2);
+int calcPointDistance(cv::Point *point1, cv::Point *point2);
 
 /**
  * Calculates the barycenter of a Rect

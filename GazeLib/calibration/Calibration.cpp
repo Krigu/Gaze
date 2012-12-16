@@ -9,7 +9,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "../utils/gui.hpp"
 #include "../utils/geometry.hpp"
-
+#include "../exception/GazeExceptions.hpp"
 #include "Calibration.hpp"
 
 using namespace std;
@@ -73,9 +73,8 @@ Calibration::~Calibration() {
 void Calibration::calcCoefficients() {
 	int matSize = calibrationData.size();
 
-	// TODO: Exception?
 	if (matSize == 0) {
-		return;
+		throw new WrongArgumentException("Cannot calculate Coeffizients with matSize=0!");
 	}
 
 	Mat measurementsX(matSize, 4, CV_32F);

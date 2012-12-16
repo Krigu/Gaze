@@ -34,3 +34,10 @@ NoImageSourceException::NoImageSourceException() : GazeException("No image sourc
 
 };
 
+WrongArgumentException::WrongArgumentException(std::string msg) : GazeException(msg) {
+    
+}
+
+WrongArgumentException::WrongArgumentException() : GazeException("This Argument-Type or Size is not supported!") {
+    
+}

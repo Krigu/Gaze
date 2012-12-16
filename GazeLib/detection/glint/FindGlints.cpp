@@ -4,8 +4,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
-// TODO: entfernen
-#include "opencv2/highgui/highgui.hpp"
 
 #include "FindGlints.hpp"
 #include "GlintCluster.hpp"
@@ -118,7 +116,7 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
     for (int i = 0; i < n; i++) {
         for (int j = i; j < n; j++) {
             //for (int j = 0; j < n; j++) {
-            int dist = calcPointDistance(glintCenter.at(i), glintCenter.at(j));
+            int dist = calcPointDistance(&glintCenter.at(i), &glintCenter.at(j));
             if (dist >= GazeConfig::GLINT_MIN_DISTANCE
                     && dist <= GazeConfig::GLINT_MAX_DISTANCE) {
                 distanceMat.at<char>(i, j) = 1;

@@ -30,7 +30,7 @@ GlintCluster::GlintCluster(std::vector<cv::Point> & glints,
 
 	for (vector<Point>::iterator it = glints.begin(); it != glints.end();
 			++it) {
-		totalDistance += calcPointDistance(*it, lastMeasurement);
+		totalDistance += calcPointDistance(&*it, &lastMeasurement);
 	}
 	distanceToLastMeasurement = (totalDistance / amountOfGlints);
 }

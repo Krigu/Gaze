@@ -94,42 +94,6 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 		}
 	}
 }
-void Starburst::pupil_threasholding(cv::Mat &gray, Point2f &center,
-		float &radius, int num_of_lines, int distance_growth) {
-
-	MatND hist;
-
-	// TODO put variables in setUp
-	int nbins = 256; // 256 levels histogram levels
-	int hsize[] = { nbins }; // just one dimension
-	float range[] = { 0, 255 };
-	const float *ranges[] = { range };
-	int chnls[] = { 0 };
-
-	// Calc history
-	calcHist(&gray, 1, chnls, Mat(), hist, 1, hsize, ranges);
-
-	float pixelSum;
-	int threshold = 0;
-
-	// Find threshold beginning with brightest point
-	for (int i = 0; i < hist.rows; i++) {
-		float histValue = hist.at<float>(i, 0);
-		pixelSum += histValue;
-		if (pixelSum > 750) {
-			threshold = i;
-			break;
-		}
-	}
-
-	cv::threshold(gray, gray, threshold, 0, cv::THRESH_TOZERO_INV);
-
-//	Mat img;
-//	// Threshold image.
-//	threshold(gray, gray, 150, 0, cv::THRESH_TOZERO_INV);
-
-	imshow("pupil thres", gray);
-}
 
 /**
  * 
@@ -287,7 +251,7 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 		std::random_shuffle(points.begin(), points.end());
 		fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
 
-		//TODO: pupil size should be configurable
+		//only accept pupil sizes within a given range
 		if (tmp_r < GazeConfig::PUPIL_MIN_RADIUS
 				|| tmp_r > GazeConfig::PUPIL_MAX_RADIUS)
 			continue;

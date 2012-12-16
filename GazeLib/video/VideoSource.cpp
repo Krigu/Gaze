@@ -15,7 +15,6 @@ using namespace std;
 using namespace cv;
 
 VideoSource::VideoSource(string videoPath) {
-	// TODO: proper implemented?
 	videoCapture = VideoCapture(videoPath);
 }
 
