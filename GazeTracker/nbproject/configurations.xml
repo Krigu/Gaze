@@ -15,7 +15,6 @@
       <itemPath>StartGazeTracker.cpp</itemPath>
       <itemPath>TCallback.cpp</itemPath>
       <itemPath>TCallback.hpp</itemPath>
-      <itemPath>test.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
