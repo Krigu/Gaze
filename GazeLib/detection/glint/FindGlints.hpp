@@ -15,6 +15,7 @@ private:
 	cv::Mat distanceMatrix(vector<cv::Point>& glintCenter);
 	void findClusters(vector<cv::Point>& blobs, vector<GlintCluster>& clusters,
 			cv::Point2f& lastMeasurement);
+    bool findRectangularCluster(vector<cv::Point>& glints);
 
 public:
 	bool findGlints(cv::Mat & image, vector<cv::Point>& glintCenters,
