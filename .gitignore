@@ -34,3 +34,12 @@ Release/
 /GazeTracker/nbproject/private/
 /GazeTracker/nbproject/Makefile-*
 /GazeTracker/nproject/Package-*.bash
+/bestFitCircle/dist/
+/bestFitCircle/build/
+/bestFitCircle/nbproject/Makefile-Debug.mk
+/bestFitCircle/nbproject/Makefile-impl.mk
+/bestFitCircle/nbproject/Makefile-Release.mk
+/bestFitCircle/nbproject/Makefile-variables.mk
+/bestFitCircle/nbproject/Package-Debug.bash
+/bestFitCircle/nbproject/Package-Release.bash
+/bestFitCircle/nbproject/private/
