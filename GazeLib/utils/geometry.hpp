@@ -26,5 +26,16 @@ double calcAngle(cv::Point start, cv::Point end);
 
 cv::Point2f calcAverage(std::vector<cv::Point2f> points);
 
+/**
+ * this function tries to find the circle that fits best (least squares)
+ * to the given points. the code is based on our coaches matlab code fitCircle.m
+ * 
+ * @param x the x coordinate
+ * @param y the y coordinate
+ * @param radius the new radius
+ * @param pointsToFit the points to which a circle should be fit
+ */
+void bestFitCircle(float * x, float * y, float * radius,
+		std::vector<cv::Point2f> pointsToFit);
 
 #endif /* GEOMETRY_HPP_ */

@@ -6,7 +6,7 @@
  */
 
 #include "BestFitCircleTest.hpp"
-#include "bestFitCircle.hpp"
+#include "utils/geometry.hpp"
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION(BestFitCircleTest);
