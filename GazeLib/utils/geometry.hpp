@@ -27,5 +27,7 @@ double calcAngle(cv::Point start, cv::Point end);
 
 cv::Point2f calcAverage(std::vector<cv::Point2f> points);
 
+bool isRectangle(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4, int tolerance);
+
 
 #endif /* GEOMETRY_HPP_ */
