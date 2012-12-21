@@ -11,7 +11,7 @@
 #include "opencv2/video/video.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
-#include "GazeConstants.hpp"
+#include "config/GazeConfig.hpp"
 #include "detection/pupil/Starburst.hpp"
 #include "detection/glint/FindGlints.hpp"
 #include "detection/eye/FindEyeRegion.hpp"
@@ -29,7 +29,7 @@ int main() {
 	Mat frame;
 
 	VideoCapture capture(
-			GazeConstants::inHomeDirectory(
+			GazeConfig::inHomeDirectory(
 					"/Dropbox/gaze/videos/osx/krigu.mov"));
 	//VideoCapture capture(0);
 
@@ -82,7 +82,7 @@ int main() {
 		float radius;
 
 		bool found = glints.findGlints(glint_search, glint_centers, start);
-
+        std::cout << "Glint found:" << found << std::endl;
 		if (found) {
 			// get the absolute coordinates
 			start = Point(start.x + eyeRegion.x, start.y + eyeRegion.y);
