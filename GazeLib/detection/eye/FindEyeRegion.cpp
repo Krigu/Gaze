@@ -78,7 +78,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     cout << "Eyes detected before filter: " << eyes.size() << endl;
     
     // removes all rects with no glints in it
-    removeInvalidRects(image, eyes);
+    removeInvalidRects(region, eyes);
     
     cout << "Eyes detected after filter: " << eyes.size() << endl;
     
@@ -128,7 +128,8 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     vector<cv::Point> glints;
     Point2f glintCenter;
-    return findGlints.findGlints(image, glints, glintCenter);
+    Mat img = image(eyeRect);
+    return findGlints.findGlints(img, glints, glintCenter);
 }
 
 // Removes all eye regions with no glints in it

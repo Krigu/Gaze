@@ -181,7 +181,7 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
 int next_comb(int comb[], int k, int n) {
     int i = k - 1;
     ++comb[i];
-    while ((i >= 0) && (comb[i] >= n - k + 1 + i)) {
+    while ((i > 0) && (comb[i] >= n - k + 1 + i)) {
         --i;
         ++comb[i];
     }
@@ -206,39 +206,65 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
 
     int n = glints.size();
     int k = 4; // The size of the subsets; for {1, 2}, {1, 3}, ... it's 2 
-    int comb[n * 2]; // comb[i] is the index of the i-th element in the combination
+    int comb[n]; // comb[i] is the index of the i-th element in the combination
 
     // Setup comb for the initial combination 
     int i;
     for (i = 0; i < k; ++i)
         comb[i] = i;
 
-    // Try first combination
-    // TODO: Improve code
-    hasRectangularAlignment = isRectangle(glints.at(comb[0]), glints.at(comb[1]), glints.at(comb[2]), glints.at(comb[3]), 5);
 
-    // If there are only 4 glints, no other combinations are possible
-    if (glints.size() == 4)
-        return hasRectangularAlignment;
+    // Try first combination
+    // TODO: Improve code and maybe not use two vectors or add in such a strange way
+    vector<cv::Point> quadruple;
+    quadruple.push_back(glints.at(comb[0]));
+    quadruple.push_back(glints.at(comb[1]));
+    quadruple.push_back(glints.at(comb[2]));
+    quadruple.push_back(glints.at(comb[3]));
+    hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_BARYCENTRE_DEVIATION);
 
     // Generate and print all the other combinations
-    while (next_comb(comb, k, n)) {
-        cout << "n" << endl;
-        cout << "Comb: " << comb << " 0: " << comb[0] << " 1: " << comb[1] << " 2: " << comb[2] << " 3: " << comb[3] << endl;
-        cout << "/n" << endl;
-
-        hasRectangularAlignment = isRectangle(glints.at(comb[0]), glints.at(comb[1]), glints.at(comb[2]), glints.at(comb[3]), 5);
+    while (!hasRectangularAlignment && next_comb(comb, k, n)) {
+        quadruple.clear();
+        quadruple.push_back(glints.at(comb[0]));
+        quadruple.push_back(glints.at(comb[1]));
+        quadruple.push_back(glints.at(comb[2]));
+        quadruple.push_back(glints.at(comb[3]));
+        hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_BARYCENTRE_DEVIATION);
+    }
+    
+    if (hasRectangularAlignment){
+        glints = quadruple;
     }
 
-    cout << "228" << endl;
 
-    // Remove all glints not in current combination
-    // TODO: optimize
-    for (int i = glints.size() - 1; i >= 0; i--) {
-        if (!(comb[0] == i || comb[1] == i || comb[2] == i || comb[3] == i)) {
-            glints.erase(glints.begin() + i);
-        }
-    }
+//    cout << "Before:" << endl;
+//    std::vector<Point>::iterator iter;
+//    for (iter = glints.begin(); iter != glints.end();) {
+//        cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
+//        iter++;
+//    }
+
+//    if (hasRectangularAlignment) {
+//
+//
+//        cout << " 0: " << comb[0] << " 1: " << comb[1] << " 2: " << comb[2] << " 3: " << comb[3] << endl;
+//        // Remove all glints not in current combination
+//        // TODO: optimize
+//        int i = 1;
+//        for (iter = glints.begin(); iter != glints.end(); i++) {
+//            if (!(comb[0] == i || comb[1] == i || comb[2] == i || comb[3] == i))
+//                iter = glints.erase(iter);
+//            else
+//                ++iter;
+//        }
+//
+//        cout << " Points: " << glints.size() << endl;
+//        for (iter = glints.begin(); iter != glints.end();) {
+//            cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
+//            iter++;
+//        }
+//    }
 
     return hasRectangularAlignment;
 }
