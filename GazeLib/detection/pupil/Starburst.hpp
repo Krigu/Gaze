@@ -4,6 +4,8 @@
 #include <vector>
 #include <opencv2/core/core.hpp>
 
+#include "Ransac.hpp"
+
 #define PI 3.14159265358979323846
 
 class Starburst {
@@ -15,6 +17,8 @@ private:
 	double angle_array[angle_num];
 	double sin_array[angle_num];
 	double cos_array[angle_num];
+    
+    Ransac ransac;
 
 public:
 	Starburst();
@@ -28,14 +32,6 @@ private:
 			short interpolation_size);
 	void smooth_vector(std::vector<unsigned char>& vector);
 	unsigned char calcRegionAverage(int index, std::vector<unsigned char>& vector);
-};
-
-class Ransac {
-public:
-	bool ransac(float * x, float * y, float * radius, std::vector<cv::Point2f>);
-
-private:
-	void fitCircle(float * x, float * y, float * r, std::vector<cv::Point2f>);
 };
 
 #endif	/* STARBURST_HPP */

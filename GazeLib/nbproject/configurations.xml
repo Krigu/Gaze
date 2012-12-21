@@ -41,6 +41,8 @@
           <itemPath>detection/glint/GlintCluster.hpp</itemPath>
         </logicalFolder>
         <logicalFolder name="pupil" displayName="pupil" projectFiles="true">
+          <itemPath>detection/pupil/Ransac.cpp</itemPath>
+          <itemPath>detection/pupil/Ransac.hpp</itemPath>
           <itemPath>detection/pupil/Starburst.cpp</itemPath>
           <itemPath>detection/pupil/Starburst.hpp</itemPath>
         </logicalFolder>
