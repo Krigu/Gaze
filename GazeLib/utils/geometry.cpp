@@ -13,9 +13,6 @@
 
 using namespace std;
 
-const double Rad2Deg = 180.0 / 3.1415;
-const double Deg2Rad = 3.1415 / 180.0;
-
 int calcPointDistance(cv::Point *point1, cv::Point *point2) {
     int distX = point1->x - point2->x;
     int distY = point1->y - point2->y;
@@ -46,7 +43,7 @@ cv::Point calcRectBarycenter(cv::Rect& rect) {
 // Calculates the angle in degrees
 
 double calcAngle(cv::Point start, cv::Point end) {
-    return atan2(end.y - start.y, end.x - start.x) * (180 / 3.141);
+    return atan2(start.y - end.y, start.x - end.x) * (180 / 3.141);
 }
 
 cv::Point2f calcAverage(std::vector<cv::Point2f> points) {
@@ -123,7 +120,7 @@ bool isRectangle(vector<cv::Point> points, int tolerance) {
     int errors = 0; // Two points have to be ortagonal, one does not matter
     for (std::vector<int>::size_type i = 0; i != points.size(); i++) {
         for (std::vector<int>::size_type j = i + 1; j != points.size(); j++) {
-            //cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << endl;
+            cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << endl;
             double angle = calcAngle(points[i], points[j]);
             if (fabs(fmod(angle, 90.0)) > tol)
                 errors++;
