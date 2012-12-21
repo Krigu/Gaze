@@ -234,37 +234,20 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
     }
     
     if (hasRectangularAlignment){
+        cout << "found" << endl;
         glints = quadruple;
+    } else {
+        cout << "Not found" << endl;
     }
 
 
-//    cout << "Before:" << endl;
-//    std::vector<Point>::iterator iter;
-//    for (iter = glints.begin(); iter != glints.end();) {
-//        cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
-//        iter++;
-//    }
+    cout << "Before:" << endl;
+    std::vector<Point>::iterator iter;
+    for (iter = glints.begin(); iter != glints.end();) {
+        cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
+        iter++;
+    }
 
-//    if (hasRectangularAlignment) {
-//
-//
-//        cout << " 0: " << comb[0] << " 1: " << comb[1] << " 2: " << comb[2] << " 3: " << comb[3] << endl;
-//        // Remove all glints not in current combination
-//        // TODO: optimize
-//        int i = 1;
-//        for (iter = glints.begin(); iter != glints.end(); i++) {
-//            if (!(comb[0] == i || comb[1] == i || comb[2] == i || comb[3] == i))
-//                iter = glints.erase(iter);
-//            else
-//                ++iter;
-//        }
-//
-//        cout << " Points: " << glints.size() << endl;
-//        for (iter = glints.begin(); iter != glints.end();) {
-//            cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
-//            iter++;
-//        }
-//    }
 
     return hasRectangularAlignment;
 }
