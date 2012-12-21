@@ -49,13 +49,14 @@ public:
      */
     CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
 
-private:
+private:    
+    
     ImageSource& imageSrc;
-    FindEyeRegion eyeFinder;
     FindGlints glintFinder;
     Starburst starburst;
     Calibration c;
     TrackerCallback *tracker_callback;
+    FindEyeRegion eyeFinder;
     Point2f last_gaze_vectors[GazeConfig::NUM_OF_SMOOTHING_FRAMES];
     bool isRunning;
     unsigned int framenumber;

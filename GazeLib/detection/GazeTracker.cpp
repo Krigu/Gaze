@@ -19,8 +19,7 @@ using namespace cv;
 
 GazeTracker::GazeTracker(ImageSource & imageSource, TrackerCallback *callback) :
 imageSrc(imageSource), tracker_callback(callback), isRunning(false), framenumber(
-0) {
-
+0), eyeFinder(FindEyeRegion(glintFinder)) {
 }
 
 void GazeTracker::getNextFrame(Mat& frame) {
