@@ -60,7 +60,7 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 			continue;
 
 #if __DEBUG_STARBURST == 1
-		cv::Mat debug = cv::Mat::zeros(90, 90, CV_8UC3);
+		cv::Mat debug = cv::Mat::zeros(300, 300, CV_8UC3);
 		cv::Point a = points.at(0);
 		cv::Point b = points.at(1);
 		cv::Point c = points.at(2);
