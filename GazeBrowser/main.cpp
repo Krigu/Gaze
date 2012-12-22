@@ -5,11 +5,11 @@
 int main(int argc, char * argv[]) {
     QApplication app(argc, argv);
 
-    MainWindow *browser;
+    BrowserWindow *browser;
     if (argc > 1)
-        browser = new MainWindow(QUrl(argv[1]));
+        browser = new BrowserWindow(QUrl(argv[1]));
     else
-        browser = new MainWindow();
+        browser = new BrowserWindow();
 
     browser->showFullScreen();
     return app.exec();

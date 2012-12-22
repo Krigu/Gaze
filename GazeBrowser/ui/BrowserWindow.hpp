@@ -8,12 +8,12 @@
 #include "tracking/CalibrationThread.hpp"
 #include "video/ImageSource.hpp"
 
-class MainWindow : public QMainWindow {
+class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    MainWindow(const QUrl& url);
-    MainWindow();
+    BrowserWindow(const QUrl& url);
+    BrowserWindow();
 
 public slots:
     void execJsCommand(QString command);

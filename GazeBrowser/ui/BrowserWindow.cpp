@@ -14,21 +14,21 @@
 
 using namespace std;
 
-MainWindow::MainWindow(const QUrl& url) {
+BrowserWindow::BrowserWindow(const QUrl& url) {
 
     init();
     view->load(url);
 
 }
 
-MainWindow::MainWindow() {
+BrowserWindow::BrowserWindow() {
 
     init();
     showBookmarkPage();
 
 }
 
-void MainWindow::init() {
+void BrowserWindow::init() {
 
     settings = new QSettings("gazebrowser.ini", QSettings::IniFormat);
 
@@ -61,19 +61,19 @@ void MainWindow::init() {
 
 }
 
-void MainWindow::adjustTitle() {
+void BrowserWindow::adjustTitle() {
     if (progress <= 0 || progress >= 100)
         setWindowTitle(view->title());
     else
         setWindowTitle(QString("%1 (%2%)").arg(view->title()).arg(progress));
 }
 
-void MainWindow::setProgress(int p) {
+void BrowserWindow::setProgress(int p) {
     progress = p;
     adjustTitle();
 }
 
-void MainWindow::finishLoading(bool) {
+void BrowserWindow::finishLoading(bool) {
     progress = 100;
     adjustTitle();
     view->page()->mainFrame()->evaluateJavaScript(jQuery);
@@ -104,22 +104,22 @@ void MainWindow::finishLoading(bool) {
         this->calibrate();
 }
 
-void MainWindow::highlightAllLinks() {
+void BrowserWindow::highlightAllLinks() {
     QString code = "$('a').each( function () { $(this).css('background-color', 'yellow') } )";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void MainWindow::scrollUp() {
+void BrowserWindow::scrollUp() {
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() - $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void MainWindow::scrollDown() {
+void BrowserWindow::scrollDown() {
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() + $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void MainWindow::rotateImages(bool invert) {
+void BrowserWindow::rotateImages(bool invert) {
     QString code;
     if (invert)
         code = "$('img').each( function () { $(this).css('-webkit-transition', '-webkit-transform 2s'); $(this).css('-webkit-transform', 'rotate(180deg)') } )";
@@ -128,30 +128,30 @@ void MainWindow::rotateImages(bool invert) {
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void MainWindow::forward() {
+void BrowserWindow::forward() {
     this->exec_webaction(QWebPage::Forward);
 }
 
-void MainWindow::back() {
+void BrowserWindow::back() {
     this->exec_webaction(QWebPage::Back);
 }
 
-void MainWindow::exec_webaction(QWebPage::WebAction action) {
+void BrowserWindow::exec_webaction(QWebPage::WebAction action) {
     view->pageAction(action);
 }
 
-void MainWindow::toggle_eye_widget() {
+void BrowserWindow::toggle_eye_widget() {
     eye_widget->setGeometry(0, this->height() - 90, 120, 90);
     eye_widget->setVisible(!eye_widget->isVisible());
 }
 
-void MainWindow::quit_gazebrowser() {
+void BrowserWindow::quit_gazebrowser() {
     // todo valid?
     delete settings;
     QApplication::exit(0);
 }
 
-void MainWindow::start_calibration() {
+void BrowserWindow::start_calibration() {
     isCalibrating = true;
     QFile file;
     file.setFileName(":/calibration.html");
@@ -160,7 +160,7 @@ void MainWindow::start_calibration() {
     file.close();
 }
 
-void MainWindow::calibrate() {
+void BrowserWindow::calibrate() {
     if (!source)
         source = new LiveSource;
     //if(!source)
@@ -173,24 +173,24 @@ void MainWindow::calibrate() {
     calibrator->start();
 }
 
-void MainWindow::zoomIn() {
+void BrowserWindow::zoomIn() {
     qreal zoomFactor = view->zoomFactor();
     zoomFactor++;
     view->setZoomFactor(zoomFactor);
 }
 
-void MainWindow::zoomOut() {
+void BrowserWindow::zoomOut() {
     qreal zoomFactor = view->zoomFactor();
     zoomFactor--;
     view->setZoomFactor(zoomFactor);
 
 }
 
-void MainWindow::execJsCommand(QString command) {
+void BrowserWindow::execJsCommand(QString command) {
     view->page()->mainFrame()->evaluateJavaScript(command);
 }
 
-void MainWindow::setupMenus() {
+void BrowserWindow::setupMenus() {
     // Add the Slot to the quit button
     // on mac this will be showed in the unified menu bar
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
@@ -220,19 +220,19 @@ void MainWindow::setupMenus() {
     zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
 }
 
-void MainWindow::alertMessage(QString message) {
+void BrowserWindow::alertMessage(QString message) {
     MessageWindow m;
     m.showException(message);
 }
 
-void MainWindow::preferences() {
+void BrowserWindow::preferences() {
     //TODO huge memery leak here
     SettingsWindow *settings = new SettingsWindow();
     settings->setWindowModality(Qt::WindowModal);
     settings->show();
 }
 
-void MainWindow::bookmarks() {
+void BrowserWindow::bookmarks() {
     //TODO huge memery leak here
     BookmarksWindow *bookmarksWin = new BookmarksWindow(settings);
     bookmarksWin->setWindowModality(Qt::WindowModal);
@@ -240,11 +240,11 @@ void MainWindow::bookmarks() {
     bookmarksWin->show();
 }
 
-void MainWindow::showCvImage(cv::Mat mat) {
+void BrowserWindow::showCvImage(cv::Mat mat) {
     eye_widget->sendImage(&mat);
 }
 
-void MainWindow::showBookmarkPage() {
+void BrowserWindow::showBookmarkPage() {
     QFile file;
     file.setFileName(":/bookmarks.html");
     file.open(QIODevice::ReadOnly);
