@@ -10,10 +10,28 @@
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
 #include "SettingsWindow.hpp"
+#include "BookmarksWindow.hpp"
 
 using namespace std;
 
 MainWindow::MainWindow(const QUrl& url) {
+
+    init();
+    view->load(url);
+
+}
+
+MainWindow::MainWindow() {
+
+    init();
+    showBookmarkPage();
+
+}
+
+void MainWindow::init() {
+
+    settings = new QSettings("gazebrowser.ini", QSettings::IniFormat);
+
     QFile file;
     file.setFileName(":js/jquery-1.8.3.min.js");
     file.open(QIODevice::ReadOnly);
@@ -28,7 +46,6 @@ MainWindow::MainWindow(const QUrl& url) {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     view = new QWebView(this);
-    view->load(url);
 
     connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
@@ -41,6 +58,7 @@ MainWindow::MainWindow(const QUrl& url) {
     eye_widget = new CVWidget(this);
     eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     eye_widget->setVisible(true);
+
 }
 
 void MainWindow::adjustTitle() {
@@ -59,6 +77,28 @@ void MainWindow::finishLoading(bool) {
     progress = 100;
     adjustTitle();
     view->page()->mainFrame()->evaluateJavaScript(jQuery);
+
+    // TODO: cleanup code and don't check for every site
+    if (view->page()->mainFrame()->url().toString() == "qrc:/" && !isCalibrating) {
+        QString html = "$('#%1').append("
+                "\"<a href='%2'><img src='http://api.thumbalizr.com/?url=%3&width=260' alt=''></a>"
+                "<br>"
+                "<a href='%4'>%5</a>\""
+                ")";
+
+        settings->beginGroup("BOOKMARKS");
+        for (int i = 0; i < 9; i++) {
+            QString desc = settings->value("DESC_" + QString::number(i)).toString();
+            QString url = settings->value("URL_" + QString::number(i)).toString();
+
+            if (url.length() > 0 && desc.length() > 0) {
+                QString code = QString(html).arg(QString::number(i + 1), url, url, url, desc);
+
+                view->page()->mainFrame()->evaluateJavaScript(code);
+            }
+        }
+        settings->endGroup();
+    }
 
     if (isCalibrating)
         this->calibrate();
@@ -106,6 +146,8 @@ void MainWindow::toggle_eye_widget() {
 }
 
 void MainWindow::quit_gazebrowser() {
+    // todo valid?
+    delete settings;
     QApplication::exit(0);
 }
 
@@ -123,7 +165,7 @@ void MainWindow::calibrate() {
         source = new LiveSource;
     //if(!source)
     //    source = new VideoSource(GazeConstants::inHomeDirectory("Dropbox/gaze/videos/k2.webm"));
-    qRegisterMetaType< cv::Mat >("cv::Mat");
+    qRegisterMetaType< cv::Mat > ("cv::Mat");
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
@@ -156,6 +198,7 @@ void MainWindow::setupMenus() {
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
     fileMenu->addAction("Preferences", this, SLOT(preferences()));
+    fileMenu->addAction("Bookmarks", this, SLOT(bookmarks()));
     fileMenu->addAction(quitAction);
 
 
@@ -177,18 +220,34 @@ void MainWindow::setupMenus() {
     zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
 }
 
-void MainWindow::alertMessage(QString message){
+void MainWindow::alertMessage(QString message) {
     MessageWindow m;
     m.showException(message);
 }
 
-void MainWindow::preferences(){
+void MainWindow::preferences() {
     //TODO huge memery leak here
     SettingsWindow *settings = new SettingsWindow();
     settings->setWindowModality(Qt::WindowModal);
     settings->show();
 }
 
-void MainWindow::showCvImage(cv::Mat mat){
+void MainWindow::bookmarks() {
+    //TODO huge memery leak here
+    BookmarksWindow *bookmarksWin = new BookmarksWindow(settings);
+    bookmarksWin->setWindowModality(Qt::WindowModal);
+    bookmarksWin->resize(500, 300);
+    bookmarksWin->show();
+}
+
+void MainWindow::showCvImage(cv::Mat mat) {
     eye_widget->sendImage(&mat);
+}
+
+void MainWindow::showBookmarkPage() {
+    QFile file;
+    file.setFileName(":/bookmarks.html");
+    file.open(QIODevice::ReadOnly);
+    view->setHtml(file.readAll(), QUrl("qrc:/"));
+    file.close();
 }
