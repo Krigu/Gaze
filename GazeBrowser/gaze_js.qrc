@@ -6,7 +6,10 @@
         
         <!-- this file is displayed when the calibration is started//-->
         <file alias="/calibration.html">html/calibration.html</file>
-        
+       
+      	<!-- this file is displayed when the calibration is started//-->
+        <file alias="/bookmarks.html">html/bookmarks.html</file>
+
         <!-- these files are used within the calibration page
              and are accessed using the qrc:// url //-->
         <file alias="js/calibration.js">html/js/calibration.js</file>
