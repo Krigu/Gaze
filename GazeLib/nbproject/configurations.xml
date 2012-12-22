@@ -93,7 +93,7 @@
       <compileType>
         <ccTool>
           <preprocessorList>
-            <Elem>__DEBUG=0</Elem>
+            <Elem>__DEBUG=1</Elem>
             <Elem>__DEBUG_FINDGLINTS=0</Elem>
             <Elem>__DEBUG_HAAR=0</Elem>
             <Elem>__DEBUG_STARBURST=0</Elem>
