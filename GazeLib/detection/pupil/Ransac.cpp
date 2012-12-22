@@ -1,16 +1,24 @@
 
+#if __DEBUG_STARBURST == 1
+#include <opencv2/highgui/highgui.hpp>
+#endif
+
 #include "Ransac.hpp"
 #include "../../config/GazeConfig.hpp"
+#include "../../utils/geometry.hpp"
+#include "../../utils/gui.hpp"
+#include "../../utils/log.hpp"
 
-
-// the RANSAC stuff:
 
 //
 // algorithm:
 // - chose 3 random points
 // - fit circle
-// - count points within circle +/+ a chosen "t
+// - count points within circle +/- a chosen "T" distance
 // - repeat above steps N times
+// - use the circle which had the most points within the
+//   range
+// - search for the circle who fits these circles best
 //
 bool Ransac::ransac(float * x, float * y, float * radius,
 		std::vector<cv::Point2f> points) {
@@ -27,10 +35,10 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 	// initialize randomizer
 	srand(time(NULL));
 
-	int max_points_within_range = 0;
+    std::vector<cv::Point2f> points_in_range;
 
 #if __DEBUG_STARBURST == 1
-	Mat debug_result;
+	cv::Mat debug_result;
 #endif
 
 	// lets fit a circle into 3 random points
@@ -39,7 +47,8 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 	for (int i = 0; i < N; i++) {
 		float tmp_x, tmp_y, tmp_r;
 		tmp_x = tmp_y = tmp_r = 0;
-		int points_within_range = 0;
+		//int points_within_range = 0;
+        std::vector<cv::Point2f> curr_points_in_range;
 
 		// fit a random circle
 		std::random_shuffle(points.begin(), points.end());
@@ -51,16 +60,16 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 			continue;
 
 #if __DEBUG_STARBURST == 1
-		Mat debug = Mat::zeros(90, 90, CV_8UC3);
+		cv::Mat debug = cv::Mat::zeros(90, 90, CV_8UC3);
 		cv::Point a = points.at(0);
 		cv::Point b = points.at(1);
 		cv::Point c = points.at(2);
 
-		cross(debug, a, 5, Scalar(255, 0, 0));
-		cross(debug, b, 5, Scalar(255, 0, 0));
-		cross(debug, c, 5, Scalar(255, 0, 0));
+		cross(debug, a, 5, cv::Scalar(255, 0, 0));
+		cross(debug, b, 5, cv::Scalar(255, 0, 0));
+		cross(debug, c, 5, cv::Scalar(255, 0, 0));
 
-		circle(debug, Point(tmp_x, tmp_y), tmp_r, Scalar(255, 255, 255));
+		circle(debug, cv::Point(tmp_x, tmp_y), tmp_r, cv::Scalar(255, 255, 255));
 		imshow("debug", debug);
 #endif
 
@@ -83,23 +92,25 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 			float magnitude = sqrt(pow(delta_y, 2) + pow(delta_x, 2));
 
 			if (magnitude >= lower_bound && magnitude <= upper_bound) {
-				points_within_range++;
+				curr_points_in_range.push_back(*it);
 #if __DEBUG_STARBURST == 1
-				cross(debug, *it, 5, Scalar(0, 255, 0));
+				cross(debug, *it, 5, cv::Scalar(0, 255, 0));
 #endif
 			} else {
 #if __DEBUG_STARBURST == 1
-				cross(debug, *it, 5, Scalar(0, 0, 255));
+				cross(debug, *it, 5, cv::Scalar(0, 0, 255));
 #endif
 			}
 
 		}
 
-		if (points_within_range > max_points_within_range) {
+		if (curr_points_in_range.size() > points_in_range.size()) {
 			*x = tmp_x;
 			*y = tmp_y;
 			*radius = tmp_r;
-			max_points_within_range = points_within_range;
+            points_in_range.clear();
+            points_in_range.insert(points_in_range.end(), 
+                    curr_points_in_range.begin(), curr_points_in_range.end());
 			found = true;
 #if __DEBUG_STARBURST == 1
 			debug_result = debug;
@@ -113,7 +124,16 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 		imshow("debug", debug_result);
 	}
 #endif
-
+    
+    // now calculate the circle who fits the points best
+    if(found){
+        bestFitCircle(x, y, radius, points_in_range);
+        
+#if __DEBUG_STARBURST == 1
+        LOG_D("BestFitCircle: x=" << *x << " y=" << *y << " R=" << *radius);
+#endif
+    }
+    
 	return found;
 }
 
