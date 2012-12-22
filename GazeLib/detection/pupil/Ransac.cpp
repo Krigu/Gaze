@@ -147,17 +147,4 @@ void Ransac::fitCircle(float * x, float * y, float * radius,
 	*y = (A * F - C * E) / G;
 
 	*radius = sqrt(pow(a.x - *x, 2) + pow(a.y - *y, 2));
-
-	//A = b_0 - a_0;
-	//B = b_1 - a_1;
-	//C = c_0 - a_0;
-	//D = c_1 - a_1;
-	//E = A*(a_0 + b_0) + B*(a_1 + b_1);
-	//F = C*(a_0 + c_0) + D*(a_1 + c_1);
-	//G = 2.0*(A*(c_1 - b_1)-B*(c_0 - b_0));
-	//p_0 = (D*E - B*F) / G;
-	//p_1 = (A*F - C*E) / G;
-	//If G is zero then the three points are collinear and no finite-radius circle through them exists. Otherwise, the radius of the circle is:
-	//
-	//r^2 = (a_0 - p_0)^2 + (a_1 - p_1)^2
 }
