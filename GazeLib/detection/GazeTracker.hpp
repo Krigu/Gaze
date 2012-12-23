@@ -18,26 +18,27 @@
 
 #include "../config/GazeConfig.hpp"
 
+enum MeasureResult {
+    MEASURE_OK,
+    FINDPUPIL_FAILED,
+    FINDGLINT_FAILED,
+};
+
 class TrackerCallback {
 public:
     virtual ~TrackerCallback(){
         
     };
-    virtual void imageProcessed(Mat &result) = 0;
+    virtual void imageProcessed(Mat &resultImage) = 0;
+    virtual void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) = 0;
 };
 
 class GazeTracker {
 public:
-    enum MeasureResult {
-        MEASURE_OK,
-        FINDPUPIL_FAILED,
-        FINDGLINT_FAILED,
-    };
-
     GazeTracker(ImageSource & imageSource, TrackerCallback *callback = NULL);
     virtual ~GazeTracker();
 
-    void track();
+    void track(unsigned int duration=0);
     void initializeCalibration();
 
 

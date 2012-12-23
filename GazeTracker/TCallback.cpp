@@ -25,3 +25,8 @@ void TCallback::imageProcessed(Mat &result){
     waitKey(100);
 }
 
+void TCallback::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector){
+    imshow("frame", resultImage);
+    waitKey(100);
+}
+

@@ -15,12 +15,15 @@ private:
     int width;
     int height;
     ImageSource *camera;
+    vector<Point2f> measurements;
     
     void calibrate(Calibration & calibration);
 
 public:
     CalibrationThread(int width, int height, ImageSource *camera);
-    void imageProcessed(Mat& result);
+    void imageProcessed(Mat& resultImage);
+    void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
+    
     
 signals:
     void jsCommand(QString);

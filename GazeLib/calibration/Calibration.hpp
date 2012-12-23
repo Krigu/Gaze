@@ -14,7 +14,6 @@
 class CalibrationData {
 private:
 	cv::Point pointOnScreen;
-	std::vector<cv::Point2f> measuredVectors;
 	cv::Point2f averageVector;
 public:
 	CalibrationData(cv::Point point, std::vector<cv::Point2f> & vectors);

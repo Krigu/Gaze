@@ -18,6 +18,7 @@ public:
     TCallback(const TCallback& orig);
     virtual ~TCallback();
     virtual void imageProcessed(Mat &result);
+    virtual void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
 private:
 
 };
