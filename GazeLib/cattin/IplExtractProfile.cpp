@@ -12,13 +12,13 @@ std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double
 {
     int width = image->width;
     int height = image->height;
-
+    
     // endpoints of profile
     double x1 = x0 + r1*std::cos(phi);
     double y1 = y0 + r1*std::sin(phi);
     double x2 = x0 + r2*std::cos(phi);
     double y2 = y0 + r2*std::sin(phi);
-
+    
     // parameters of profile
     if( !IplClipLineToImage( image, x1, y1, x2, y2 ) )
     {
@@ -41,7 +41,7 @@ std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double
     {
         double x = x1 + i*dx;
         double y = y1 + i*dy;
-
+        
         // bilinear interpolation
 	    int xx = (int) floor(x);
 	    int yy = (int) floor(y);
@@ -82,7 +82,8 @@ std::vector<unsigned char> IplExtractProfile( IplImage* image, double x0, double
             profile.push_back( result );
         }
         else
-            profile.push_back( 0 );
+            break; // stop clipping this line when outside of the image
+        //    profile.push_back( 0 );
     }
     done = true;
     return profile;
