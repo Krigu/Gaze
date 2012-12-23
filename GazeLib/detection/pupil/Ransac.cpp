@@ -54,11 +54,6 @@ bool Ransac::ransac(float * x, float * y, float * radius,
 		std::random_shuffle(points.begin(), points.end());
 		fitCircle(&tmp_x, &tmp_y, &tmp_r, points);
 
-		//only accept pupil sizes within a given range
-		if (tmp_r < GazeConfig::PUPIL_MIN_RADIUS
-				|| tmp_r > GazeConfig::PUPIL_MAX_RADIUS)
-			continue;
-
 #if __DEBUG_STARBURST == 1
 		cv::Mat debug = cv::Mat::zeros(300, 300, CV_8UC3);
 		cv::Point a = points.at(0);

@@ -42,12 +42,6 @@ int GazeConfig::HAAR_EYE_MAX_HEIGHT;
 int GazeConfig::HAAR_EYE_MAX_WIDTH;
 int GazeConfig::HAAR_FINDREGION_MAX_TRIES;
 
-//
-// RANSAC stuff
-//
-int GazeConfig::PUPIL_MIN_RADIUS;
-int GazeConfig::PUPIL_MAX_RADIUS;
-
 string GazeConfig::inHomeDirectory(string suffix) {
 	string home(getenv("HOME"));
 	return home + "/" + suffix;

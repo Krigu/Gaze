@@ -67,12 +67,6 @@ public:
     // Max amount of tries to find eye region
     static int HAAR_FINDREGION_MAX_TRIES;
 
-    //
-    // RANSAC stuff
-    //
-    static int PUPIL_MIN_RADIUS;
-    static int PUPIL_MAX_RADIUS;
-
     GazeConfig() {
         initConiguration();
     }
@@ -112,11 +106,6 @@ public:
         GazeConfig::HAAR_EYE_MAX_WIDTH = 700;
         GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
 
-        //
-        // RANSAC stuff
-        //
-        GazeConfig::PUPIL_MIN_RADIUS = 15;
-        GazeConfig::PUPIL_MAX_RADIUS = 80;
     }
 
     /**
