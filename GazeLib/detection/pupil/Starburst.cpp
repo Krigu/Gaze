@@ -118,34 +118,47 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 		points.clear();
 
+        const int LINE_LENGTH=150;
+        
 		// calculate the lines in every direction
-		for (unsigned short i = 0; i < num_of_lines; i++) {
+		for (unsigned short angleNum = 0; angleNum < num_of_lines; angleNum++) {
 			// calculate the current degree
-			const double current_angle = angle * i;
+			const double current_angle = angle * angleNum;
 
 			bool done;
 			double dx, dy;
 			dx = dy = 0;
 
 			vector<unsigned char> profile = IplExtractProfile(&gray,
-					start_point.x, start_point.y, 0, 50, current_angle, done,
+					start_point.x, start_point.y, 0, LINE_LENGTH, current_angle, done,
 					dx, dy);
 
+            //smooth_vector(profile);
+            
 			int vectorSize = profile.size();
-			if (vectorSize > 3) {
-				for (int i = 3; i < vectorSize; i++) {
+            short edgeNum=0;
+			if (vectorSize > 5) {
+				for (int i = 5; i < vectorSize; i++) {
 					unsigned char current = profile.at(i);
-					unsigned char last = profile.at(i - 3);
+					unsigned char last = profile.at(i - 5);
 
-					if (current > (last + 10)) {
-						float x = start_point.x + i * dx;
-						float y = start_point.y + i * dy;
+					if (current > (last + 40)) {
+                        /*
+                         * skip this edge and use the next one
+                         * (it's probably the outer edge of the iris)
+                         * ++edgeNum;
+                        if(edgeNum<2){
+                            i+=10;
+                            continue;
+                        }*/
+						float x = start_point.x + (i-2) * dx;
+						float y = start_point.y + (i-2) * dy;
 						Point2f p = Point2f(x, y);
 						points.push_back(p);
 						break;
 					}
 				}
-			}
+			} 
 		}
 
 		// calculate the mean of all points
@@ -183,10 +196,6 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	float x, y, r;
 	x = y = r = 0;
 	found = ransac.ransac(&x, &y, &r, points);
-
-	// find the radius and the circle center
-	//minEnclosingCircle(points, center, radius);
-	//LOG_D("Size: " << points.size());
 
 	if(found){
 		center = Point2f(x, y);
