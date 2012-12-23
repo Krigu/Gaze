@@ -64,7 +64,7 @@ bool IplClipLineToImage( IplImage* img, double& x0, double& y0, double& x1, doub
                 x = x1 + (double)(1/m) * (double)(img->height-1 - y1);
             else
                 x = x1;
-            y = 0.0;
+            y = img->height-1;
         }
 
         if( outCode & 8 ) // left
