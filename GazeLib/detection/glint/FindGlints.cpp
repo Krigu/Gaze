@@ -213,7 +213,6 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
     for (i = 0; i < k; ++i)
         comb[i] = i;
 
-
     // Try first combination
     // TODO: Improve code and maybe not use two vectors or add in such a strange way
     vector<cv::Point> quadruple;
@@ -232,22 +231,10 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
         quadruple.push_back(glints.at(comb[3]));
         hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_BARYCENTRE_DEVIATION);
     }
-    
-    if (hasRectangularAlignment){
-        cout << "found" << endl;
+
+    if (hasRectangularAlignment) {
         glints = quadruple;
-    } else {
-        cout << "Not found" << endl;
     }
-
-
-    cout << "Before:" << endl;
-    std::vector<Point>::iterator iter;
-    for (iter = glints.begin(); iter != glints.end();) {
-        cout << "(" << (*iter).x << ", " << (*iter).y << ")" << endl;
-        iter++;
-    }
-
 
     return hasRectangularAlignment;
 }
