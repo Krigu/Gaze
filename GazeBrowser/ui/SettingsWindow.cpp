@@ -143,31 +143,12 @@ SettingsWindow::SettingsWindow() {
     haarGroup->setLayout(haarLayout);
 
     //
-    // RANSAC stuff
-    //
-    QGroupBox *pupilGroup = new QGroupBox(tr("Pupil Settings"));
-    QGridLayout *pupilLayout = new QGridLayout;
-
-    QLabel *lPupilMinRadius = new QLabel("Min Pupil Radius");
-    QSpinBox *sPupilMinRadius = setUpSpinBox(0, 1000, 1, GazeConfig::PUPIL_MIN_RADIUS);
-    pupilLayout->addWidget(lPupilMinRadius, 0, 0);
-    pupilLayout->addWidget(sPupilMinRadius, 0, 1);
-
-    QLabel *lPupilMaxRadius = new QLabel("Max Pupil Radius");
-    QSpinBox *sPupilMaxRadius = setUpSpinBox(0, 1000, 1, GazeConfig::PUPIL_MAX_RADIUS);
-    pupilLayout->addWidget(lPupilMaxRadius, 1, 0);
-    pupilLayout->addWidget(sPupilMaxRadius, 1, 1);
-    pupilGroup->setLayout(pupilLayout);
-
     //
     //
-    //
-
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(generalGroup);
     layout->addWidget(glintGroup);
     layout->addWidget(haarGroup);
-    layout->addWidget(pupilGroup);
     setLayout(layout);
 
 }

@@ -16,12 +16,24 @@ BookmarksWindow::BookmarksWindow(QSettings * settings) : settings(settings) {
     settings->beginGroup("BOOKMARKS");
 
     QVBoxLayout *layout = new QVBoxLayout;
+    QWidget *widget = new QWidget();
     for (int i = 0; i < 9; i++) {
         layout->addWidget(createLinkGroup(i));
     }
+    widget->setLayout(layout);
 
-    layout->addWidget(createButtonGroup());
-    setLayout(layout);
+    QScrollArea* scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(1);
+    scrollArea->setBackgroundRole(QPalette::Dark);
+    scrollArea->setWidget(widget);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->resize(500, 400);
+
+    // Pack everything in a BoxLayout
+    QVBoxLayout *content = new QVBoxLayout;
+    content->addWidget(scrollArea);
+    content->addWidget(createButtonGroup());    
+    setLayout(content);
 
     settings->endGroup();
 }

@@ -44,6 +44,10 @@ protected slots:
     void zoomIn();
     void zoomOut();
     void init();
+    
+    // Navigation actions
+    void showBookmarkPage();
+    void goToPage();
 
 private:
     QString jQuery;
@@ -57,5 +61,5 @@ private:
     void exec_webaction(QWebPage::WebAction action);
     void calibrate();
     void setupMenus();
-    void showBookmarkPage();
+    
 };
