@@ -9,6 +9,8 @@
 #include "geometry.hpp"
 #include "../exception/GazeExceptions.hpp"
 
+#include <iostream>
+
 const double Rad2Deg = 180.0 / 3.1415;
 const double Deg2Rad = 3.1415 / 180.0;
 
@@ -121,9 +123,10 @@ bool isRectangle(vector<cv::Point> points, int tolerance) {
     int errors = 0; // Two points have to be ortagonal, one does not matter
     for (std::vector<int>::size_type i = 0; i != points.size(); i++) {
         for (std::vector<int>::size_type j = i + 1; j != points.size(); j++) {
-            //cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << endl;
+            cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << " Tol: " << tol << endl;
             double angle = calcAngle(points[i], points[j]);
-            if (fabs(fmod(angle, 90.0)) > tol)
+            //if (fabs(fmod(angle "", 90.0)) > tol)
+            if (fmod(fabs(angle)+ tolerance, 90) > 2 * tolerance)
                 errors++;
             if (errors > 2)
                 return false;

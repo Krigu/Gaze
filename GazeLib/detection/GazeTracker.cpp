@@ -57,6 +57,7 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
     while (!foundEye) {
         getNextFrame(frame);
 
+        // TODO: what to do with uslepp?
         usleep(20);
 
         foundEye = eyeFinder.findLeftEye(frame, frameRegion);

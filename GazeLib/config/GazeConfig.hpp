@@ -46,7 +46,7 @@ public:
     // Max distance between two glints
     static int GLINT_MAX_DISTANCE;
     // Max difference between barycentre
-    static int GLINT_BARYCENTRE_DEVIATION;
+    static int GLINT_ANGLE_TOLERANCE;
 
     //
     // Haar configuration
@@ -93,7 +93,7 @@ public:
         GazeConfig::GLINT_MAX_DISTANCE = 100;
 
         // TODO: Implement in settings window
-        GazeConfig::GLINT_BARYCENTRE_DEVIATION = 7;
+        GazeConfig::GLINT_ANGLE_TOLERANCE = 10;
 
         //
         // Haar configuration

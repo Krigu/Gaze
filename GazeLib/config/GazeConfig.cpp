@@ -29,7 +29,7 @@ int GazeConfig::GLINT_MIN_PIXEL;
 int GazeConfig::GLINT_MAX_PIXEL;
 int GazeConfig::GLINT_MIN_DISTANCE;
 int GazeConfig::GLINT_MAX_DISTANCE;
-int GazeConfig::GLINT_BARYCENTRE_DEVIATION;
+int GazeConfig::GLINT_ANGLE_TOLERANCE;
 //
 // Haar configuration
 //

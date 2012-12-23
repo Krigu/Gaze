@@ -221,7 +221,7 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
     quadruple.push_back(glints.at(comb[1]));
     quadruple.push_back(glints.at(comb[2]));
     quadruple.push_back(glints.at(comb[3]));
-    hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_BARYCENTRE_DEVIATION);
+    hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_ANGLE_TOLERANCE);
 
     // Generate and print all the other combinations
     while (!hasRectangularAlignment && next_comb(comb, k, n)) {
@@ -230,10 +230,12 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
         quadruple.push_back(glints.at(comb[1]));
         quadruple.push_back(glints.at(comb[2]));
         quadruple.push_back(glints.at(comb[3]));
-        hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_BARYCENTRE_DEVIATION);
+        hasRectangularAlignment = isRectangle(quadruple, GazeConfig::GLINT_ANGLE_TOLERANCE);
     }
 
-    if (hasRectangularAlignment) {
+    LOG_D("isRect: " << hasRectangularAlignment);
+    
+    if (hasRectangularAlignment) {        
         glints = quadruple;
     }
 
