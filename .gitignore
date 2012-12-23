@@ -54,3 +54,14 @@ Package-Debug.bash
 /VideoStarburstTest/nbproject/Package-Debug.bash
 /VideoStarburstTest/nbproject/Package-Release.bash
 /GazeTracker/nbproject/Package-*
+/StaticImageStarburst/build/
+/StaticImageStarburst/dist/
+/StaticImageStarburst/nbproject/Makefile-Debug.mk
+/StaticImageStarburst/nbproject/Makefile-impl.mk
+/StaticImageStarburst/nbproject/Makefile-Release.mk
+/StaticImageStarburst/nbproject/Makefile-variables.mk
+/StaticImageStarburst/nbproject/Package-Release.bash
+/StaticImageStarburst/nbproject/private/
+/StaticImageStarburst/nbproject/private/configurations.xml
+/StaticImageStarburst/nbproject/private/Makefile-variables.mk
+/StaticImageStarburst/nbproject/private/private.xml
