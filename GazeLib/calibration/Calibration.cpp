@@ -17,9 +17,9 @@ using namespace cv;
 
 CalibrationData::CalibrationData(cv::Point point,
 		std::vector<cv::Point2f> & vectors) :
-		pointOnScreen(point){
+		pointOnScreen(point), measuredVectors(vectors) {
 
-	averageVector = calcAverage(vectors);
+	averageVector = calcAverage(measuredVectors);
 }
 
 const cv::Point2f& CalibrationData::getAverageVector() const {
