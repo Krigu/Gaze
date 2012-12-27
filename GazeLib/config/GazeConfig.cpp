@@ -46,7 +46,7 @@ int GazeConfig::HAAR_FINDREGION_MAX_TRIES;
 //  General settings
 //
 bool GazeConfig::DETECT_LEFT_EYE; 
-bool GazeConfig::DETECT_IRIS; 
+bool GazeConfig::DETECT_PUPIL; 
 
 string GazeConfig::inHomeDirectory(string suffix) {
 	string home(getenv("HOME"));

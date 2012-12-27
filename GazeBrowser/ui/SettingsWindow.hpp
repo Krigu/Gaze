@@ -25,7 +25,10 @@ protected slots:
     void onStarburstSelectionToggled(bool checked);    
 private:
 
-    
+    QRadioButton *rLeftEye;
+    QRadioButton *rRightEye;
+    QRadioButton *rPupil;
+    QRadioButton *rIris;
 
     QSpinBox * setUpSpinBox(int min, int max, int step, int& default_value);
 };

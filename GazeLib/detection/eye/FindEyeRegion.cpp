@@ -125,6 +125,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 }
 
 // Checks if a region has glints in it
+
 bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     vector<cv::Point> glints;
     Point2f glintCenter;
@@ -133,9 +134,10 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
 }
 
 // Removes all eye regions with no glints in it
+
 bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     std::vector<Rect>::iterator iter;
-    
+
     for (iter = regions.begin(); iter != regions.end();) {
         if (!hasGlintsInRect(image, *iter))
             iter = regions.erase(iter);
@@ -150,4 +152,11 @@ bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
 
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
     return findEye(image, eyeRect, leftEyeCompareFunc);
+}
+
+bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect) {
+    if (GazeConfig::DETECT_LEFT_EYE)
+        return findLeftEye(image, eyeRect);
+    else
+        return findRightEye(image, eyeRect);
 }

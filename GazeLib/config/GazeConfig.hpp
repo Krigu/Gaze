@@ -69,8 +69,8 @@ public:
 
     // takes the left eye (on screen) if value is true, right eye otherweise
     static bool DETECT_LEFT_EYE;
-    // tries to detect the iris if true, otherwise the pupil
-    static bool DETECT_IRIS;
+    // tries to detect the pupil if true, otherwise the iris
+    static bool DETECT_PUPIL;
 
     GazeConfig() {
         initConiguration();
@@ -113,7 +113,7 @@ public:
 
         // General Settings
         GazeConfig::DETECT_LEFT_EYE = true;
-        GazeConfig::DETECT_IRIS = true;
+        GazeConfig::DETECT_PUPIL = true;
 
     }
 

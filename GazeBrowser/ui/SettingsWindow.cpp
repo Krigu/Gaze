@@ -18,13 +18,13 @@ SettingsWindow::SettingsWindow() {
 
 
     QLabel *eyeLabel = new QLabel(tr("Eye"));
-    QRadioButton *rLeftEye = new QRadioButton(tr("Left eye"));
+    rLeftEye = new QRadioButton(tr("Left eye"));
     //QObject::connect(radio1,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
     rLeftEye->setAutoExclusive(false);
-    QRadioButton *rRightEye = new QRadioButton(tr("Right eye"));
+    rRightEye = new QRadioButton(tr("Right eye"));
     //QObject::connect(radio2,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
-    rLeftEye->setChecked(true);
-    rRightEye->setChecked(false);
+    rLeftEye->setChecked(GazeConfig::DETECT_LEFT_EYE);
+    rRightEye->setChecked(!GazeConfig::DETECT_LEFT_EYE);
 
     QVBoxLayout *eyeBox = new QVBoxLayout;
     eyeBox->addWidget(eyeLabel);
@@ -39,15 +39,15 @@ SettingsWindow::SettingsWindow() {
     generalLayout->addLayout(eyeBox, 0, 0);
 
     QLabel *detectionLabel = new QLabel(tr("Detect"));
-    QRadioButton *rPupil = new QRadioButton(tr("Iris"));
+    rPupil = new QRadioButton(tr("Iris"));
     //QObject::connect(radio1,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
     rPupil->setAutoExclusive(false);
-    QRadioButton *rIris = new QRadioButton(tr("Pupil"));
+    rIris = new QRadioButton(tr("Pupil"));
     //QObject::connect(radio2,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
 
-    rPupil->setChecked(true);
+    rPupil->setChecked(GazeConfig::DETECT_PUPIL);
     rPupil->setAutoExclusive(true);
-    rIris->setChecked(false);
+    rIris->setChecked(!GazeConfig::DETECT_PUPIL);
     rIris->setAutoExclusive(true);
 
     QVBoxLayout *detectionBox = new QVBoxLayout;
@@ -150,13 +150,13 @@ SettingsWindow::SettingsWindow() {
     layout->addWidget(glintGroup);
     layout->addWidget(haarGroup);
     setLayout(layout);
-    
+
     // register handlers
-    connect(rLeftEye,SIGNAL(toggled(bool)),this,SLOT(onEyeSelectionToggled()));
-    connect(rRightEye,SIGNAL(toggled(bool)),this,SLOT(onEyeSelectionToggled()));
-    
-    connect(rIris,SIGNAL(toggled(bool)),this,SLOT(onStarburstSelectionToggled()));
-    connect(rPupil,SIGNAL(toggled(bool)),this,SLOT(onStarburstSelectionToggled()));
+    connect(rLeftEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
+    connect(rRightEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
+
+    connect(rIris, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
+    connect(rPupil, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
 
 }
 
@@ -170,11 +170,11 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
 }
 
 void SettingsWindow::onEyeSelectionToggled(bool checked) {
-
+    GazeConfig::DETECT_LEFT_EYE = rLeftEye->isChecked;
 }
 
 void SettingsWindow::onStarburstSelectionToggled(bool checked) {
-
+    GazeConfig::DETECT_PUPIL = rIris->isChecked;
 }
 
 SettingsWindow::~SettingsWindow() {

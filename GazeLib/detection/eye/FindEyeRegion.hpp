@@ -25,4 +25,5 @@ public:
     FindEyeRegion(FindGlints& findGlints);
     bool findLeftEye(Mat &image, Rect& eyeRect);
     bool findRightEye(Mat &image, Rect& eyeRect);
+    bool findEye(Mat &image, Rect& eyeRect);
 };
