@@ -67,6 +67,11 @@ public:
     // Max amount of tries to find eye region
     static int HAAR_FINDREGION_MAX_TRIES;
 
+    // takes the left eye (on screen) if value is true, right eye otherweise
+    static bool DETECT_LEFT_EYE;
+    // tries to detect the iris if true, otherwise the pupil
+    static bool DETECT_IRIS;
+
     GazeConfig() {
         initConiguration();
     }
@@ -105,6 +110,10 @@ public:
         GazeConfig::HAAR_EYE_MAX_HEIGHT = 500;
         GazeConfig::HAAR_EYE_MAX_WIDTH = 700;
         GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
+
+        // General Settings
+        GazeConfig::DETECT_LEFT_EYE = true;
+        GazeConfig::DETECT_IRIS = true;
 
     }
 

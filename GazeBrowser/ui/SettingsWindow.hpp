@@ -20,10 +20,12 @@ class SettingsWindow : public QWidget {
 public:
     SettingsWindow();
     virtual ~SettingsWindow();
-
+protected slots:
+    void onEyeSelectionToggled(bool checked);
+    void onStarburstSelectionToggled(bool checked);    
 private:
 
-
+    
 
     QSpinBox * setUpSpinBox(int min, int max, int step, int& default_value);
 };

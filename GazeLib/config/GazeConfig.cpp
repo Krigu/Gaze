@@ -42,6 +42,12 @@ int GazeConfig::HAAR_EYE_MAX_HEIGHT;
 int GazeConfig::HAAR_EYE_MAX_WIDTH;
 int GazeConfig::HAAR_FINDREGION_MAX_TRIES;
 
+//
+//  General settings
+//
+bool GazeConfig::DETECT_LEFT_EYE; 
+bool GazeConfig::DETECT_IRIS; 
+
 string GazeConfig::inHomeDirectory(string suffix) {
 	string home(getenv("HOME"));
 	return home + "/" + suffix;

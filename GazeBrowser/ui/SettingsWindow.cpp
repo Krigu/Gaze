@@ -150,6 +150,13 @@ SettingsWindow::SettingsWindow() {
     layout->addWidget(glintGroup);
     layout->addWidget(haarGroup);
     setLayout(layout);
+    
+    // register handlers
+    connect(rLeftEye,SIGNAL(toggled(bool)),this,SLOT(onEyeSelectionToggled()));
+    connect(rRightEye,SIGNAL(toggled(bool)),this,SLOT(onEyeSelectionToggled()));
+    
+    connect(rIris,SIGNAL(toggled(bool)),this,SLOT(onStarburstSelectionToggled()));
+    connect(rPupil,SIGNAL(toggled(bool)),this,SLOT(onStarburstSelectionToggled()));
 
 }
 
@@ -160,6 +167,14 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
     spinBox->setValue(default_value);
 
     return spinBox;
+}
+
+void SettingsWindow::onEyeSelectionToggled(bool checked) {
+
+}
+
+void SettingsWindow::onStarburstSelectionToggled(bool checked) {
+
 }
 
 SettingsWindow::~SettingsWindow() {
