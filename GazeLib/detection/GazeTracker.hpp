@@ -57,10 +57,10 @@ private:
     Starburst starburst;
     Calibration c;
     TrackerCallback *tracker_callback;
-    FindEyeRegion eyeFinder;
     Point2f last_gaze_vectors[GazeConfig::NUM_OF_SMOOTHING_FRAMES];
     bool isRunning;
     unsigned int framenumber;
+    FindEyeRegion eyeFinder;
     Rect frameRegion;     
 
     void getNextFrame(Mat & frame);
