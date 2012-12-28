@@ -136,7 +136,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
             //smooth_vector(profile);
             
 			int vectorSize = profile.size();
-            short edgeNum=0;
+            //short edgeNum=0;
 			if (vectorSize > 5) {
 				for (int i = 5; i < vectorSize; i++) {
 					unsigned char current = profile.at(i);
@@ -169,7 +169,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			mean_y += it->y;
 		}
 
-		if (points.size() > 0) {
+		if (!points.empty()) {
 			mean_x /= points.size();
 			mean_y /= points.size();
 		} else {

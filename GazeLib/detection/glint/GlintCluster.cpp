@@ -22,7 +22,7 @@ GlintCluster::GlintCluster(std::vector<cv::Point> & glints,
 		glints(glints) {
 
 	// TODO: Specify what to do. Exception?
-	if (glints.size() == 0)
+	if (glints.empty())
 		return;
 
 	int amountOfGlints = glints.size();

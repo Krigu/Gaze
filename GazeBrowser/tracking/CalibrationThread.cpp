@@ -21,7 +21,7 @@ void CalibrationThread::run()
         
         // todo: now start/continue the tracker fred
         //calib.calculateCoordinates();
-    } catch(GazeException e) {
+    } catch(GazeException& e) {
         emit error(e.what());
     }
 }

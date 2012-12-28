@@ -83,7 +83,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     cout << "Eyes detected after filter: " << eyes.size() << endl;
     
     // No eye detected
-    if (eyes.size() == 0) {
+    if (eyes.empty()) {
         return false;
     }        // One eye detected
     else if (eyes.size() == 1) {

@@ -88,7 +88,7 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
     vector<GlintCluster> clusters;
     findClusters(glintCenters, clusters, lastMeasurement);
 
-    if (clusters.size() == 0) {
+    if (clusters.empty()) {
         return false;
     } else if (clusters.size() > 1) {
         sort(clusters.begin(), clusters.end());
