@@ -20,7 +20,7 @@ private:
     cv::CascadeClassifier eye_classifier;
     bool findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc);
     bool hasGlintsInRect(Mat &image, Rect& eyeRect);
-    bool removeInvalidRects(Mat& image, vector<Rect>& regions);
+    void removeInvalidRects(Mat& image, vector<Rect>& regions);
 public:
     FindEyeRegion(FindGlints& findGlints);
     bool findLeftEye(Mat &image, Rect& eyeRect);

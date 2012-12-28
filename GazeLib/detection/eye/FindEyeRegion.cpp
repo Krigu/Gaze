@@ -135,7 +135,7 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
 
 // Removes all eye regions with no glints in it
 
-bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
+void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     std::vector<Rect>::iterator iter;
 
     for (iter = regions.begin(); iter != regions.end();) {
