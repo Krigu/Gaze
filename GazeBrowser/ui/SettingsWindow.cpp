@@ -170,11 +170,17 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
 }
 
 void SettingsWindow::onEyeSelectionToggled(bool checked) {
-    GazeConfig::DETECT_LEFT_EYE = rLeftEye->isChecked;
+    if (rLeftEye->isChecked())
+        GazeConfig::DETECT_LEFT_EYE = true;
+    else
+        GazeConfig::DETECT_LEFT_EYE = false;
 }
 
 void SettingsWindow::onStarburstSelectionToggled(bool checked) {
-    GazeConfig::DETECT_PUPIL = rIris->isChecked;
+    if (rIris->isChecked())
+        GazeConfig::DETECT_PUPIL = true;
+    else
+        GazeConfig::DETECT_PUPIL = false;    
 }
 
 SettingsWindow::~SettingsWindow() {

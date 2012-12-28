@@ -13,6 +13,7 @@
 class QGroupBox;
 class QLabel;
 class QSpinBox;
+class QRadioButton;
 
 class SettingsWindow : public QWidget {
     Q_OBJECT
