@@ -8,6 +8,7 @@
 #include "GazeConfig.hpp"
 
 #include <stdlib.h>
+#include <unistd.h>
 
 using namespace std;
 
