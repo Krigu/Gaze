@@ -74,7 +74,7 @@ void Calibration::calcCoefficients() {
 	int matSize = calibrationData.size();
 
 	if (matSize == 0) {
-		throw new WrongArgumentException("Cannot calculate Coeffizients with matSize=0!");
+		throw WrongArgumentException("Cannot calculate Coeffizients with matSize=0!");
 	}
 
 	Mat measurementsX(matSize, 4, CV_32F);
