@@ -41,15 +41,6 @@ public:
     void track(unsigned int duration=0);
     void initializeCalibration();
 
-
-    /**
-     * measures the GazeVector
-     *
-     * @return the average GazeVector measured for this point. the measure
-     * takes int duration seconds
-     */
-    CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
-
 private:    
     
     ImageSource& imageSrc;
