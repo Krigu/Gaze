@@ -15,7 +15,7 @@
 
 class VideoSource: public ImageSource {
 private:
-	cv::VideoCapture videoCapture;
+	cv::VideoCapture *videoCapture;
 public:
 	VideoSource(std::string videoPath);
 	~VideoSource();

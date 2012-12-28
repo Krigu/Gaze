@@ -15,22 +15,23 @@ using namespace std;
 using namespace cv;
 
 VideoSource::VideoSource(string videoPath) {
-	videoCapture = VideoCapture(videoPath);
+	videoCapture = new VideoCapture(videoPath);
 }
 
 VideoSource::~VideoSource() {
-	videoCapture.release();
+	videoCapture->release();
+    delete videoCapture;
 }
 
 
 bool VideoSource::nextGrayFrame(cv::Mat& frame) {
 
 	// Check if capture is open
-	if (!videoCapture.isOpened())
+	if (!videoCapture->isOpened())
 		return false;
 
 	// Check if there are more frames
-	if (!videoCapture.read(frame))
+	if (!videoCapture->read(frame))
 		return false;
 
 	 // Check for invalid input

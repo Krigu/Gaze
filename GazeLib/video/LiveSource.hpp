@@ -15,7 +15,7 @@
 
 class LiveSource : public ImageSource {
 private:
-	cv::VideoCapture videoCapture;
+	cv::VideoCapture *videoCapture;
 public:
 	LiveSource();
 	LiveSource(int channel);

@@ -40,7 +40,6 @@ void GazeTracker::initializeCalibration() {
     vector<cv::Point> glints;
 
     do {
-        getNextFrame(frame);
         // Endless search for eye region
         findEyeRegion(frame, eyeRegion, glintCenter, true);
         
@@ -57,14 +56,9 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
     while (!foundEye) {
         getNextFrame(frame);
 
-        // TODO: what to do with uslepp?
-        //usleep(20);
-
         foundEye = eyeFinder.findEye(frame, frameRegion);
         tries++;
 
-        // TODO init one window for whole calibration process
-        // TODO init one window for whole calibration process
         if (calibrationMode) {
             //imshow("frame", frame);
             if (tracker_callback != NULL) {
@@ -73,10 +67,6 @@ void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
                 tracker_callback->imageProcessed(fullFrame);
             }
         }
-
-        // TODO: Global var for waitkey?
-        //        waitKey(20);
-        //        QThread::msleep(20);
 
         // No eye region found
         if (!calibrationMode && tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)
@@ -105,12 +95,18 @@ GazeTracker::~GazeTracker() {
     // TODO Auto-generated destructor stub
 }
 
-void GazeTracker::track() {
+void GazeTracker::track(unsigned int duration) {
 
     Mat currentFrame;
     Point2f glintCenter;
     Point2f gazeVector;
 
+    double ticks = 0;
+    double maxTicks=0;
+    if(duration>0)
+        maxTicks = duration * getTickFrequency();
+    else
+        maxTicks = std::numeric_limits<double>::max();
 
     // Find eye 
     getNextFrame(currentFrame);
@@ -118,6 +114,8 @@ void GazeTracker::track() {
 
     int noGlints = 0;
 
+    double startTick = getTickCount();
+    
     // main loop
     do {
         // Get next frame
@@ -127,7 +125,16 @@ void GazeTracker::track() {
 
         rectangle(f1, frameRegion, Scalar(255, 255, 255), 3);
         imshow("Frame from source", f1);
-#endif      
+
+#endif     
+        
+        if ((frameRegion.x + frameRegion.width) > currentFrame.cols)
+            frameRegion.x = currentFrame.cols - frameRegion.width;
+        
+        if ((frameRegion.y + frameRegion.height) > currentFrame.rows)
+            frameRegion.y = currentFrame.rows - frameRegion.height;        
+        
+
         currentFrame = currentFrame(frameRegion);
 
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
@@ -138,7 +145,6 @@ void GazeTracker::track() {
 
                 this->smoothSignal(gazeVector, smoothed_gaze_vec,
                         this->last_gaze_vectors, framenumber);
-                //c.printPoint(smoothed_gace_vec);
 
                 LOG_D("Current GazeVector: " << gazeVector);
 
@@ -164,20 +170,22 @@ void GazeTracker::track() {
 
         // notify our callback about the processed frames...
         if (this->tracker_callback != NULL)
-            tracker_callback->imageProcessed(currentFrame);
+            tracker_callback->imageProcessed(currentFrame, result, smoothed_gaze_vec);
 
+        ticks = getTickCount() - startTick;
+        
 #if __DEBUG_STEP_BY_STEP == 1    
         int keycode = waitKey(0);
 #else
-        int keycode = waitKey(50);
+        //int keycode = waitKey(50);
 #endif        
-        if (keycode == 32) // space
-            while (waitKey(100) != 32)
+        /*if (keycode == 32) // space
+            while (waitKey(100) != 32)*/
                 ;
-    } while (true);
+    } while (ticks < maxTicks);
 }
 
-GazeTracker::MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter) {
+MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter) {
     vector<cv::Point> glints;
     float radius;
     Point2f pupilCenter;
@@ -229,7 +237,7 @@ void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f dat
 
 CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
         unsigned int duration) {
-
+/*
     Mat currentFrame;
     Point2f glintCenter;
 
@@ -252,7 +260,7 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
 
         // notify our callback about the processed frames...
         if (this->tracker_callback != NULL)
-            tracker_callback->imageProcessed(currentFrame);
+            tracker_callback->imageProcessed(currentFrame, result, gazeVector);
 
         if (result == MEASURE_OK)
             measurements.push_back(gazeVector);
@@ -261,5 +269,6 @@ CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
     }
 
     CalibrationData data(pointOnScreen, measurements);
-    return data;
+    return data;*/
+    
 }

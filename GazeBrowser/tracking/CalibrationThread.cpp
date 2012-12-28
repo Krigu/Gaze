@@ -51,13 +51,13 @@ void CalibrationThread::calibrate(Calibration & calibration){
             msleep(3000);
             
             Point2f p(point_x, point_y);
-            CalibrationData data = tracker.measurePoint(p, 5);
+            measurements.clear();
+            tracker.track(5);
+            CalibrationData data(p, measurements);
             calibration.addCalibrationData(data);
             cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
          }
      }
-     
-     
      
      calibration.calcCoefficients();
      
@@ -66,6 +66,20 @@ void CalibrationThread::calibrate(Calibration & calibration){
      
 }
 
-void CalibrationThread::imageProcessed(Mat& result){
-    emit cvImage(result);
+void CalibrationThread::imageProcessed(Mat& resultImage){
+    //TODO move the sleep into another (non-UI) thread?
+    msleep(10);
+    emit cvImage(resultImage);
+}
+
+void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
+    //TODO move the sleep into another (non-UI) thread?
+    msleep(10);
+    emit cvImage(resultImage);
+    switch (result) {
+        case MEASURE_OK:
+            measurements.push_back(gazeVector);
+            break;
+    }
+    std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 }

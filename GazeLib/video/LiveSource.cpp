@@ -11,18 +11,19 @@ using namespace std;
 using namespace cv;
 
 LiveSource::LiveSource() {
-    videoCapture = VideoCapture(0);
+    videoCapture = new VideoCapture(0);
     // Set resolution for Microsoft Life cam
-    videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-    videoCapture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+    videoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+    videoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 720);
 }
 
 LiveSource::LiveSource(int channel) {
-    videoCapture = VideoCapture(channel);
+    videoCapture = new VideoCapture(channel);
 }
 
 LiveSource::~LiveSource() {
-    videoCapture.release();
+    videoCapture->release();
+    delete videoCapture;
 }
 
 bool LiveSource::nextGrayFrame(cv::Mat& frame) {
@@ -30,11 +31,11 @@ bool LiveSource::nextGrayFrame(cv::Mat& frame) {
     //    waitKey(10);
 
     // Check if capture is open
-    if (!videoCapture.isOpened())
+    if (!videoCapture->isOpened())
         return false;
 
     // Check if there are more frames
-    if (!videoCapture.read(frame))
+    if (!videoCapture->read(frame))
         return false;
 
     // Check for invalid input
