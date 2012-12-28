@@ -52,3 +52,19 @@ string GazeConfig::inHomeDirectory(string suffix) {
 	string home(getenv("HOME"));
 	return home + "/" + suffix;
 }
+
+string GazeConfig::inWorkingDir(std::string suffix){
+    long size;
+    char *buf;
+    char *ptr;
+
+    size = pathconf(".", _PC_PATH_MAX);
+
+    if ((buf = (char *)malloc((size_t)size)) != NULL)
+        ptr = getcwd(buf, (size_t)size);
+    else
+        return suffix;
+
+    string s(ptr);
+    return s + "/" + suffix;
+}
