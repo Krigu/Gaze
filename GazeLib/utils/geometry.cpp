@@ -8,6 +8,7 @@
 #include <vector>
 #include "geometry.hpp"
 #include "../exception/GazeExceptions.hpp"
+#include "log.hpp"
 
 #include <iostream>
 
@@ -123,7 +124,7 @@ bool isRectangle(vector<cv::Point> points, int tolerance) {
     int errors = 0; // Two points have to be ortagonal, one does not matter
     for (std::vector<int>::size_type i = 0; i != points.size(); i++) {
         for (std::vector<int>::size_type j = i + 1; j != points.size(); j++) {
-            cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << " Tol: " << tol << endl;
+            LOG_D("Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << " Tol: " << tol);
             double angle = calcAngle(points[i], points[j]);
             //if (fabs(fmod(angle "", 90.0)) > tol)
             if (fmod(fabs(angle)+ tolerance, 90) > 2 * tolerance)
