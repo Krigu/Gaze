@@ -15,7 +15,7 @@ class GlintCluster {
 private:
 	std::vector<cv::Point> glints;
 	int distanceToLastMeasurement;
-        int width;
+        int clusterWidth;
 
 public:
 	GlintCluster(std::vector<cv::Point> & glints, cv::Point lastMeasurement);

@@ -39,7 +39,7 @@ glints(glints) {
     }
 
     distanceToLastMeasurement = (totalDistance / amountOfGlints);
-    width = right - left;
+    clusterWidth = right - left;
 }
 
 /**
@@ -70,7 +70,7 @@ cv::Point2f GlintCluster::centerPoint() {
 }
 
 int const GlintCluster::width() const {
-    return width;
+    return clusterWidth;
 }
 
 /**

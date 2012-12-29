@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "../exception/GazeExceptions.hpp"
-#include "../../utils/log.hpp"
+#include "log.hpp"
 
 #include "geometry.hpp"
 
@@ -71,7 +71,7 @@ cv::Point2f calcAverage(std::vector<cv::Point2f> points) {
     int amount = points.size();
 
     if (amount == 0) {
-        throw new WrongArgumentException("Cannot calc the average of 0 Points!");
+        throw WrongArgumentException("Cannot calc the average of 0 Points!");
     }
 
     float sumX = 0;

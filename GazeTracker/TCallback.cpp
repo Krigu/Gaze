@@ -9,7 +9,7 @@
 
 #include "TCallback.hpp"
 
-#include "opencv2/highgui/highgui.hpp";
+#include "opencv2/highgui/highgui.hpp"
 
 TCallback::TCallback() {
 }

@@ -100,6 +100,7 @@
             <Elem>__DEBUG_STEP_BY_STEP=0</Elem>
             <Elem>__DEBUG_TRACKER=0</Elem>
           </preprocessorList>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <archiverTool>
         </archiverTool>

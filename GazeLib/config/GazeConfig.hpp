@@ -108,6 +108,10 @@ public:
      * you may add a suffix for example to point directly to a file
      */
     static std::string inHomeDirectory(std::string suffix);
+    
+    
+    static std::string inWorkingDir(std::string suffix);
+
 };
 
 // create an instance and make sure, that "initConfiguration()" is run once

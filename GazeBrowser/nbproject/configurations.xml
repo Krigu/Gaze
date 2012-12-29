@@ -78,6 +78,7 @@
           <incDir>
             <pElem>../GazeLib</pElem>
           </incDir>
+          <warningLevel>2</warningLevel>
         </ccTool>
         <linkerTool>
           <linkerLibItems>

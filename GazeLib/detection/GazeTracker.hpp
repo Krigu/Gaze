@@ -41,15 +41,6 @@ public:
     void track(unsigned int duration=0);
     void initializeCalibration();
 
-
-    /**
-     * measures the GazeVector
-     *
-     * @return the average GazeVector measured for this point. the measure
-     * takes int duration seconds
-     */
-    CalibrationData measurePoint(Point2f pointOnScreen, unsigned int duration);
-
 private:    
     
     ImageSource& imageSrc;
@@ -57,10 +48,10 @@ private:
     Starburst starburst;
     Calibration c;
     TrackerCallback *tracker_callback;
-    FindEyeRegion eyeFinder;
     Point2f last_gaze_vectors[GazeConfig::NUM_OF_SMOOTHING_FRAMES];
     bool isRunning;
     unsigned int framenumber;
+    FindEyeRegion eyeFinder;
     Rect frameRegion;     
 
     void getNextFrame(Mat & frame);

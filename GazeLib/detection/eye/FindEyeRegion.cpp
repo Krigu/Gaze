@@ -9,6 +9,8 @@
 #include "../../utils/log.hpp"
 #include "../../config/GazeConfig.hpp"
 
+#include "../../exception/GazeExceptions.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -34,17 +36,18 @@ void takeRightEye(Rect* r2) {
 }
 
 FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
-    // TODO exit when classiefier can0t be loaded
     if (!eye_region_classifier.load(
-            GazeConfig::inHomeDirectory(
-            "/Dropbox/gaze/haar/parojosG.xml"))) {
-        LOG_W("ERROR: Could not load left eye classifier cascade");
+            GazeConfig::inWorkingDir(
+            "../__haarcascades/haarcascade_mcs_eyepair_big.xml"))) {
+        LOG_W("ERROR: Could not load eyepair classifier cascade");
+        throw GazeException("ERROR: Could not load eyepair classifier cascade");
     }
 
     if (!eye_classifier.load(
-            GazeConfig::inHomeDirectory(
-            "/Dropbox/gaze/haar/haarcascade_eye.xml"))) {
-        LOG_W("ERROR: Could not load left eyes classifier cascade");
+            GazeConfig::inWorkingDir(
+            "../__haarcascades/haarcascade_eye.xml"))) {
+        LOG_W("ERROR: Could not load eye classifier cascade");
+        throw GazeException("ERROR: Could not load eye classifier cascade");
     }
 
     // Init adjust functions
@@ -118,6 +121,7 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     return findGlints.findGlints(img, glints, glintCenter);
 }
 
+
 /**
  * Removes all eye regions with no glints in it
  * 
@@ -125,7 +129,7 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
  * @param regions
  * @return 
  */
-bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
+void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     std::vector<Rect>::iterator iter;
 
     for (iter = regions.begin(); iter != regions.end();) {

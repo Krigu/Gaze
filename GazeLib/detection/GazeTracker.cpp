@@ -227,42 +227,5 @@ void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f dat
         smoothed.y /= GazeConfig::NUM_OF_SMOOTHING_FRAMES;
     }
     data[framenumber % GazeConfig::NUM_OF_SMOOTHING_FRAMES] = measured;
-}
-
-CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
-        unsigned int duration) {
-    /*
-        Mat currentFrame;
-        Point2f glintCenter;
-
-        getNextFrame(currentFrame);
-        findEyeRegion(currentFrame, frameRegion, glintCenter);
-
-        vector<Point2f> measurements;
-        double ticks = 0;
-        double maxTicks = duration * getTickFrequency();
-
-        double startTick = getTickCount();
-
-        while (ticks < maxTicks) {
-
-            Point2f gazeVector;
-
-            getNextFrame(currentFrame);
-            currentFrame = currentFrame(frameRegion);
-            MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
-
-            // notify our callback about the processed frames...
-            if (this->tracker_callback != NULL)
-                tracker_callback->imageProcessed(currentFrame, result, gazeVector);
-
-            if (result == MEASURE_OK)
-                measurements.push_back(gazeVector);
-
-            ticks = getTickCount() - startTick;
-        }
-
-        CalibrationData data(pointOnScreen, measurements);
-        return data;*/
 
 }
