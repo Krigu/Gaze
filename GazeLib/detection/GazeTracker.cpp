@@ -110,7 +110,6 @@ void GazeTracker::track(unsigned int duration) {
         maxTicks = std::numeric_limits<double>::max();
 
     // Find eye 
-    getNextFrame(currentFrame);
     findEyeRegion(currentFrame, glintCenter);
 
     int noGlints = 0;
@@ -158,7 +157,6 @@ void GazeTracker::track(unsigned int duration) {
                 noGlints++;
                 if (noGlints > 5) {
                     LOG_W("no glints found. need to reinitialize");
-                    getNextFrame(currentFrame);
                     findEyeRegion(currentFrame, glintCenter);
 
                     noGlints = 0;
