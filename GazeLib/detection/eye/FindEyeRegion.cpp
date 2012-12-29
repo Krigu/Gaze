@@ -39,14 +39,12 @@ FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
     if (!eye_region_classifier.load(
             GazeConfig::inWorkingDir(
             "../__haarcascades/haarcascade_mcs_eyepair_big.xml"))) {
-        LOG_W("ERROR: Could not load eyepair classifier cascade");
         throw GazeException("ERROR: Could not load eyepair classifier cascade");
     }
 
     if (!eye_classifier.load(
             GazeConfig::inWorkingDir(
             "../__haarcascades/haarcascade_eye.xml"))) {
-        LOG_W("ERROR: Could not load eye classifier cascade");
         throw GazeException("ERROR: Could not load eye classifier cascade");
     }
 

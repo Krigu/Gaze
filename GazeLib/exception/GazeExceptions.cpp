@@ -6,8 +6,10 @@
  */
 
 #include "GazeExceptions.hpp"
+#include "../utils/log.hpp"
 
 GazeException::GazeException(std::string msg) : errorMsg(msg) {
+    LOG_W(msg);
 }
 
 GazeException::~GazeException() throw () {
