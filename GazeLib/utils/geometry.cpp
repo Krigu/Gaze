@@ -6,15 +6,34 @@
  */
 
 #include <vector>
-#include "geometry.hpp"
-#include "../exception/GazeExceptions.hpp"
-
 #include <iostream>
+
+#include "../exception/GazeExceptions.hpp"
+#include "../../utils/log.hpp"
+
+#include "geometry.hpp"
 
 const double Rad2Deg = 180.0 / 3.1415;
 const double Deg2Rad = 3.1415 / 180.0;
 
 using namespace std;
+
+// Comperator to order points by their x-coordinate
+
+bool comparePoint(cv::Point p1, cv::Point p2) {
+    return p1.x < p2.x;
+}
+
+struct distanceSorter {
+    cv::Point2f reference;
+
+    distanceSorter(cv::Point2f reference) : reference(reference) {
+    }
+
+    bool operator()(cv::Point2f first, cv::Point2f second) {
+        return calcPoint2fDistance(reference, first) < calcPoint2fDistance(reference, second);
+    }
+};
 
 int calcPointDistance(cv::Point *point1, cv::Point *point2) {
     int distX = point1->x - point2->x;
@@ -25,7 +44,6 @@ int calcPointDistance(cv::Point *point1, cv::Point *point2) {
 }
 
 // TODO use template for calcPointDistanfce and calcPoint2fDistance
-
 // TODO is computional challenging sqrt necessary for only comparing the distances in distanceSorter
 
 float calcPoint2fDistance(cv::Point2f point1, cv::Point2f point2) {
@@ -70,17 +88,6 @@ cv::Point2f calcAverage(std::vector<cv::Point2f> points) {
     return cv::Point2f(x, y);
 }
 
-struct distanceSorter {
-    cv::Point2f reference;
-
-    distanceSorter(cv::Point2f  reference) : reference(reference) {
-    }
-
-    bool operator()(cv::Point2f first, cv::Point2f  second) {
-        return calcPoint2fDistance(reference, first) < calcPoint2fDistance(reference, second);
-    }
-};
-
 cv::Point2f calcMedianPoint(cv::Point2f reference, std::vector< cv::Point2f > scores) {
 
     cv::Point2f median;
@@ -100,40 +107,37 @@ cv::Point2f calcMedianPoint(cv::Point2f reference, std::vector< cv::Point2f > sc
     return median;
 }
 
-//bool isRectangle(cv::Point p1, cv::Point p2, cv::Point p3, cv::Point p4, int tolerance) {
-
-//    tolerance = tolerance * tolerance;
-//
-//    // Find barycentre
-//    double cx = (p1.x + p2.x + p3.x + p4.x) / 4;
-//    double cy = (p1.y + p2.y + p3.y + p4.y) / 4;
-//
-//    // calc squared distance from point to barycentre
-//    double dd1 = pow(cx - p1.x, 2) + pow(cy - p1.y, 2);
-//    double dd2 = pow(cx - p2.x, 2) + pow(cy - p2.y, 2);
-//    double dd3 = pow(cx - p3.x, 2) + pow(cy - p3.y, 2);
-//    double dd4 = pow(cx - p4.x, 2) + pow(cy - p4.y, 2);
-//
-//    return fabs(dd1 - dd2) <= tolerance && fabs(dd1 - dd3) <= tolerance && fabs(dd1 - dd4) <= tolerance
-//}
-
 bool isRectangle(vector<cv::Point> points, int tolerance) {
-    // TODO: Optimize
-    double tol = static_cast<double> (tolerance);
-    int errors = 0; // Two points have to be ortagonal, one does not matter
-    for (std::vector<int>::size_type i = 0; i != points.size(); i++) {
-        for (std::vector<int>::size_type j = i + 1; j != points.size(); j++) {
-            cout << "Angle i: " << i << " j: " << j << " " << points[i] << " " << points[j] << ": " << calcAngle(points[i], points[j]) << " Tol: " << tol << endl;
-            double angle = calcAngle(points[i], points[j]);
-            //if (fabs(fmod(angle "", 90.0)) > tol)
-            if (fmod(fabs(angle)+ tolerance, 90) > 2 * tolerance)
-                errors++;
-            if (errors > 2)
-                return false;
-        }
-    }
 
-    return true;
+    orientateFourPoints(points);
+
+    // TODO: optimize
+    cv::Point p1 = points.at(0);
+    cv::Point p2 = points.at(1);
+    cv::Point p3 = points.at(2);
+    cv::Point p4 = points.at(3);
+
+    // (1/2)|[(x3-x1)(y4-y2) +(x4-x2)(y1-y3)]|
+    float area = 0.5 * abs((p3.x - p1.x) * (p4.y - p2.y) + (p4.x - p2.x) * (p1.y - p3.y));
+    if (area < 1)
+        return false;
+    
+    cv::Mat input(points, false);
+
+    LOG_D("Points " << points);
+    
+    cv::RotatedRect r = cv::minAreaRect(input);
+
+    float enclosingArea = r.size.width * r.size.height;
+    float ratio = enclosingArea / area;
+
+    // TODO: Add const for ratio
+    bool result = ratio < 1.5 && ((r.angle + 90) + tolerance) < (2 * tolerance);
+    LOG_D("Area: " << area << " Enclosing area: " << enclosingArea 
+            << " Rotation: " << r.angle << " Ratio: " << ratio << " Result:" << result);
+
+    return result;
+
 }
 
 /**
@@ -163,22 +167,22 @@ void bestFitCircle(float * x, float * y, float * radius,
         std::vector<cv::Point2f> pointsToFit) {
 
     unsigned int numPoints = pointsToFit.size();
-    
+
     //setup an opencv mat with our points
     // col 1 = x coordinates and col 2 = y coordinates
     cv::Mat1f points(numPoints, 2);
 
-    unsigned int i=0;
+    unsigned int i = 0;
     for (std::vector<cv::Point2f>::iterator it = pointsToFit.begin(); it != pointsToFit.end(); ++it) {
-        points.at<float>(i,0) = it->x;
-        points.at<float>(i,1) = it->y;
+        points.at<float>(i, 0) = it->x;
+        points.at<float>(i, 1) = it->y;
         ++i;
     }
 
     cv::Mat1f x_coords = points.col(0);
     cv::Mat1f y_coords = points.col(1);
     cv::Mat1f ones = cv::Mat::ones(numPoints, 1, CV_32F);
-    
+
     // calculate the M matrix
     cv::Mat1f M(numPoints, 3);
     cv::Mat1f x2 = x_coords * 2;
@@ -186,15 +190,30 @@ void bestFitCircle(float * x, float * y, float * radius,
     x2.col(0).copyTo(M.col(0));
     y2.col(0).copyTo(M.col(1));
     ones.col(0).copyTo(M.col(2));
-    
+
     // calculate v
     cv::Mat1f v = x_coords.mul(x_coords) + y_coords.mul(y_coords);
-    
+
     //TODO some error handling in solve()?
     cv::Mat pars;
     cv::solve(M, v, pars, cv::DECOMP_SVD);
-    
-    *x = pars.at<float>(0,0);
-    *y = pars.at<float>(0,1);
-    *radius = sqrt(pow(*x,2) + pow(*y,2) + pars.at<float>(0,2)); 
+
+    *x = pars.at<float>(0, 0);
+    *y = pars.at<float>(0, 1);
+    *radius = sqrt(pow(*x, 2) + pow(*y, 2) + pars.at<float>(0, 2));
+}
+
+void orientateFourPoints(std::vector< cv::Point >& points) {
+
+    // Order by x-coordinate
+    sort(points.begin(), points.end(), comparePoint);
+
+    // Compare y-coordinate of 1 & 2
+    // higher value on fist position
+    if (points.at(0).y < points.at(1).y)
+        swap(points.at(0), points.at(1));
+
+    if (points.at(2).y > points.at(3).y)
+        swap(points.at(2), points.at(3));
+
 }
