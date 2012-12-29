@@ -235,10 +235,11 @@ void BrowserWindow::start_calibration() {
 }
 
 void BrowserWindow::calibrate() {
-    //if (!source)
-    //    source = new LiveSource;
-    if(!source)
-        source = new VideoSource(GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye_720p.mov"));
+    if (!source)
+        source = new LiveSource;
+//    if(!source)
+//        source = new VideoSource(GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye_720p.mov"));
+
     qRegisterMetaType< cv::Mat > ("cv::Mat");
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
