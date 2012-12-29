@@ -18,28 +18,35 @@ using namespace cv;
  * center of the glints.
  */
 GlintCluster::GlintCluster(std::vector<cv::Point> & glints,
-		cv::Point lastMeasurement) :
-		glints(glints) {
+        cv::Point lastMeasurement) :
+glints(glints) {
 
-	// TODO: Specify what to do. Exception?
-	if (glints.empty())
-		return;
+    // TODO: Specify what to do. Exception?
+    if (glints.empty())
+        return;
 
-	int amountOfGlints = glints.size();
-	int totalDistance = 0;
+    int amountOfGlints = glints.size();
+    int totalDistance = 0;
 
-	for (vector<Point>::iterator it = glints.begin(); it != glints.end();
-			++it) {
-		totalDistance += calcPointDistance(&*it, &lastMeasurement);
-	}
-	distanceToLastMeasurement = (totalDistance / amountOfGlints);
+    int left = 10000;
+    int right = 0;
+
+    for (vector<Point>::iterator it = glints.begin(); it != glints.end(); ++it) {
+        
+        totalDistance += calcPointDistance(&*it, &lastMeasurement);
+        left = min(left, it->x);
+        right = max(right, it->x);
+    }
+
+    distanceToLastMeasurement = (totalDistance / amountOfGlints);
+    width = right - left;
 }
 
 /**
  * Returns the distance from the glints to the last known glint center
  */
 int const GlintCluster::averageDistanceToCenter() const {
-	return distanceToLastMeasurement;
+    return distanceToLastMeasurement;
 
 }
 
@@ -47,32 +54,36 @@ int const GlintCluster::averageDistanceToCenter() const {
  * Calculates the center of the glint cluster
  */
 cv::Point2f GlintCluster::centerPoint() {
-	int amount = glints.size();
-	int sumX = 0;
-	int sumY = 0;
-	for (vector<Point>::iterator it = glints.begin(); it != glints.end();
-			++it) {
-		sumX += it->x;
-		sumY += it->y;
-	}
+    int amount = glints.size();
+    int sumX = 0;
+    int sumY = 0;
+    for (vector<Point>::iterator it = glints.begin(); it != glints.end();
+            ++it) {
+        sumX += it->x;
+        sumY += it->y;
+    }
 
-	float x = sumX / amount;
-	float y = sumY / amount;
+    float x = sumX / amount;
+    float y = sumY / amount;
 
-	return cv::Point2f(x, y);
+    return cv::Point2f(x, y);
+}
+
+int const GlintCluster::width() const {
+    return width;
 }
 
 /**
  * Returns all glint belonging to this cluster
  */
 std::vector<cv::Point> const& GlintCluster::glintsInCluster() const {
-	return glints;
+    return glints;
 }
 
 /**
  * < Operator for using the sort algorithm
  */
 bool operator<(const GlintCluster& g1, const GlintCluster& g2) {
-	return (g1.averageDistanceToCenter() < g2.averageDistanceToCenter());
+    return (g1.averageDistanceToCenter() < g2.averageDistanceToCenter());
 }
 

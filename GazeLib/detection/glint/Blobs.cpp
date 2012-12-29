@@ -35,21 +35,6 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
 }
 
 /**
- * Removes all blobs larger or smaller than a predefined size
- */
-void Blobs::removeInvalidSize() {
-
-    std::vector<Blob>::iterator iter;
-    for (iter = blobs.begin(); iter != blobs.end();) {
-        if (iter->size < GazeConfig::GLINT_MIN_PIXEL
-                || iter->size > GazeConfig::GLINT_MAX_PIXEL)
-            iter = blobs.erase(iter);
-        else
-            ++iter;
-    }
-}
-
-/**
  * Removes all blobs which don't have a roundish form
  */
 void Blobs::removeInvalidShape() {

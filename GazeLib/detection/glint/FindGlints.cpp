@@ -13,6 +13,9 @@
 #include "../../utils/gui.hpp"
 #include "../../config/GazeConfig.hpp"
 
+// TODO: remove, its only for debugging
+#include "opencv2/highgui/highgui.hpp"
+
 using namespace std;
 using namespace cv;
 
@@ -62,17 +65,11 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 #endif
 
     LOG_D("Countours size: " << contours.size());
-
     Blobs blobs = Blobs(contours);
     LOG_D("Blobs size after thresholding: " << blobs.blobSize());
-    //TODO: remove the blob sizes in the configuration
-    //blobs.removeInvalidSize();
-    LOG_D("Blobs size after removing invalid size: " << blobs.blobSize());
     blobs.removeInvalidShape();
-    LOG_D("Blobs size after removing invalid size: " << blobs.blobSize());
-
+    LOG_D("Blobs size after removing invalid shape: " << blobs.blobSize());
     blobs.blobCenters(glintCenters);
-
     LOG_D("Blobs size: " << glintCenters);
 
 #if __DEBUG_FINDGLINTS == 1
@@ -93,6 +90,11 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
     } else if (clusters.size() > 1) {
         sort(clusters.begin(), clusters.end());
     }
+
+
+    // Adjust glint distance with current measurement
+    // To make sure that the diagonals are also considered, the width of the cluster are multiplied with SQR(2)
+    GazeConfig::GLINT_DISTANCE = 0.8 * GazeConfig::GLINT_DISTANCE + 0.2 * (clusters.at(0).width() * 1.4);
 
     glintCenters = clusters.at(0).glintsInCluster();
     lastMeasurement = clusters.at(0).centerPoint();
@@ -118,8 +120,10 @@ cv::Mat FindGlints::distanceMatrix(vector<cv::Point>& glintCenter) {
         for (int j = i; j < n; j++) {
             //for (int j = 0; j < n; j++) {
             int dist = calcPointDistance(&glintCenter.at(i), &glintCenter.at(j));
-            if (dist >= GazeConfig::GLINT_MIN_DISTANCE
-                    && dist <= GazeConfig::GLINT_MAX_DISTANCE) {
+            // Consider only nighbours within distance
+            // There is a tolerance added as well
+            if (dist >= (GazeConfig::GLINT_DISTANCE - GazeConfig::GLINT_DISTANCE_TOLERANCE)
+                    && dist <= (GazeConfig::GLINT_DISTANCE + GazeConfig::GLINT_DISTANCE_TOLERANCE)) {
                 distanceMat.at<char>(i, j) = 1;
             }
         }
@@ -234,8 +238,8 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
     }
 
     LOG_D("isRect: " << hasRectangularAlignment);
-    
-    if (hasRectangularAlignment) {        
+
+    if (hasRectangularAlignment) {
         glints = quadruple;
     }
 
