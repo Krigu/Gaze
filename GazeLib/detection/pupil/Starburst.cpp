@@ -142,7 +142,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 					unsigned char current = profile.at(i);
 					unsigned char last = profile.at(i - 5);
 
-					if (current > (last + 40)) {
+					if (current > (last + 30)) {
                         /*
                          * skip this edge and use the next one
                          * (it's probably the outer edge of the iris)
