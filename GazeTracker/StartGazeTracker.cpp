@@ -24,7 +24,7 @@ using namespace std;
 
 int main() {
 
-    string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/k2.webm");
+    string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye.mov");
 
 
 
@@ -33,9 +33,6 @@ int main() {
     VideoSource videoSource(path);
 
     //LiveSource liveSource;
-
-    GazeConfig::GLINT_MIN_PIXEL = 1;
-    GazeConfig::GLINT_MIN_DISTANCE = 5;
 
     TrackerCallback* callback;
     callback = new TCallback();
