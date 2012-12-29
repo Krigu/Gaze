@@ -132,7 +132,7 @@ bool isRectangle(vector<cv::Point> points, int tolerance) {
     float ratio = enclosingArea / area;
 
     // TODO: Add const for ratio
-    bool result = ratio < 1.5 && ((r.angle + 90) + tolerance) < (2 * tolerance);
+    bool result = ratio < 1.5 && (fmod(fabs(r.angle)+ tolerance, 90) <= 2 * tolerance);
     LOG_D("Area: " << area << " Enclosing area: " << enclosingArea 
             << " Rotation: " << r.angle << " Ratio: " << ratio << " Result:" << result);
 
