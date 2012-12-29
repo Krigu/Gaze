@@ -24,7 +24,7 @@ using namespace std;
 
 int main() {
 
-    string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye.mov");
+    string path = GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye_720p.mov");
 
 
 
