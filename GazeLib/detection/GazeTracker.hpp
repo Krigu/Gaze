@@ -64,7 +64,7 @@ private:
     Rect frameRegion;     
 
     void getNextFrame(Mat & frame);
-    void findEyeRegion(Mat & frame, cv::Rect& frameRegion, cv::Point2f& frameCenter, bool calibrationMode = false);
+    void findEyeRegion(Mat & frame, cv::Point2f& frameCenter, bool calibrationMode = false);
 
     void smoothSignal(Point2f &measured, Point2f &smoothed, Point2f data[], unsigned int framenumber);
     MeasureResult measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter);

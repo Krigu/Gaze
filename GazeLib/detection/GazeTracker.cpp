@@ -35,20 +35,19 @@ void GazeTracker::initializeCalibration() {
     Mat frame;
     // Copy for displaying image
     Mat fullFrame;
-    Rect eyeRegion;
     Point2f glintCenter;
     vector<cv::Point> glints;
 
     do {
         // Endless search for eye region
-        findEyeRegion(frame, eyeRegion, glintCenter, true);
-        
+        findEyeRegion(frame, glintCenter, true);
+
     } while (!glintFinder.findGlints(frame, glints, glintCenter));
 
     // TODO more output
 }
 
-void GazeTracker::findEyeRegion(Mat & frame, Rect& frameRegion,
+void GazeTracker::findEyeRegion(Mat & frame,
         Point2f& frameCenter, bool calibrationMode) {
 
     bool foundEye = false;
@@ -88,7 +87,9 @@ void GazeTracker::adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion) 
     x = (x > 0) ? x : 0;
     y = (y > 0) ? y : 0;
 
-    frameRegion = Rect(x, y, width, height);
+    frameRegion.x = x;
+    frameRegion.y = y;
+
 }
 
 GazeTracker::~GazeTracker() {
@@ -102,20 +103,20 @@ void GazeTracker::track(unsigned int duration) {
     Point2f gazeVector;
 
     double ticks = 0;
-    double maxTicks=0;
-    if(duration>0)
+    double maxTicks = 0;
+    if (duration > 0)
         maxTicks = duration * getTickFrequency();
     else
         maxTicks = std::numeric_limits<double>::max();
 
     // Find eye 
     getNextFrame(currentFrame);
-    findEyeRegion(currentFrame, frameRegion, glintCenter);
+    findEyeRegion(currentFrame, glintCenter);
 
     int noGlints = 0;
 
     double startTick = getTickCount();
-    
+
     // main loop
     do {
         // Get next frame
@@ -127,17 +128,19 @@ void GazeTracker::track(unsigned int duration) {
         imshow("Frame from source", f1);
 
 #endif     
-        
+
+        // TODO: extract to method
         if ((frameRegion.x + frameRegion.width) > currentFrame.cols)
             frameRegion.x = currentFrame.cols - frameRegion.width;
-        
+
         if ((frameRegion.y + frameRegion.height) > currentFrame.rows)
-            frameRegion.y = currentFrame.rows - frameRegion.height;        
-        
+            frameRegion.y = currentFrame.rows - frameRegion.height;
 
         currentFrame = currentFrame(frameRegion);
 
         MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
+        
+        LOG_D("Measure result: " << result);
 
         Point2f smoothed_gaze_vec;
         switch (result) {
@@ -156,7 +159,7 @@ void GazeTracker::track(unsigned int duration) {
                 if (noGlints > 5) {
                     LOG_W("no glints found. need to reinitialize");
                     getNextFrame(currentFrame);
-                    findEyeRegion(currentFrame, frameRegion, glintCenter);
+                    findEyeRegion(currentFrame, glintCenter);
 
                     noGlints = 0;
                     framenumber = 0; // restart the smoothing
@@ -174,14 +177,6 @@ void GazeTracker::track(unsigned int duration) {
 
         ticks = getTickCount() - startTick;
         
-#if __DEBUG_STEP_BY_STEP == 1    
-        int keycode = waitKey(0);
-#else
-        //int keycode = waitKey(50);
-#endif        
-        /*if (keycode == 32) // space
-            while (waitKey(100) != 32)*/
-                ;
     } while (ticks < maxTicks);
 }
 
@@ -202,11 +197,10 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
     } else {
         return FINDGLINT_FAILED;
     }
-
+    // TODO: necessary?
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);
-
 
     // now calculate the gaze vector
     gazeVector.x = glintCenter.x - pupilCenter.x;
@@ -237,38 +231,38 @@ void GazeTracker::smoothSignal(Point2f &measured, Point2f &smoothed, Point2f dat
 
 CalibrationData GazeTracker::measurePoint(Point2f pointOnScreen,
         unsigned int duration) {
-/*
-    Mat currentFrame;
-    Point2f glintCenter;
-
-    getNextFrame(currentFrame);
-    findEyeRegion(currentFrame, frameRegion, glintCenter);
-
-    vector<Point2f> measurements;
-    double ticks = 0;
-    double maxTicks = duration * getTickFrequency();
-
-    double startTick = getTickCount();
-
-    while (ticks < maxTicks) {
-
-        Point2f gazeVector;
+    /*
+        Mat currentFrame;
+        Point2f glintCenter;
 
         getNextFrame(currentFrame);
-        currentFrame = currentFrame(frameRegion);
-        MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
+        findEyeRegion(currentFrame, frameRegion, glintCenter);
 
-        // notify our callback about the processed frames...
-        if (this->tracker_callback != NULL)
-            tracker_callback->imageProcessed(currentFrame, result, gazeVector);
+        vector<Point2f> measurements;
+        double ticks = 0;
+        double maxTicks = duration * getTickFrequency();
 
-        if (result == MEASURE_OK)
-            measurements.push_back(gazeVector);
+        double startTick = getTickCount();
 
-        ticks = getTickCount() - startTick;
-    }
+        while (ticks < maxTicks) {
 
-    CalibrationData data(pointOnScreen, measurements);
-    return data;*/
-    
+            Point2f gazeVector;
+
+            getNextFrame(currentFrame);
+            currentFrame = currentFrame(frameRegion);
+            MeasureResult result = measureFrame(currentFrame, gazeVector, glintCenter);
+
+            // notify our callback about the processed frames...
+            if (this->tracker_callback != NULL)
+                tracker_callback->imageProcessed(currentFrame, result, gazeVector);
+
+            if (result == MEASURE_OK)
+                measurements.push_back(gazeVector);
+
+            ticks = getTickCount() - startTick;
+        }
+
+        CalibrationData data(pointOnScreen, measurements);
+        return data;*/
+
 }
