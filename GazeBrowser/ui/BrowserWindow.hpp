@@ -4,6 +4,8 @@
 #include <QSettings>
 
 #include "CVWidget.hpp"
+#include "BookmarksWindow.hpp"
+#include "SettingsWindow.hpp"
 
 #include "tracking/CalibrationThread.hpp"
 #include "video/ImageSource.hpp"
@@ -30,10 +32,9 @@ protected slots:
     void highlightAllLinks();
     void scrollUp();
     void scrollDown();
-    void rotateImages(bool invert);
     void back();
     void forward();
-    void toggle_eye_widget();
+    void show_eye_widget();
     void start_calibration();
 
     void quit_gazebrowser();
@@ -53,12 +54,13 @@ private:
     QString jQuery;
     QWebView *view;
     CVWidget *eye_widget;
+    BookmarksWindow *bookmarksWin;
     CalibrationThread *calibrator;
+    SettingsWindow *settingsWin;
     ImageSource *source;
     int progress;
     QSettings * settings;
     bool isCalibrating;
-    void exec_webaction(QWebPage::WebAction action);
     void calibrate();
     void setupMenus();
     

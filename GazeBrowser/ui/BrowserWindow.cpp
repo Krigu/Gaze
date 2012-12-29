@@ -9,8 +9,6 @@
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
-#include "SettingsWindow.hpp"
-#include "BookmarksWindow.hpp"
 
 using namespace std;
 
@@ -51,15 +49,68 @@ void BrowserWindow::init() {
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
-    eye_widget = new CVWidget(this);
-    eye_widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    eye_widget->setVisible(true);
+    eye_widget = new CVWidget;
+    eye_widget->setWindowModality(Qt::WindowModal);
+    eye_widget->setAttribute(Qt::WA_DeleteOnClose, false); //only hide the widget
+    
+    bookmarksWin = new BookmarksWindow(settings);
+    bookmarksWin->setWindowModality(Qt::WindowModal);
+    bookmarksWin->setAttribute(Qt::WA_DeleteOnClose, false);
+    
+    settingsWin = new SettingsWindow();
+    settingsWin->setWindowModality(Qt::WindowModal);
+    settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
     
     setupMenus();
     
     setCentralWidget(view);
 }
 
+void BrowserWindow::setupMenus() {
+    // Add the Slot to the quit button
+    // on mac this will be showed in the unified menu bar
+    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+    QAction *quitAction = new QAction("Quit Browser", this);
+    quitAction->setMenuRole(QAction::QuitRole);
+    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
+    fileMenu->addAction("Bookmarks", this, SLOT(bookmarks()));
+    fileMenu->addAction("Preferences", this, SLOT(preferences()));
+    fileMenu->addSeparator();
+    fileMenu->addAction(quitAction);
+
+
+    QMenu *navMenu = menuBar()->addMenu(tr("&Navigation"));
+    navMenu->addAction("Back", this, SLOT(back()));
+    navMenu->addAction("Forward", this, SLOT(forward()));
+    navMenu->addSeparator();
+    navMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
+    navMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
+    navMenu->addSeparator();
+    navMenu->addAction("Go to page", this, SLOT(goToPage()));
+    navMenu->addAction("Show Bookmarks", this, SLOT(showBookmarkPage()));
+
+    QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
+    // Zoom
+    QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
+    zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
+    zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
+
+    QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
+    gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
+    gazeMenu->addSeparator();
+    gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
+    gazeMenu->addSeparator();
+    gazeMenu->addAction("Show the Eye Widget", this, SLOT(show_eye_widget()));
+
+}
+
+/*
+ * Methods handling the Website-Loading:
+ *  - adjustTitle()
+ *  - setProgress()
+ *  - finishLoading()
+ *  - goToPage()
+ */
 void BrowserWindow::adjustTitle() {
     if (progress <= 0 || progress >= 100)
         setWindowTitle(view->title());
@@ -103,6 +154,34 @@ void BrowserWindow::finishLoading(bool) {
         this->calibrate();
 }
 
+void BrowserWindow::goToPage() {
+    // TODO: optimize and add a better layout. Maybe create window to make QLineEdit largerF
+    bool ok;
+    QString text = QInputDialog::getText(this,
+            tr("Go to page"),
+            tr("URL:"),
+            QLineEdit::Normal,
+            "http://www.", &ok);
+    if (ok && !text.isEmpty()) {
+        // Check prefix
+        if (!(text.startsWith("http://", Qt::CaseInsensitive) || text.startsWith("https://", Qt::CaseInsensitive))) {
+            text = "http://" + text;
+        }
+
+        view->load(QUrl(text));
+    }
+}
+
+/*
+ * Methods for the "Gaze Actions"
+ *  - highlightAllLinks()
+ *  - scrollUp()
+ *  - scrollDown()
+ *  - forward()
+ *  - back()
+ *  - zoomIn() and zoomOut()
+ */
+
 void BrowserWindow::highlightAllLinks() {
     QString code = "$('a').each( function () { $(this).css('background-color', 'yellow') } )";
     view->page()->mainFrame()->evaluateJavaScript(code);
@@ -118,15 +197,6 @@ void BrowserWindow::scrollDown() {
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void BrowserWindow::rotateImages(bool invert) {
-    QString code;
-    if (invert)
-        code = "$('img').each( function () { $(this).css('-webkit-transition', '-webkit-transform 2s'); $(this).css('-webkit-transform', 'rotate(180deg)') } )";
-    else
-        code = "$('img').each( function () { $(this).css('-webkit-transition', '-webkit-transform 2s'); $(this).css('-webkit-transform', 'rotate(0deg)') } )";
-    view->page()->mainFrame()->evaluateJavaScript(code);
-}
-
 void BrowserWindow::forward() {
     view->forward();
 }
@@ -135,20 +205,25 @@ void BrowserWindow::back() {
     view->back();
 }
 
-void BrowserWindow::exec_webaction(QWebPage::WebAction action) {
-    view->pageAction(action);
+void BrowserWindow::zoomIn() {
+    qreal zoomFactor = view->zoomFactor();
+    zoomFactor++;
+    view->setZoomFactor(zoomFactor);
 }
 
-void BrowserWindow::toggle_eye_widget() {
-    eye_widget->setGeometry(0, this->height() - 90, 120, 90);
-    eye_widget->setVisible(!eye_widget->isVisible());
+void BrowserWindow::zoomOut() {
+    qreal zoomFactor = view->zoomFactor();
+    zoomFactor--;
+    view->setZoomFactor(zoomFactor);
+
 }
 
-void BrowserWindow::quit_gazebrowser() {
-    // todo valid?
-    delete settings;
-    QApplication::exit(0);
-}
+/*
+ * Gaze Methods:
+ *  - start_calibration() - Loads the calibration screen
+ *  - calibrate() - starts the calibrationThread
+ * 
+ */
 
 void BrowserWindow::start_calibration() {
     isCalibrating = true;
@@ -172,59 +247,20 @@ void BrowserWindow::calibrate() {
     calibrator->start();
 }
 
-void BrowserWindow::zoomIn() {
-    qreal zoomFactor = view->zoomFactor();
-    zoomFactor++;
-    view->setZoomFactor(zoomFactor);
-}
-
-void BrowserWindow::zoomOut() {
-    qreal zoomFactor = view->zoomFactor();
-    zoomFactor--;
-    view->setZoomFactor(zoomFactor);
-
-}
-
 void BrowserWindow::execJsCommand(QString command) {
     view->page()->mainFrame()->evaluateJavaScript(command);
 }
 
-void BrowserWindow::setupMenus() {
-    // Add the Slot to the quit button
-    // on mac this will be showed in the unified menu bar
-    QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    QAction *quitAction = new QAction("Quit Browser", this);
-    quitAction->setMenuRole(QAction::QuitRole);
-    connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
-    fileMenu->addAction("Bookmarks", this, SLOT(bookmarks()));
-    fileMenu->addAction("Preferences", this, SLOT(preferences()));
-    fileMenu->addSeparator();
-    fileMenu->addAction(quitAction);
+/*
+ * Some UI Methods 
+ * 
+ */
 
-
-    QMenu *navMenu = menuBar()->addMenu(tr("&Navigation"));
-    navMenu->addAction("Back", this, SLOT(back()));
-    navMenu->addAction("Forward", this, SLOT(forward()));
-    navMenu->addSeparator();
-    navMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
-    navMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
-    navMenu->addSeparator();
-    navMenu->addAction("Go to page", this, SLOT(goToPage()));
-    navMenu->addAction("Show Bookmarks", this, SLOT(showBookmarkPage()));
-
-    QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
-    // Zoom
-    QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
-    zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
-    zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
-
-    QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
-    gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
-    gazeMenu->addSeparator();
-    gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
-    gazeMenu->addSeparator();
-    gazeMenu->addAction("Enable/Disable Eye Widget", this, SLOT(toggle_eye_widget()));
-
+void BrowserWindow::quit_gazebrowser() {
+    // todo valid?
+    delete settings;
+    
+    QApplication::exit(0);
 }
 
 void BrowserWindow::alertMessage(QString message) {
@@ -233,16 +269,10 @@ void BrowserWindow::alertMessage(QString message) {
 }
 
 void BrowserWindow::preferences() {
-    //TODO huge memery leak here
-    SettingsWindow *settings = new SettingsWindow();
-    settings->setWindowModality(Qt::WindowModal);
-    settings->show();
+    settingsWin->show();
 }
 
 void BrowserWindow::bookmarks() {
-    //TODO huge memery leak here
-    BookmarksWindow *bookmarksWin = new BookmarksWindow(settings);
-    bookmarksWin->setWindowModality(Qt::WindowModal);
     bookmarksWin->resize(500, 300);
     bookmarksWin->show();
 }
@@ -259,20 +289,6 @@ void BrowserWindow::showBookmarkPage() {
     file.close();
 }
 
-void BrowserWindow::goToPage() {
-    // TODO: optimize and add a better layout. Maybe create window to make QLineEdit largerF
-    bool ok;
-    QString text = QInputDialog::getText(this,
-            tr("Go to page"),
-            tr("URL:"),
-            QLineEdit::Normal,
-            "http://www.", &ok);
-    if (ok && !text.isEmpty()) {
-        // Check prefix
-        if (!(text.startsWith("http://", Qt::CaseInsensitive) || text.startsWith("https://", Qt::CaseInsensitive))) {
-            text = "http://" + text;
-        }
-
-        view->load(QUrl(text));
-    }
+void BrowserWindow::show_eye_widget() {
+    eye_widget->show();
 }

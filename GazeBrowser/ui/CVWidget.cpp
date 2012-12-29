@@ -8,7 +8,7 @@
 #endif
 
 
-CVWidget::CVWidget(QWidget* parent) : QGLWidget(QGLFormat(QGL::SampleBuffers), parent) {
+CVWidget::CVWidget(QWidget* parent) : QGLWidget(QGLFormat(QGL::SampleBuffers)) {
     setMinimumSize(90,90);
     this->display_mode = 0;
 }
