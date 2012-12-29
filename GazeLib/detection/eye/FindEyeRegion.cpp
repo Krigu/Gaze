@@ -12,18 +12,25 @@
 using namespace std;
 using namespace cv;
 
-// Compares the size of two rects
-
-bool compareRect(Rect r1, Rect r2) {
-    return ((r1.width * r1.height) < (r2.width * r2.height));
+/**
+ * Adjusts the width and takes only the left side
+ * 
+ * @param r2 Eyeregion
+ */
+void takeLeftEye(Rect* r2) {
+    r2->width = (r2->width / 2);
 }
 
-Rect* takeLeftEye(Rect* r1, Rect* r2) {
-    return (r1->x < r2->x) ? r1 : r2;
-}
-
-Rect* takeRightEye(Rect* r1, Rect* r2) {
-    return (r1->x > r2->x) ? r1 : r2;
+/**
+ * Adjusts the widht and the x-coordinate and takes only 
+ * the right part of the provided rect
+ * 
+ * @param r2 Eyeregion
+ */
+void takeRightEye(Rect* r2) {
+    r2->x += (r2->width / 2);
+    r2->width = (r2->width / 2);
+    //  return (r1->x > r2->x) ? r1 : r2;
 }
 
 FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
@@ -36,24 +43,24 @@ FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
 
     if (!eye_classifier.load(
             GazeConfig::inHomeDirectory(
-            "/Dropbox/gaze/haar/haar_left_eye.xml"))) {
+            "/Dropbox/gaze/haar/haarcascade_eye.xml"))) {
         LOG_W("ERROR: Could not load left eyes classifier cascade");
     }
 
-    // Init compare functions
-    rightEyeCompareFunc = &takeRightEye;
-    leftEyeCompareFunc = &takeLeftEye;
+    // Init adjust functions
+    rightEyeRegionClipper = &takeRightEye;
+    leftEyeRegionClipper = &takeLeftEye;
 }
 
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
-        eyeCompareFunction& compareFunc) {
+        eyeRegionAdjustFunction& compareFunc) {
     vector<Rect> faces;
     eye_region_classifier.detectMultiScale(image, faces, 1.1, 1,
             0 | CV_HAAR_SCALE_IMAGE,
             Size(GazeConfig::HAAR_EYEREGION_MIN_WIDTH,
             GazeConfig::HAAR_EYEREGION_MIN_HEIGHT));
 
-    cout << "Faces detected: " << faces.size() << endl;
+    LOG_D("Faces detected: " << faces.size());
     if (faces.size() < 1) {
         LOG_W("No face detected!");
         return false;
@@ -61,60 +68,33 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 
     // TODO: What to do with multiple detections?
     Rect eyeRegion = faces.at(0);
-
+    // TODO: necessary?
     rectangle(image, faces.at(0), Scalar(255, 255, 255), 3);
 
+    // Extract right or left part of eye region
+    (*compareFunc)( &eyeRegion);
 
-    // TODO extract min and maxsize to constants
     vector<Rect> eyes;
     Mat region = image(eyeRegion);
-    eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
+    eye_classifier.detectMultiScale(region, eyes, 1.2, 2,
             0 | CV_HAAR_SCALE_IMAGE,
             Size(GazeConfig::HAAR_EYE_MIN_WIDTH,
             GazeConfig::HAAR_EYE_MIN_HEIGHT),
             Size(GazeConfig::HAAR_EYE_MAX_WIDTH,
             GazeConfig::HAAR_EYE_MAX_HEIGHT));
 
-    cout << "Eyes detected before filter: " << eyes.size() << endl;
-    
+    LOG_D("Eyes detected before filter: " << eyes.size());
     // removes all rects with no glints in it
     removeInvalidRects(region, eyes);
-    
-    cout << "Eyes detected after filter: " << eyes.size() << endl;
-    
+    LOG_D("Eyes detected after filter: " << eyes.size());
+
     // No eye detected
     if (eyes.empty()) {
         return false;
-    }        // One eye detected
-    else if (eyes.size() == 1) {
+    }// One eye detected
+    // TODO: more than one result
+    else if (eyes.size() > 0) {
         eyeRect = eyes.at(0);
-    }// Multiple eyes. Filter false positives out
-        // Take one of the two most similar rects
-    else {
-        sort(eyes.begin(), eyes.end(), compareRect);
-
-        // Take a high value so minDistance will be overriden with the first iteration
-        int minDistance = 100000;
-        Rect* r1 = NULL;
-        Rect* r2 = NULL;
-
-        for (std::vector<int>::size_type i = 0; i != (eyes.size() - 1); i++) {
-
-            int distance = (eyes[i + 1].width * eyes[i + 1].height)
-                    - (eyes[i].width * eyes[i].height);
-
-            if (distance < minDistance) {
-                r1 = &eyes[i];
-                r2 = &eyes[i + 1];
-                minDistance = distance;
-            }
-
-            rectangle(image, eyes.at(i), Scalar(255, 255, 255), 3);
-            rectangle(image, eyes.at(i + 1), Scalar(255, 255, 255), 3);
-        }
-        // TODO Check if r1, r2 is not null
-        // Take left rect
-        eyeRect = *compareFunc(r1, r2);
     }
 
     // Add offset
@@ -124,8 +104,13 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     return true;
 }
 
-// Checks if a region has glints in it
-
+/**
+ * Checks if a region has glints in it
+ * 
+ * @param image
+ * @param eyeRect
+ * @return 
+ */
 bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     vector<cv::Point> glints;
     Point2f glintCenter;
@@ -133,8 +118,13 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     return findGlints.findGlints(img, glints, glintCenter);
 }
 
-// Removes all eye regions with no glints in it
-
+/**
+ * Removes all eye regions with no glints in it
+ * 
+ * @param image
+ * @param regions
+ * @return 
+ */
 bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     std::vector<Rect>::iterator iter;
 
@@ -146,14 +136,32 @@ bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     }
 }
 
+/**
+ * 
+ * @param image
+ * @param eyeRect
+ * @return 
+ */
 bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
-    return findEye(image, eyeRect, rightEyeCompareFunc);
+    return findEye(image, eyeRect, rightEyeRegionClipper);
 }
 
+/**
+ * 
+ * @param image
+ * @param eyeRect
+ * @return 
+ */
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
-    return findEye(image, eyeRect, leftEyeCompareFunc);
+    return findEye(image, eyeRect, leftEyeRegionClipper);
 }
 
+/**
+ * 
+ * @param image
+ * @param eyeRect
+ * @return 
+ */
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect) {
     if (GazeConfig::DETECT_LEFT_EYE)
         return findLeftEye(image, eyeRect);
