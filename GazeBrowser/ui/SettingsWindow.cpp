@@ -10,6 +10,7 @@
 #include "config/GazeConfig.hpp"
 #include "AutoSaveSpinbox.hpp"
 
+// TODO: Adjust titles of constants. p.E. glint angle tolerance
 SettingsWindow::SettingsWindow() {
 
     QGroupBox *generalGroup = new QGroupBox(tr("General configuration"));
@@ -66,36 +67,20 @@ SettingsWindow::SettingsWindow() {
     QGroupBox *glintGroup = new QGroupBox(tr("Glints Configuration"));
     QLabel *lGlintThreshold = new QLabel(tr("threshold for binarization"));
     QSpinBox *sGlintThreshold = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_THRESHOLD);
-    QLabel *lGlintMinDiameter = new QLabel(tr("Min blob diameter"));
-    QSpinBox *sGlintMinDiameter = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MIN_DIAMETER);
-    QLabel *lGlintMaxDiameter = new QLabel(tr("Max blob diameter"));
-    QSpinBox *sGlintMaxDiameter = setUpSpinBox(0, 1000, 1, GazeConfig::GLINT_MAX_DIAMETER);
-    QLabel *lGlintMinPixel = new QLabel(tr("Min pixels in blob"));
-    QSpinBox *sGlintMinPixel = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_MIN_PIXEL);
-    QLabel *lGlintMaxPixel = new QLabel(tr("Max pixels in blob"));
-    QSpinBox *sGlintMaxPixel = setUpSpinBox(0, 1000, 1, GazeConfig::GLINT_MAX_PIXEL);
-    QLabel *lGlintMinDistance = new QLabel(tr("Min blob distance"));
-    QSpinBox *sGlintMinDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MIN_DISTANCE);
+    QLabel *lGlintDistanceTolerance = new QLabel(tr("Distance tolerance for glints"));
+    QSpinBox *sGlintMinDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_DISTANCE_TOLERANCE);
     QLabel *lGlintMaxDistance = new QLabel(tr("Max blob distance"));
-    QSpinBox *sGlintMaxDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_MAX_DISTANCE);
+    QSpinBox *sGlintMaxDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_DISTANCE);
 
 
     QGridLayout *glintLayout = new QGridLayout;
 
     glintLayout->addWidget(lGlintThreshold, 0, 0);
     glintLayout->addWidget(sGlintThreshold, 0, 1);
-    glintLayout->addWidget(lGlintMinDiameter, 1, 0);
-    glintLayout->addWidget(sGlintMinDiameter, 1, 1);
-    glintLayout->addWidget(lGlintMaxDiameter, 2, 0);
-    glintLayout->addWidget(sGlintMaxDiameter, 2, 1);
-    glintLayout->addWidget(lGlintMinPixel, 3, 0);
-    glintLayout->addWidget(sGlintMinPixel, 3, 1);
-    glintLayout->addWidget(lGlintMaxPixel, 4, 0);
-    glintLayout->addWidget(sGlintMaxPixel, 4, 1);
-    glintLayout->addWidget(lGlintMinDistance, 5, 0);
-    glintLayout->addWidget(sGlintMinDistance, 5, 1);
-    glintLayout->addWidget(lGlintMaxDistance, 6, 0);
-    glintLayout->addWidget(sGlintMaxDistance, 6, 1);
+    glintLayout->addWidget(lGlintDistanceTolerance, 1, 0);
+    glintLayout->addWidget(sGlintMinDistance, 1, 1);
+    glintLayout->addWidget(lGlintMaxDistance, 2, 0);
+    glintLayout->addWidget(sGlintMaxDistance, 2, 1);
 
     glintGroup->setLayout(glintLayout);
 
