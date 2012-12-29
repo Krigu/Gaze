@@ -20,13 +20,17 @@ TCallback::TCallback(const TCallback& orig) {
 TCallback::~TCallback() {
 }
 
-void TCallback::imageProcessed(Mat &result){
+void TCallback::imageProcessed(Mat &result) {
     imshow("frame", result);
-    waitKey(100);
+    int keycode = waitKey(1);
+    if (keycode == 32) // space
+        while (waitKey(10) != 32);
 }
 
-void TCallback::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector){
+void TCallback::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
     imshow("frame", resultImage);
-    waitKey(100);
+    int keycode = waitKey(1);
+    if (keycode == 32) // space
+        while (waitKey(10) != 32);
 }
 

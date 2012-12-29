@@ -33,18 +33,10 @@ public:
 
     // fasch ds wichtigschte
     static int GLINT_THRESHOLD;
-
-    static int GLINT_MIN_DIAMETER;
-    static int GLINT_MAX_DIAMETER;
-
-    // TODO calculate from diameter
-    static int GLINT_MIN_PIXEL;
-    // TODO calculate from diameter
-    static int GLINT_MAX_PIXEL;
     // Min distance between two glints
-    static int GLINT_MIN_DISTANCE;
+    static int GLINT_DISTANCE_TOLERANCE;
     // Max distance between two glints
-    static int GLINT_MAX_DISTANCE;
+    static int GLINT_DISTANCE;
     // Max difference between barycentre
     static int GLINT_ANGLE_TOLERANCE;
 
@@ -86,16 +78,9 @@ public:
         // Glints Configuration
         //
 
-        GazeConfig::GLINT_THRESHOLD = 230;
-        GazeConfig::GLINT_MIN_DIAMETER = 2;
-        GazeConfig::GLINT_MAX_DIAMETER = 6;
-
-        //static const int GLINT_RADIUS = 6;
-
-        GazeConfig::GLINT_MIN_PIXEL = 25;
-        GazeConfig::GLINT_MAX_PIXEL = 160;
-        GazeConfig::GLINT_MIN_DISTANCE = 1;
-        GazeConfig::GLINT_MAX_DISTANCE = 100;
+        GazeConfig::GLINT_THRESHOLD = 240;
+        GazeConfig::GLINT_DISTANCE_TOLERANCE = 20;
+        GazeConfig::GLINT_DISTANCE = 30;
 
         // TODO: Implement in settings window
         GazeConfig::GLINT_ANGLE_TOLERANCE = 10;

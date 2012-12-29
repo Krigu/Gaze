@@ -23,12 +23,8 @@ const unsigned int GazeConfig::NUM_OF_SMOOTHING_FRAMES;
 //
 
 int GazeConfig::GLINT_THRESHOLD;
-int GazeConfig::GLINT_MIN_DIAMETER;
-int GazeConfig::GLINT_MAX_DIAMETER;
-int GazeConfig::GLINT_MIN_PIXEL;
-int GazeConfig::GLINT_MAX_PIXEL;
-int GazeConfig::GLINT_MIN_DISTANCE;
-int GazeConfig::GLINT_MAX_DISTANCE;
+int GazeConfig::GLINT_DISTANCE_TOLERANCE;
+int GazeConfig::GLINT_DISTANCE;
 int GazeConfig::GLINT_ANGLE_TOLERANCE;
 //
 // Haar configuration

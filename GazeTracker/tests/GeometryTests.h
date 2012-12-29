@@ -20,6 +20,8 @@ class GeometryTests : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(testCalcAverage);
     CPPUNIT_TEST(testCalcMedianPoint);
     CPPUNIT_TEST(testIsRectangle);
+    CPPUNIT_TEST(testIsRectangleArea);
+    
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -37,6 +39,7 @@ private:
     void testCalcAverage();
     void testCalcMedianPoint();
     void testIsRectangle();
+    void testIsRectangleArea();
 
 };
 

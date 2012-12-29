@@ -8,17 +8,17 @@
 using namespace std;
 using namespace cv;
 
-typedef Rect* (*eyeCompareFunction)(Rect*, Rect*);
+typedef void (*eyeRegionClipFunction)(Mat&, Rect*);
 
 class FindEyeRegion {
 private:
     FindGlints& findGlints;
-    
-    eyeCompareFunction leftEyeCompareFunc;
-    eyeCompareFunction rightEyeCompareFunc;
+
+    eyeRegionClipFunction leftEyeRegionClipper;
+    eyeRegionClipFunction rightEyeRegionClipper;
     cv::CascadeClassifier eye_region_classifier;
     cv::CascadeClassifier eye_classifier;
-    bool findEye(Mat &image, Rect& eyeRect, eyeCompareFunction& compareFunc);
+    bool findEye(Mat &image, Rect& eyeRect, eyeRegionClipFunction& compareFunc);
     bool hasGlintsInRect(Mat &image, Rect& eyeRect);
     bool removeInvalidRects(Mat& image, vector<Rect>& regions);
 public:

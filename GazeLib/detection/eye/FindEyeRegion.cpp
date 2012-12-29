@@ -13,17 +13,19 @@ using namespace std;
 using namespace cv;
 
 // Compares the size of two rects
-
 bool compareRect(Rect r1, Rect r2) {
     return ((r1.width * r1.height) < (r2.width * r2.height));
 }
 
-Rect* takeLeftEye(Rect* r1, Rect* r2) {
-    return (r1->x < r2->x) ? r1 : r2;
+void takeLeftEye(Mat& r1, Rect* r2) {
+    r2->width = (r2->width / 2);
+//    return (r1->x < r2->x) ? r1 : r2;
 }
 
-Rect* takeRightEye(Rect* r1, Rect* r2) {
-    return (r1->x > r2->x) ? r1 : r2;
+void takeRightEye(Mat& r1, Rect* r2) {
+    r2->x += (r2->width / 2);
+    r2->width = (r2->width / 2);
+  //  return (r1->x > r2->x) ? r1 : r2;
 }
 
 FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
@@ -36,17 +38,17 @@ FindEyeRegion::FindEyeRegion(FindGlints& findGlints) : findGlints(findGlints) {
 
     if (!eye_classifier.load(
             GazeConfig::inHomeDirectory(
-            "/Dropbox/gaze/haar/haar_left_eye.xml"))) {
+            "/Dropbox/gaze/haar/haarcascade_eye.xml"))) {
         LOG_W("ERROR: Could not load left eyes classifier cascade");
     }
 
     // Init compare functions
-    rightEyeCompareFunc = &takeRightEye;
-    leftEyeCompareFunc = &takeLeftEye;
+    rightEyeRegionClipper = &takeRightEye;
+    leftEyeRegionClipper = &takeLeftEye;
 }
 
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
-        eyeCompareFunction& compareFunc) {
+        eyeRegionClipFunction& compareFunc) {
     vector<Rect> faces;
     eye_region_classifier.detectMultiScale(image, faces, 1.1, 1,
             0 | CV_HAAR_SCALE_IMAGE,
@@ -63,12 +65,14 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     Rect eyeRegion = faces.at(0);
 
     rectangle(image, faces.at(0), Scalar(255, 255, 255), 3);
-
+    
+    // Extract right or left part of eye region
+    (*compareFunc)(image, &eyeRegion);
 
     // TODO extract min and maxsize to constants
     vector<Rect> eyes;
     Mat region = image(eyeRegion);
-    eye_classifier.detectMultiScale(region, eyes, 1.1, 2,
+    eye_classifier.detectMultiScale(region, eyes, 1.2, 2,
             0 | CV_HAAR_SCALE_IMAGE,
             Size(GazeConfig::HAAR_EYE_MIN_WIDTH,
             GazeConfig::HAAR_EYE_MIN_HEIGHT),
@@ -86,36 +90,36 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     if (eyes.empty()) {
         return false;
     }        // One eye detected
-    else if (eyes.size() == 1) {
+    else if (eyes.size() > 0) {
         eyeRect = eyes.at(0);
     }// Multiple eyes. Filter false positives out
         // Take one of the two most similar rects
-    else {
-        sort(eyes.begin(), eyes.end(), compareRect);
-
-        // Take a high value so minDistance will be overriden with the first iteration
-        int minDistance = 100000;
-        Rect* r1 = NULL;
-        Rect* r2 = NULL;
-
-        for (std::vector<int>::size_type i = 0; i != (eyes.size() - 1); i++) {
-
-            int distance = (eyes[i + 1].width * eyes[i + 1].height)
-                    - (eyes[i].width * eyes[i].height);
-
-            if (distance < minDistance) {
-                r1 = &eyes[i];
-                r2 = &eyes[i + 1];
-                minDistance = distance;
-            }
-
-            rectangle(image, eyes.at(i), Scalar(255, 255, 255), 3);
-            rectangle(image, eyes.at(i + 1), Scalar(255, 255, 255), 3);
-        }
-        // TODO Check if r1, r2 is not null
-        // Take left rect
-        eyeRect = *compareFunc(r1, r2);
-    }
+//    else {
+//        sort(eyes.begin(), eyes.end(), compareRect);
+//
+//        // Take a high value so minDistance will be overriden with the first iteration
+//        int minDistance = 100000;
+//        Rect* r1 = NULL;
+//        Rect* r2 = NULL;
+//
+//        for (std::vector<int>::size_type i = 0; i != (eyes.size() - 1); i++) {
+//
+//            int distance = (eyes[i + 1].width * eyes[i + 1].height)
+//                    - (eyes[i].width * eyes[i].height);
+//
+//            if (distance < minDistance) {
+//                r1 = &eyes[i];
+//                r2 = &eyes[i + 1];
+//                minDistance = distance;
+//            }
+//
+//            rectangle(image, eyes.at(i), Scalar(255, 255, 255), 3);
+//            rectangle(image, eyes.at(i + 1), Scalar(255, 255, 255), 3);
+//        }
+//        // TODO Check if r1, r2 is not null
+//        // Take left rect
+//        eyeRect = *compareFunc(r1, r2);
+//    }
 
     // Add offset
     eyeRect.x += eyeRegion.x;
@@ -147,11 +151,11 @@ bool FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
 }
 
 bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
-    return findEye(image, eyeRect, rightEyeCompareFunc);
+    return findEye(image, eyeRect, rightEyeRegionClipper);
 }
 
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
-    return findEye(image, eyeRect, leftEyeCompareFunc);
+    return findEye(image, eyeRect, leftEyeRegionClipper);
 }
 
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect) {

@@ -28,11 +28,23 @@ GlintCluster::GlintCluster(std::vector<cv::Point> & glints,
 	int amountOfGlints = glints.size();
 	int totalDistance = 0;
 
+        int left = 10000;
+        int right = 0;
+        
+        cout << "Glint cluster" << glints << endl;
+        
 	for (vector<Point>::iterator it = glints.begin(); it != glints.end();
 			++it) {
 		totalDistance += calcPointDistance(&*it, &lastMeasurement);
+                cout << "Distance: " << totalDistance << endl;
+                
+                left = min(left, it->x);
+                right = max(right, it->x);
 	}
 	distanceToLastMeasurement = (totalDistance / amountOfGlints);
+        cout << "Glint distance " << left << " " << right << endl;
+        
+        size = right - left;
 }
 
 /**
@@ -60,6 +72,10 @@ cv::Point2f GlintCluster::centerPoint() {
 	float y = sumY / amount;
 
 	return cv::Point2f(x, y);
+}
+
+int const GlintCluster::width() const{
+    return size;
 }
 
 /**
