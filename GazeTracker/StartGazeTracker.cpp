@@ -32,12 +32,14 @@ int main() {
 
     VideoSource videoSource(path);
 
-    //LiveSource liveSource;
+    LiveSource liveSource;
 
     TrackerCallback* callback;
     callback = new TCallback();
+    
+    GazeConfig::DETECT_LEFT_EYE = false;
 
-    GazeTracker tracker(videoSource, callback);
+    GazeTracker tracker(liveSource, callback);
 
 
 

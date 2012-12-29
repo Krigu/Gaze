@@ -20,6 +20,14 @@
                    displayName="Test Files"
                    projectFiles="false"
                    kind="TEST_LOGICAL_FOLDER">
+      <logicalFolder name="f3"
+                     displayName="CalibrationTest"
+                     projectFiles="true"
+                     kind="TEST">
+        <itemPath>tests/CalibrationTest.cpp</itemPath>
+        <itemPath>tests/CalibrationTest.h</itemPath>
+        <itemPath>tests/CalibrationTestRunner.cpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="f2"
                      displayName="GazeTestFolder"
                      projectFiles="true"
@@ -115,6 +123,24 @@
         </ccTool>
         <linkerTool>
           <output>${TESTDIR}/TestFiles/f2</output>
+        </linkerTool>
+      </folder>
+      <folder path="TestFiles/f3">
+        <cTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </cTool>
+        <ccTool>
+          <incDir>
+            <pElem>.</pElem>
+          </incDir>
+        </ccTool>
+        <linkerTool>
+          <output>${TESTDIR}/TestFiles/f3</output>
+          <linkerLibItems>
+            <linkerLibStdlibItem>CppUnit</linkerLibStdlibItem>
+          </linkerLibItems>
         </linkerTool>
       </folder>
     </conf>
