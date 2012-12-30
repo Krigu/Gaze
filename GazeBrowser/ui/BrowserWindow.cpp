@@ -49,6 +49,10 @@ void BrowserWindow::init() {
     connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
+    // add our own webpage to control the user-agent
+    webpage = new GazeWebPage;
+    view->setPage(webpage);
+    
     eye_widget = new CVWidget;
     eye_widget->setWindowModality(Qt::WindowModal);
     eye_widget->setAttribute(Qt::WA_DeleteOnClose, false); //only hide the widget
@@ -153,7 +157,7 @@ void BrowserWindow::finishLoading(bool) {
     // TODO: cleanup code and don't check for every site
     if (view->page()->mainFrame()->url().toString() == "qrc:/" && !isCalibrating) {
         QString html = "$('#%1').append("               
-                "\"<a href='%2'><img src='http://images.shrinktheweb.com/xino.php?stwembed=1&stwaccesskeyid=key&stwsize=lg&stwurl=%3' alt=''></a>"
+                "\"<a href='%2'><img src='http://gaze.frickler.ch/screenshot/?screenshot_url=%3' alt=''></a>"
                 ""
                 "<br>"
                 "<a href='%4'>%5</a>\""
