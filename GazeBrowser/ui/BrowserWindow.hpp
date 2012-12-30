@@ -24,6 +24,7 @@ public slots:
 
 protected slots:
 
+    void showEvent(QShowEvent *event);
     void adjustTitle();
     void setProgress(int p);
     void finishLoading(bool);
@@ -63,5 +64,8 @@ private:
     bool isCalibrating;
     void calibrate();
     void setupMenus();
+    
+ private slots:
+     void setUpCamera();
     
 };

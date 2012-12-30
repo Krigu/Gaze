@@ -63,6 +63,9 @@ void BrowserWindow::init() {
     
     setupMenus();
     
+    // register the OpenCV datatypes for a later emitting
+    qRegisterMetaType< cv::Mat > ("cv::Mat");
+    
     setCentralWidget(view);
 }
 
@@ -102,6 +105,25 @@ void BrowserWindow::setupMenus() {
     gazeMenu->addSeparator();
     gazeMenu->addAction("Show the Eye Widget", this, SLOT(show_eye_widget()));
 
+}
+
+/**
+ * this method is called, as soon as the window is displayed. here
+ * we trigger the setUpCamera(). if we do this in the constructor
+ * we would block the whole UI until openCV has opened the camera.
+ */
+void BrowserWindow::showEvent(QShowEvent *event){
+    Q_UNUSED(event);
+    QTimer::singleShot(1000, this, SLOT(setUpCamera()));
+}
+
+
+/**
+ * opens a connection to the webcam .openCV has problems, if VideoCapture 
+ * is created outside the main thread...
+ */
+void BrowserWindow::setUpCamera(){
+    source = new LiveSource;
 }
 
 /*
@@ -235,12 +257,6 @@ void BrowserWindow::start_calibration() {
 }
 
 void BrowserWindow::calibrate() {
-    if (!source)
-        source = new LiveSource;
-//    if(!source)
-//        source = new VideoSource(GazeConfig::inHomeDirectory("Dropbox/gaze/videos/choose_the_correct_eye_720p.mov"));
-
-    qRegisterMetaType< cv::Mat > ("cv::Mat");
     calibrator = new CalibrationThread(view->width(), view->height(), source);
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
