@@ -27,6 +27,10 @@ SettingsWindow::SettingsWindow() {
     rLeftEye->setChecked(GazeConfig::DETECT_LEFT_EYE);
     rRightEye->setChecked(!GazeConfig::DETECT_LEFT_EYE);
 
+    // register handlers
+    connect(rLeftEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
+    connect(rRightEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
+    
     QVBoxLayout *eyeBox = new QVBoxLayout;
     eyeBox->addWidget(eyeLabel);
     eyeBox->addWidget(rLeftEye);
@@ -40,12 +44,12 @@ SettingsWindow::SettingsWindow() {
     generalLayout->addLayout(eyeBox, 0, 0);
 
     QLabel *detectionLabel = new QLabel(tr("Detect"));
-    rPupil = new QRadioButton(tr("Iris"));
-    //QObject::connect(radio1,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
+    rPupil = new QRadioButton(tr("Pupil"));
+    connect(rPupil, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
     rPupil->setAutoExclusive(false);
-    rIris = new QRadioButton(tr("Pupil"));
-    //QObject::connect(radio2,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
-
+    rIris = new QRadioButton(tr("Iris"));
+    connect(rIris, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
+    
     rPupil->setChecked(GazeConfig::DETECT_PUPIL);
     rPupil->setAutoExclusive(true);
     rIris->setChecked(!GazeConfig::DETECT_PUPIL);
@@ -136,13 +140,6 @@ SettingsWindow::SettingsWindow() {
     layout->addWidget(haarGroup);
     setLayout(layout);
 
-    // register handlers
-    connect(rLeftEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
-    connect(rRightEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
-
-    connect(rIris, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
-    connect(rPupil, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
-
 }
 
 QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default_value) {
@@ -154,18 +151,18 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
     return spinBox;
 }
 
-void SettingsWindow::onEyeSelectionToggled(bool checked) {
+void SettingsWindow::onEyeSelectionToggled() {
     if (rLeftEye->isChecked())
         GazeConfig::DETECT_LEFT_EYE = true;
     else
         GazeConfig::DETECT_LEFT_EYE = false;
 }
 
-void SettingsWindow::onStarburstSelectionToggled(bool checked) {
+void SettingsWindow::onStarburstSelectionToggled() {
     if (rIris->isChecked())
-        GazeConfig::DETECT_PUPIL = true;
+        GazeConfig::DETECT_PUPIL = false;
     else
-        GazeConfig::DETECT_PUPIL = false;    
+        GazeConfig::DETECT_PUPIL = true;    
 }
 
 SettingsWindow::~SettingsWindow() {

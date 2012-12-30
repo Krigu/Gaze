@@ -22,8 +22,8 @@ public:
     SettingsWindow();
     virtual ~SettingsWindow();
 protected slots:
-    void onEyeSelectionToggled(bool checked);
-    void onStarburstSelectionToggled(bool checked);    
+    void onEyeSelectionToggled();
+    void onStarburstSelectionToggled();    
 private:
 
     QRadioButton *rLeftEye;
