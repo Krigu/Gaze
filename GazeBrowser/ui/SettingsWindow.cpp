@@ -16,21 +16,15 @@ SettingsWindow::SettingsWindow() {
     QGroupBox *generalGroup = new QGroupBox(tr("General configuration"));
     QGridLayout *generalLayout = new QGridLayout;
 
-
-
     QLabel *eyeLabel = new QLabel(tr("Eye"));
     rLeftEye = new QRadioButton(tr("Left eye"));
-    //QObject::connect(radio1,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
+    connect(rLeftEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
     rLeftEye->setAutoExclusive(false);
     rRightEye = new QRadioButton(tr("Right eye"));
-    //QObject::connect(radio2,SIGNAL(clicked(bool)),this,SLOT(clickkedstate(bool)));
+    connect(rRightEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
     rLeftEye->setChecked(GazeConfig::DETECT_LEFT_EYE);
     rRightEye->setChecked(!GazeConfig::DETECT_LEFT_EYE);
 
-    // register handlers
-    connect(rLeftEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
-    connect(rRightEye, SIGNAL(toggled(bool)), this, SLOT(onEyeSelectionToggled()));
-    
     QVBoxLayout *eyeBox = new QVBoxLayout;
     eyeBox->addWidget(eyeLabel);
     eyeBox->addWidget(rLeftEye);
@@ -148,6 +142,9 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
     spinBox->setSingleStep(step);
     spinBox->setValue(default_value);
 
+    connect(spinBox, SIGNAL(valueChanged(int)),
+             spinBox, SLOT(adjustGazeValue(int)));
+    
     return spinBox;
 }
 
