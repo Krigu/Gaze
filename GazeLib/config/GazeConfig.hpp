@@ -25,7 +25,7 @@ public:
     // how many frames should we use to smooth the signal?
     static const unsigned int NUM_OF_SMOOTHING_FRAMES = 5;
 
-    static const int GLINT_RADIUS = 6;
+    static const int GLINT_RADIUS = 8;
 
     //
     // Glints Configuration

@@ -13,6 +13,7 @@ using namespace std;
 #if __DEBUG_STARBURST == 1
 #include "../../utils/gui.hpp"
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/features2d/features2d.hpp>
 #endif
 
 Starburst::Starburst() {
@@ -114,11 +115,11 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
 	Point2f start_point = Point2f(center.x, center.y);
 
+    const int LINE_LENGTH=150;
+    
 	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
 
 		points.clear();
-
-        const int LINE_LENGTH=150;
         
 		// calculate the lines in every direction
 		for (unsigned short angleNum = 0; angleNum < num_of_lines; angleNum++) {
@@ -136,28 +137,48 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
             //smooth_vector(profile);
             
 			int vectorSize = profile.size();
+            bool onEdge=false;
+            
+            //TODO performance issue here?
+            int threashold = (GazeConfig::DETECT_PUPIL) ? 30 : 15;
+            
             //short edgeNum=0;
 			if (vectorSize > 5) {
+                vector<Point2f> edgesInCurrentProfile;
 				for (int i = 5; i < vectorSize; i++) {
 					unsigned char current = profile.at(i);
 					unsigned char last = profile.at(i - 5);
 
-					if (current > (last + 30)) {
-                        /*
-                         * skip this edge and use the next one
-                         * (it's probably the outer edge of the iris)
-                         * ++edgeNum;
-                        if(edgeNum<2){
-                            i+=10;
+					if (current > (last + threashold)) {
+                        
+                        if(onEdge)
                             continue;
-                        }*/
+                        
 						float x = start_point.x + (i-2) * dx;
 						float y = start_point.y + (i-2) * dy;
 						Point2f p = Point2f(x, y);
-						points.push_back(p);
-						break;
-					}
+						edgesInCurrentProfile.push_back(p);
+                        onEdge=true;
+						//break;
+                        
+					} else {
+                        onEdge = false;
+                    }
 				}
+                
+                if(edgesInCurrentProfile.size()>0){
+                    if(GazeConfig::DETECT_PUPIL){
+                        // the pupil is the first edge
+                        points.push_back(edgesInCurrentProfile.at(0));
+                    } else {
+                        if(edgesInCurrentProfile.size()>=2)
+                            points.push_back(edgesInCurrentProfile.at(1));
+                        else
+                            points.push_back(edgesInCurrentProfile.at(0));
+                    }                    
+                }
+
+                
 			} 
 		}
 
@@ -173,9 +194,11 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			mean_x /= points.size();
 			mean_y /= points.size();
 		} else {
-			//TODO report error
+            //TODO report error?
 			LOG_D("no mean calculated!");
-			continue;
+            //mean_x = -1;
+            //mean_y = -1;
+			break;;
 		}
 
 		if ((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4) {
@@ -207,8 +230,6 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 	for (std::vector<Point2f>::iterator it = points.begin(); it != points.end();
 			++it) {
 		cross(copy, *it, 3);
-		//line(gray, start, *it, color);
-		//circle(gray, *it, 1, color);
 	}
 	imshow("starburst result", copy);
 #endif
