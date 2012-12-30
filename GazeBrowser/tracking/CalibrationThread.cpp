@@ -59,10 +59,10 @@ void CalibrationThread::calibrate(Calibration & calibration){
          }
      }
      
-     calibration.calcCoefficients();
+     calibration.calibrate(100,3);
      
      cout << "Calibrationdata:" << endl;
-     calibration.printCalibration();
+
      
 }
 

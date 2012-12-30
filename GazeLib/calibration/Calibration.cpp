@@ -6,8 +6,9 @@
  */
 
 #include <iostream>
-#include "opencv2/highgui/highgui.hpp"
+
 #include "../utils/gui.hpp"
+#include "../utils/log.hpp"
 #include "../utils/geometry.hpp"
 #include "../exception/GazeExceptions.hpp"
 #include "Calibration.hpp"
@@ -17,7 +18,7 @@ using namespace cv;
 
 CalibrationData::CalibrationData(cv::Point point,
         std::vector<cv::Point2f> & vectors) :
-actualPoint(point), distance(0) {
+actualPoint(point), distance(-1) {
 
     medianVector = calcMedianPoint(point, vectors);
     //averageVector = calcAverage(vectors);
@@ -42,20 +43,31 @@ bool operator<(const CalibrationData& d1, const CalibrationData& d2) {
     return d1.distance < d2.distance;
 }
 
-Calibration::Calibration() : rng(RNG(12345)) {
+Calibration::Calibration() {
+    // TODO: remove, only for debugging
+    coefficientsX = Mat(1, 4, CV_32F);
+    coefficientsY = Mat(1, 4, CV_32F);
 
+    coefficientsX.at<float>(0, 0) = 208.83293;
+    coefficientsX.at<float>(0, 1) = 61.582436;
+    coefficientsX.at<float>(0, 2) = 10.489847;
+    coefficientsX.at<float>(0, 3) = -0.26797113;
 
+    coefficientsY.at<float>(0, 0) = 788.78058;
+    coefficientsY.at<float>(0, 1) = -1.6516321;
+    coefficientsY.at<float>(0, 2) = -69.358757;
+    coefficientsY.at<float>(0, 3) = 0.20553038;
 }
 
 Calibration::~Calibration() {
 
 }
 
-void Calibration::calcCoefficients() {
+void Calibration::calcCoefficients(int accuracyThreshold) {
     int matSize = calibrationData.size();
 
     if (matSize == 0) {
-        throw WrongArgumentException("Cannot calculate Coeffizients with matSize=0!");
+        throw WrongArgumentException("Cannot calculate coeffizients with matSize=0!");
     }
 
     Mat measurementsX(matSize, 4, CV_32F);
@@ -90,59 +102,15 @@ void Calibration::calcCoefficients() {
 
     solve(measurementsX, calibrationPointX, coefficientsX, DECOMP_SVD);
     solve(measurementsY, calibrationPointY, coefficientsY, DECOMP_SVD);
-    
-    
+
+
 }
 
 void Calibration::addCalibrationData(CalibrationData data) {
     calibrationData.push_back(data);
 }
 
-void Calibration::printCalibration(std::vector<cv::Point2f> points) {
-
-    Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255),
-            255);
-
-
-    for (vector<cv::Point2f>::iterator it = points.begin();
-            it != points.end(); ++it) {
-
-        // calulated point
-        Point calcPoint = calculateCoordinates(*it);
-        calcPoint.x /= 2;
-        calcPoint.y /= 2;
-        cross(display, calcPoint, 5, color);
-    }
-
-    imshow("Calibration", display);
-
-}
-
-void Calibration::printCalibration() {
-
-    display = Mat::zeros(Size(720, 450), CV_8UC3);
-
-    for (vector<CalibrationData>::iterator it = calibrationData.begin();
-            it != calibrationData.end(); ++it) {
-
-        // calulated point
-        Point calcPoint = calculateCoordinates(it->getMeasuredMedianVector());
-        calcPoint.x /= 2;
-        calcPoint.y /= 2;
-        cout << "Calculated Point: " << calcPoint << endl;
-        cross(display, calcPoint, 5, Scalar(0, 0, 255));
-        Point actualPoint = it->getActualPoint();
-        actualPoint.x = actualPoint.x / 2;
-        actualPoint.y = actualPoint.y / 2;
-        cout << "Actual Point: " << actualPoint << endl;
-        cross(display, actualPoint, 5, Scalar(0, 255, 0));
-    }
-
-    imshow("Calibration", display);
-
-}
-
-cv::Point Calibration::calculateCoordinates(cv::Point2f vector) {
+cv::Point Calibration::calcCoordinates(cv::Point2f vector) {
     float a0 = coefficientsX.at<float>(0, 0);
     float a1 = coefficientsX.at<float>(0, 1);
     float a2 = coefficientsX.at<float>(0, 2);
@@ -165,7 +133,7 @@ void Calibration::calcCalibrationDataDistance() {
             it != calibrationData.end(); ++it) {
 
         // calulated point
-        Point calculatedPoint = calculateCoordinates(it->getMeasuredMedianVector());
+        Point calculatedPoint = calcCoordinates(it->getMeasuredMedianVector());
         Point actualPoint = it->getActualPoint();
         int distance = calcPointDistance(&actualPoint, &calculatedPoint);
         it->distance = distance;
@@ -175,18 +143,51 @@ void Calibration::calcCalibrationDataDistance() {
 int Calibration::calcAverageDeviation() {
 
     int totalDistance = 0;
-    
-    sort(calibrationData.begin(), calibrationData.end());
 
     // Iterate over all calibrationData
     for (vector<CalibrationData>::iterator it = calibrationData.begin();
             it != calibrationData.end(); ++it) {
 
         totalDistance += it->getDistance();
-        cout << "Distance " << it->getDistance() << endl;
     }
 
-    cout << "Average distance: " << totalDistance / calibrationData.size() << endl;
-
     return totalDistance;
+}
+
+void Calibration::removeWorstCalibrationData() {
+
+    sort(calibrationData.begin(), calibrationData.end());
+    calibrationData.erase(calibrationData.end() - 3, calibrationData.end());
+}
+
+bool Calibration::calibrate(int accuracyThreshold, int maxExceedence) {
+
+    // Calculate the coordinate
+    calcCoefficients();
+    LOG_D(" Calibration actual point: " << calibrationData.at(0).getActualPoint()
+            << " Measured point " << calcCoordinates(calibrationData.at(0).getMeasuredMedianVector()));
+    calcCalibrationDataDistance();
+    LOG_D("Average deviation: " << calcAverageDeviation());
+
+    int errors = 0;
+    // Check how many distances are greater than threshold and remove them   
+    vector<CalibrationData>::iterator it;
+    for (it = calibrationData.begin(); it != calibrationData.end();) {
+        if (it->getDistance() > accuracyThreshold) {
+            it = calibrationData.erase(it);
+            errors++;
+        } else
+            ++it;
+    }
+
+    // If the calibration process is not accurate enough, false will be returned
+    if (errors > maxExceedence)
+        return false;
+
+    // Otherwise consider only those measurements smaller than threshold
+    calcCoefficients(accuracyThreshold);
+    LOG_D(" Calibration actual point: " << calibrationData.at(0).getActualPoint()
+            << " Measured point " << calcCoordinates(calibrationData.at(0).getMeasuredMedianVector()));
+
+    return true;
 }

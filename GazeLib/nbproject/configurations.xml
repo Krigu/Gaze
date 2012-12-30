@@ -16,6 +16,8 @@
       <logicalFolder name="calibration" displayName="calibration" projectFiles="true">
         <itemPath>calibration/Calibration.cpp</itemPath>
         <itemPath>calibration/Calibration.hpp</itemPath>
+        <itemPath>calibration/CalibrationVisualizer.cpp</itemPath>
+        <itemPath>calibration/CalibrationVisualizer.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="cattin" displayName="cattin" projectFiles="true">
         <itemPath>cattin/IplClipLineToImage.cpp</itemPath>
@@ -93,7 +95,7 @@
       <compileType>
         <ccTool>
           <preprocessorList>
-            <Elem>__DEBUG=1</Elem>
+            <Elem>__DEBUG=0</Elem>
             <Elem>__DEBUG_FINDGLINTS=0</Elem>
             <Elem>__DEBUG_HAAR=0</Elem>
             <Elem>__DEBUG_STARBURST=0</Elem>

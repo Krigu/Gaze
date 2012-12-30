@@ -10,6 +10,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "calibration/Calibration.hpp"
+#include "calibration/CalibrationVisualizer.hpp"
 
 #include "CalibrationTest.h"
 
@@ -1110,25 +1111,33 @@ void CalibrationTest::testCalibrtion() {
     calib.addCalibrationData(data4);
     calib.addCalibrationData(data5);
     calib.addCalibrationData(data6);
-//    calib.addCalibrationData(data7);
-//    calib.addCalibrationData(data8);
+    calib.addCalibrationData(data7);
+    calib.addCalibrationData(data8);
     calib.addCalibrationData(data9);
 
-    calib.calcCoefficients();
-    calib.printCalibration();
+    CalibrationVisualizer calibVisual(&calib);
 
-    calib.printCalibration(measurements1);
-    calib.printCalibration(measurements2);
-    calib.printCalibration(measurements3);
-    calib.printCalibration(measurements4);
-    calib.printCalibration(measurements5);
-    calib.printCalibration(measurements6);
-    calib.printCalibration(measurements7);
-    calib.printCalibration(measurements8);
-    calib.printCalibration(measurements9);
+    CPPUNIT_ASSERT(calib.calibrate(100, 3));
+    //    calib.printCalibration();
+    //
+    calibVisual.printCalibration();
+    calibVisual.printCalibration(measurements1);
+    calibVisual.printCalibration(measurements2);
+    calibVisual.printCalibration(measurements3);
+    calibVisual.printCalibration(measurements4);
+    calibVisual.printCalibration(measurements5);
+    calibVisual.printCalibration(measurements6);
+    calibVisual.printCalibration(measurements7);
+    calibVisual.printCalibration(measurements8);
+    calibVisual.printCalibration(measurements9);
+    
+    calibVisual.printCoefficients();
 
-    calib.calcCalibrationDataDistance();
-    calib.calcAverageDeviation();
+    //    calib.calcCalibrationDataDistance();
+    //    calib.calcAverageDeviation();
+    //    
+    //    calib.removeWorstCalibrationData();
+    //    calib.calcAverageDeviation();
 
     waitKey(0);
 }

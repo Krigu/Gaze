@@ -10,7 +10,7 @@
 
 #include "opencv2/core/core.hpp"
 #include "detection/GazeTracker.hpp"
-
+#include "calibration/Calibration.hpp"
 
 class TCallback : public TrackerCallback{
 public:
@@ -20,7 +20,7 @@ public:
     virtual void imageProcessed(Mat &result);
     virtual void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
 private:
-
+    Calibration calib;
 };
 
 #endif	/* TCALLBACK_HPP */

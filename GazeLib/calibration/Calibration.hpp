@@ -12,54 +12,47 @@
 #include <opencv2/core/core.hpp>
 
 class Calibration;
+class CalibrationVisualizer;
 
 class CalibrationData {
     friend class Calibration;
 private:
-	cv::Point actualPoint;
-	cv::Point2f medianVector;
-    
-protected:   
-        // distance between actualPoint and measured point
+    cv::Point actualPoint;
+    cv::Point2f medianVector;
+
+protected:
+    // distance between actualPoint and measured point
     int distance;
 public:
-	CalibrationData(cv::Point point, std::vector<cv::Point2f> & vectors);
-	cv::Point2f const& getMeasuredMedianVector() const;
-	cv::Point const& getActualPoint() const;
+    CalibrationData(cv::Point point, std::vector<cv::Point2f> & vectors);
+    cv::Point2f const& getMeasuredMedianVector() const;
+    cv::Point const& getActualPoint() const;
     int const getDistance() const;
-    
+
     friend bool operator<(const CalibrationData& d1, const CalibrationData& d2);
 };
 
-
-
 class Calibration {
-private:
-	// TODO remove display and don't show image
-	cv::Mat display;
-	cv::vector<CalibrationData> calibrationData;
+    friend class CalibrationVisualizer; // For debugging and visualizing
+private:   
 
-	cv::Mat coefficientsX;
-	cv::Mat coefficientsY;
-    cv::RNG rng;
-
-
-public:
-	Calibration();
-	virtual ~Calibration();
-
-	void calcCoefficients();
+protected:
+    cv::Mat coefficientsX;
+    cv::Mat coefficientsY;    
+    cv::vector<CalibrationData> calibrationData;
     
-	void addCalibrationData(CalibrationData data);  
-    cv::Point calculateCoordinates(cv::Point2f vector);
+    void calcCoefficients(int accuracyThreshold = 0);
     void calcCalibrationDataDistance();
     int calcAverageDeviation();
-    
-	void printCalibration(std::vector<cv::Point2f> points);    
-    void printCalibration();
+    void removeWorstCalibrationData();
+public:
+    Calibration();
+    virtual ~Calibration();
 
-	
+    void addCalibrationData(CalibrationData data);
+    bool calibrate(int accuracyThreshold, int maxExceedence);
 
+    cv::Point calcCoordinates(cv::Point2f vector);
 };
 
 /* namespace std */
