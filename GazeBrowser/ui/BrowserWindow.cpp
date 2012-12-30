@@ -152,8 +152,9 @@ void BrowserWindow::finishLoading(bool) {
 
     // TODO: cleanup code and don't check for every site
     if (view->page()->mainFrame()->url().toString() == "qrc:/" && !isCalibrating) {
-        QString html = "$('#%1').append("
-                "\"<a href='%2'><img src='http://api.thumbalizr.com/?url=%3&width=260' alt=''></a>"
+        QString html = "$('#%1').append("               
+                "\"<a href='%2'><img src='http://images.shrinktheweb.com/xino.php?stwembed=1&stwaccesskeyid=key&stwsize=lg&stwurl=%3' alt=''></a>"
+                ""
                 "<br>"
                 "<a href='%4'>%5</a>\""
                 ")";
