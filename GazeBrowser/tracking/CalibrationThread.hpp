@@ -1,14 +1,13 @@
 #ifndef CALIBRATIONTHREAD_HPP_
 #define CALIBRATIONTHREAD_HPP_
 
-#include <QtGui>
-#include <QtWebKit>
+#include <QtCore>
 #include "video/ImageSource.hpp"
 #include "detection/GazeTracker.hpp"
 
 class Calibration;
 
-class CalibrationThread : public QThread, public TrackerCallback {
+class CalibrationThread : public QObject, public TrackerCallback {
     Q_OBJECT
 
 private:
@@ -17,7 +16,7 @@ private:
     ImageSource *camera;
     vector<Point2f> measurements;
     
-    void calibrate(Calibration & calibration);
+    bool calibrate(Calibration & calibration);
 
 public:
     CalibrationThread(int width, int height, ImageSource *camera);
@@ -30,8 +29,8 @@ signals:
     void error(QString);
     void cvImage(cv::Mat);
 
-protected:
-    void run();
+public slots:
+    void run(void);
 };
 
 #endif

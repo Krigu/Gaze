@@ -22,6 +22,10 @@ public slots:
     void alertMessage(QString message);
     void showCvImage(cv::Mat mat);
 
+    //TODO remove!!
+    signals:
+        void startThread(void);
+    
 protected slots:
 
     void showEvent(QShowEvent *event);

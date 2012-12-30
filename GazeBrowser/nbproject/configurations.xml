@@ -26,9 +26,17 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="threads" displayName="threads" projectFiles="true">
+        <itemPath>threads/Sleeper.cpp</itemPath>
+        <itemPath>threads/Sleeper.hpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
+        <itemPath>tracking/ActionManager.cpp</itemPath>
+        <itemPath>tracking/ActionManager.hpp</itemPath>
         <itemPath>tracking/CalibrationThread.cpp</itemPath>
         <itemPath>tracking/CalibrationThread.hpp</itemPath>
+        <itemPath>tracking/TrackingThread.cpp</itemPath>
+        <itemPath>tracking/TrackingThread.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="ui" displayName="ui" projectFiles="true">
         <itemPath>ui/AutoSaveSpinbox.cpp</itemPath>
@@ -62,6 +70,7 @@
     <Elem>ui</Elem>
     <Elem>html</Elem>
     <Elem>tracking</Elem>
+    <Elem>threads</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

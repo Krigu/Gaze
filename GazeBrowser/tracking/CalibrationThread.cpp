@@ -6,6 +6,10 @@
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
 #include "exception/GazeExceptions.hpp"
+#include "TrackingThread.hpp"
+#include "ActionManager.hpp"
+#include "../threads/Sleeper.hpp"
+
 
 using namespace std;
 
@@ -16,17 +20,40 @@ CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera)
 void CalibrationThread::run()
 {
     try{
-        Calibration calib;
-        calibrate(calib);
+        Calibration *calib;
+        bool calibrated=false;
+        while(!calibrated){
+            calib = new Calibration;
+            //calibrated = calibrate(*calib);
+            calibrated = true;
+            if(!calibrated)
+                delete calib;
+        }
         
-        // todo: now start/continue the tracker fred
-        //calib.calculateCoordinates();
+        ActionManager *manager = new ActionManager;
+        QThread *thread = new QThread;
+        TrackingThread *trackingThread = new TrackingThread(calib);
+        
+        qRegisterMetaType< cv::Point > ("cv::Point");
+        connect(trackingThread, SIGNAL(estimatedPoint(cv::Point)), manager, SLOT(measuredPoint(cv::Point)));
+        
+        // TODO: worst hack ever, remove as soon as possible
+        connect(this, SIGNAL(jsCommand(QString)), trackingThread, SLOT(testRun(void)));
+        
+        trackingThread->moveToThread(thread);
+        thread->start();
+        
+        emit jsCommand("");
+        
+        //trackingThread->start();
+   
+        cout << "CalibrationThread is dead!" << endl;
     } catch(GazeException& e) {
         emit error(e.what());
     }
 }
 
-void CalibrationThread::calibrate(Calibration & calibration){
+bool CalibrationThread::calibrate(Calibration & calibration){
      int x_offset = 40;
      int y_offset = 40;
      
@@ -48,7 +75,7 @@ void CalibrationThread::calibrate(Calibration & calibration){
                     .arg(point_x).arg(point_y);
             
             emit jsCommand(code);
-            msleep(3000);
+            Sleeper::msleep(3000);
             
             Point2f p(point_x, point_y);
             measurements.clear();
@@ -59,22 +86,18 @@ void CalibrationThread::calibrate(Calibration & calibration){
          }
      }
      
-     calibration.calibrate(100,3);
-     
-     cout << "Calibrationdata:" << endl;
-
-     
+     return calibration.calibrate(100,3);
 }
 
 void CalibrationThread::imageProcessed(Mat& resultImage){
     //TODO move the sleep into another (non-UI) thread?
-    msleep(33);
+    Sleeper::msleep(33);
     emit cvImage(resultImage);
 }
 
 void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
     //TODO move the sleep into another (non-UI) thread?
-    msleep(33);
+    Sleeper::msleep(33);
     emit cvImage(resultImage);
    
     if(result == MEASURE_OK){

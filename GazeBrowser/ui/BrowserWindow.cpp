@@ -261,7 +261,16 @@ void BrowserWindow::calibrate() {
     connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
     connect(calibrator, SIGNAL(cvImage(cv::Mat)), this, SLOT(showCvImage(cv::Mat)));
-    calibrator->start();
+
+    connect(this, SIGNAL(startThread(void)), calibrator, SLOT(run(void)));
+    
+    QThread *calThread = new QThread;
+    calibrator->moveToThread(calThread);
+    calThread->start();
+    
+    emit startThread();
+    
+    //calibrator->start();
 }
 
 void BrowserWindow::execJsCommand(QString command) {
