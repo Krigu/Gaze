@@ -107,7 +107,6 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {
 	const float angle = 2 * PI / num_of_lines; // in radiants!
-	const Scalar color = Scalar(255, 255, 255);
 
 	bool found=false;
 
