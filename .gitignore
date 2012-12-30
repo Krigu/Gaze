@@ -15,6 +15,10 @@
 Debug/
 Release/
 
+# hide the generated Documentation
+/doc/cpp/GazeLib/
+/doc/cpp/GazeBrowser/
+
 /GazeBrowser/nbproject/qt-Debug.mk
 /GazeBrowser/moc_*.cpp
 /GazeBrowser/build/
