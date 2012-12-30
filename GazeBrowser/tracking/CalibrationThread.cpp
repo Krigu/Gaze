@@ -55,7 +55,7 @@ void CalibrationThread::calibrate(Calibration & calibration){
             tracker.track(5);
             CalibrationData data(p, measurements);
             calibration.addCalibrationData(data);
-            cout << "Point: " << p << "Vector: " << data.getAverageVector() << endl;
+            cout << "Point: " << p << "Vector: " << data.getMeasuredMedianVector() << endl;
          }
      }
      

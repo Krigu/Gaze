@@ -132,8 +132,7 @@ void CalibrationTest::testCalibrtion() {
     measurements1.push_back(Point2f(-4.8996, 10.5314));
     measurements1.push_back(Point2f(-4.86657, 10.439));
     CalibrationData data1(p1, measurements1);
-    cout << "Point: " << p1 << "Vector: " << data1.getAverageVector() << endl;
-    calib.addCalibrationData(data1);
+    cout << "Point: " << p1 << "Vector: " << data1.getMeasuredMedianVector() << endl;
 
     // Top center
     vector<Point2f> measurements2;
@@ -222,8 +221,7 @@ void CalibrationTest::testCalibrtion() {
     measurements2.push_back(Point2f(6.60184, 11.5383));
     measurements2.push_back(Point2f(6.74466, 11.4427));
     CalibrationData data2(p2, measurements2);
-    cout << "Point: " << p2 << "Vector: " << data2.getAverageVector() << endl;
-    calib.addCalibrationData(data2);
+    cout << "Point: " << p2 << "Vector: " << data2.getMeasuredMedianVector() << endl;
 
 
     // Top right
@@ -316,8 +314,7 @@ void CalibrationTest::testCalibrtion() {
     measurements3.push_back(Point2f(18.9558, 10.0441));
     measurements3.push_back(Point2f(19.1182, 9.94827));
     CalibrationData data3(p3, measurements3);
-    cout << "Point: " << p3 << "Vector: " << data3.getAverageVector() << endl;
-    calib.addCalibrationData(data3);
+    cout << "Point: " << p3 << "Vector: " << data3.getMeasuredMedianVector() << endl;
 
     // middle left
     vector<Point2f> measurements4;
@@ -456,8 +453,7 @@ void CalibrationTest::testCalibrtion() {
     measurements4.push_back(Point2f(-4.64879, 4.0242));
     measurements4.push_back(Point2f(-4.77592, 4.09055));
     CalibrationData data4(p4, measurements4);
-    cout << "Point: " << p4 << "Vector: " << data4.getAverageVector() << endl;
-    calib.addCalibrationData(data4);
+    cout << "Point: " << p4 << "Vector: " << data4.getMeasuredMedianVector() << endl;
 
     // middle center
     vector<Point2f> measurements5;
@@ -602,8 +598,7 @@ void CalibrationTest::testCalibrtion() {
     measurements5.push_back(Point2f(7.53922, 4.96639));
     measurements5.push_back(Point2f(7.68488, 5.02896));
     CalibrationData data5(p5, measurements5);
-    cout << "Point: " << p5 << "Vector: " << data5.getAverageVector() << endl;
-    calib.addCalibrationData(data5);
+    cout << "Point: " << p5 << "Vector: " << data5.getMeasuredMedianVector() << endl;
 
     // middle right
     vector<Point2f> measurements6;
@@ -746,8 +741,7 @@ void CalibrationTest::testCalibrtion() {
     measurements6.push_back(Point2f(18.8895, 4.86259));
     measurements6.push_back(Point2f(18.906, 4.94315));
     CalibrationData data6(p6, measurements6);
-    cout << "Point: " << p6 << "Vector: " << data6.getAverageVector() << endl;
-    calib.addCalibrationData(data6);
+    cout << "Point: " << p6 << "Vector: " << data6.getMeasuredMedianVector() << endl;
 
     // bottom left
     vector<Point2f> measurements7;
@@ -888,8 +882,7 @@ void CalibrationTest::testCalibrtion() {
     measurements7.push_back(Point2f(-4.50862, -1.31499));
     measurements7.push_back(Point2f(-4.39881, -1.34096));
     CalibrationData data7(p7, measurements7);
-    cout << "Point: " << p7 << "Vector: " << data7.getAverageVector() << endl;
-    //calib.addCalibrationData(data7);
+    cout << "Point: " << p7 << "Vector: " << data7.getMeasuredMedianVector() << endl;
 
     // bottom center
     vector<Point2f> measurements8;
@@ -1028,8 +1021,7 @@ void CalibrationTest::testCalibrtion() {
     measurements8.push_back(Point2f(7.25434, -1.46918));
     measurements8.push_back(Point2f(7.37878, -1.52248));
     CalibrationData data8(p8, measurements7);
-    cout << "Point: " << p8 << "Vector: " << data8.getAverageVector() << endl;
-    //calib.addCalibrationData(data8);
+    cout << "Point: " << p8 << "Vector: " << data8.getMeasuredMedianVector() << endl;
 
     // bottom right
     vector<Point2f> measurements9;
@@ -1110,12 +1102,21 @@ void CalibrationTest::testCalibrtion() {
     measurements9.push_back(Point2f(19.0227, -1.17026));
     measurements9.push_back(Point2f(19.0018, -1.0835));
     CalibrationData data9(p9, measurements9);
-    cout << "Point: " << p9 << "Vector: " << data9.getAverageVector() << endl;
+    cout << "Point: " << p9 << "Vector: " << data9.getMeasuredMedianVector() << endl;
+
+    calib.addCalibrationData(data1);
+    calib.addCalibrationData(data2);
+    calib.addCalibrationData(data3);
+    calib.addCalibrationData(data4);
+    calib.addCalibrationData(data5);
+    calib.addCalibrationData(data6);
+//    calib.addCalibrationData(data7);
+//    calib.addCalibrationData(data8);
     calib.addCalibrationData(data9);
 
     calib.calcCoefficients();
     calib.printCalibration();
-    
+
     calib.printCalibration(measurements1);
     calib.printCalibration(measurements2);
     calib.printCalibration(measurements3);
@@ -1124,7 +1125,10 @@ void CalibrationTest::testCalibrtion() {
     calib.printCalibration(measurements6);
     calib.printCalibration(measurements7);
     calib.printCalibration(measurements8);
-    calib.printCalibration(measurements9);    
+    calib.printCalibration(measurements9);
+
+    calib.calcCalibrationDataDistance();
+    calib.calcAverageDeviation();
 
     waitKey(0);
 }
