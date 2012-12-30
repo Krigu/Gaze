@@ -10,6 +10,17 @@
 #include "tracking/CalibrationThread.hpp"
 #include "video/ImageSource.hpp"
 
+class GazeWebPage : public QWebPage {
+ public:
+    GazeWebPage(){
+        QWebPage::QWebPage(); 
+    }
+    QString userAgentForUrl(const QUrl &url ) const{
+        //TODO OS and Version in User-Agent?
+        return QString("GazeBrowser");
+    }
+};
+
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
@@ -58,6 +69,7 @@ protected slots:
 private:
     QString jQuery;
     QWebView *view;
+    GazeWebPage *webpage;
     CVWidget *eye_widget;
     BookmarksWindow *bookmarksWin;
     CalibrationThread *calibrator;
