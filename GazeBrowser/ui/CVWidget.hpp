@@ -10,7 +10,7 @@ class CVWidget : public QGLWidget
 {
     Q_OBJECT
 public:
-    CVWidget(QWidget* parent=0);
+    CVWidget();
     void setDisplayMode(int mode);
     void sendImage(cv::Mat *img);
 

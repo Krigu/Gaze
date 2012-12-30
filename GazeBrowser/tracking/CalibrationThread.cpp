@@ -68,18 +68,18 @@ void CalibrationThread::calibrate(Calibration & calibration){
 
 void CalibrationThread::imageProcessed(Mat& resultImage){
     //TODO move the sleep into another (non-UI) thread?
-    msleep(10);
+    msleep(33);
     emit cvImage(resultImage);
 }
 
 void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
     //TODO move the sleep into another (non-UI) thread?
-    msleep(10);
+    msleep(33);
     emit cvImage(resultImage);
-    switch (result) {
-        case MEASURE_OK:
+   
+    if(result == MEASURE_OK){
             measurements.push_back(gazeVector);
-            break;
     }
+
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 }
