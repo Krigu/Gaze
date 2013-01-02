@@ -37,6 +37,10 @@
           <itemPath>threads/calibration/CalibrationThread.cpp</itemPath>
           <itemPath>threads/calibration/CalibrationThread.hpp</itemPath>
         </logicalFolder>
+        <logicalFolder name="idle" displayName="idle" projectFiles="true">
+          <itemPath>threads/idle/IdleThread.cpp</itemPath>
+          <itemPath>threads/idle/IdleThread.hpp</itemPath>
+        </logicalFolder>
         <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
           <itemPath>threads/tracking/TrackingThread.cpp</itemPath>
           <itemPath>threads/tracking/TrackingThread.hpp</itemPath>

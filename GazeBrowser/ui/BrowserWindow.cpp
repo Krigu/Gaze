@@ -126,6 +126,7 @@ void BrowserWindow::setUpCamera(){
     source = new LiveSource;
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
+    tManager->showIdle();
 }
 
 /*

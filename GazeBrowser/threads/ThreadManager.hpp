@@ -14,6 +14,7 @@
 class CalibrationThread;
 class TrackingThread;
 class BrowserWindow;
+class IdleThread;
 
 class ThreadManager : public QObject {
     
@@ -23,10 +24,12 @@ public:
     ThreadManager(BrowserWindow *parent);
     virtual ~ThreadManager();
     void startCalibration();
+    void showIdle();
     
     signals: 
     void calibrate(void);
     void track(Calibration);
+    void showIdleImages(void);
     
 public slots:
     void error(QString message);
@@ -39,10 +42,12 @@ private:
     // our threads "application logic"
     CalibrationThread *calibrator;
     TrackingThread *tracker;
+    IdleThread *idle;
     
     // the threads
     QThread *trackingThread;
     QThread *calibrationThread;
+    QThread *idleThread;
     
     // the Camera-Lock
     QMutex *cameraLock;
