@@ -18,7 +18,7 @@
 using std::cout;
 using std::endl;
 
-TrackingThread::TrackingThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock) {
+TrackingThread::TrackingThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
 }
 
 TrackingThread::~TrackingThread() {
@@ -31,6 +31,8 @@ void TrackingThread::track(Calibration calibration) {
         return;
     }
     
+    running = true;
+    
     srand(time(NULL));
 
     int x, y;
@@ -40,7 +42,7 @@ void TrackingThread::track(Calibration calibration) {
     cin >> y;
 
     unsigned long i = 0;
-    while (i < 35) {
+    while (i < 35 && running) {
         cout << "I'm Tracking! " << ++i << endl;
         Sleeper::msleep(500);
         Point p;
@@ -50,8 +52,10 @@ void TrackingThread::track(Calibration calibration) {
     }
     
     cameraLock->unlock();
-    
-    track(calibration);
+    if(running)
+        track(calibration);
+    else
+        emit hasStopped(EV_GO_IDLE);
 }
 
 void TrackingThread::imageProcessed(Mat& resultImage) {
@@ -70,4 +74,8 @@ void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Poi
     }
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
+}
+
+void TrackingThread::stop() {
+    this->running = false;
 }

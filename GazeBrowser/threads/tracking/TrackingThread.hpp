@@ -10,6 +10,7 @@
 
 #include <QtCore>
 #include "detection/GazeTracker.hpp"
+#include "../ThreadManager.hpp"
 
 class CalibrationData;
 
@@ -22,20 +23,24 @@ public:
     
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-  
+    void stop();
+    
     signals:
     void estimatedPoint(cv::Point);
     
 public slots:
     void track(Calibration calibration);
+
     
 signals:
     void error(QString);
     void cvImage(cv::Mat);
+    void hasStopped(PROGRAM_EVENTS);
 
 private:
     ImageSource *camera;
     QMutex *cameraLock;
+    bool running;
 };
 
 #endif	/* TRACKINGTHREAD_HPP */

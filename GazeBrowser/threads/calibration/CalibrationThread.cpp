@@ -13,7 +13,7 @@
 using namespace std;
 
 CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock) 
-       : width(width), height(height), camera(camera), cameraLock(cameraLock){
+       : width(width), height(height), camera(camera), cameraLock(cameraLock), running(false){
 }
 
 void CalibrationThread::run()
@@ -23,10 +23,12 @@ void CalibrationThread::run()
         return;
     }
     
+    running = true;
+    
     try{
         Calibration *calib;
         bool calibrated=false;
-        while(!calibrated){
+        while(!calibrated && running){
             calib = new Calibration;
             //calibrated = calibrate(*calib);
             calibrated = true;
@@ -37,7 +39,9 @@ void CalibrationThread::run()
         cameraLock->unlock();
         
         if(calibrated)
-            emit(track(*calib));
+            emit(calibrationFinished(*calib));
+        else if (!running)
+            emit hasStopped(EV_GO_IDLE);
         
     } catch(GazeException& e) {
         cameraLock->unlock();
@@ -97,4 +101,8 @@ void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, 
     }
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
+}
+
+void CalibrationThread::stop(){
+    this->running = false;
 }

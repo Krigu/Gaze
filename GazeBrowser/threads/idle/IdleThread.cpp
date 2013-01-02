@@ -8,8 +8,9 @@
 #include "IdleThread.hpp"
 #include "video/LiveSource.hpp"
 #include "../Sleeper.hpp"
+#include "threads/ThreadManager.hpp"
 
-IdleThread::IdleThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock) {
+IdleThread::IdleThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
 }
 
 IdleThread::~IdleThread() {
@@ -26,6 +27,8 @@ void IdleThread::displayCamera(void){
         return;
     }
     
+    running = true;
+    
     LiveSource *live = dynamic_cast<LiveSource*>(camera);
     if(live == 0) {
         cameraLock->unlock();
@@ -33,7 +36,7 @@ void IdleThread::displayCamera(void){
         return;
     }
     
-    while(true){
+    while(running){
         cv::Mat frame;
         if(live->nextGrayFrame(frame)){
             Sleeper::msleep(33);
@@ -45,4 +48,11 @@ void IdleThread::displayCamera(void){
     }
     
     cameraLock->unlock();
+    
+    // notify the other threads
+    emit hasStopped(EV_CALIBRATE);
+}
+
+void IdleThread::stop() {
+    this->running = false;
 }
