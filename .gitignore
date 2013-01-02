@@ -69,3 +69,5 @@ Package-Debug.bash
 /StaticImageStarburst/nbproject/private/configurations.xml
 /StaticImageStarburst/nbproject/private/Makefile-variables.mk
 /StaticImageStarburst/nbproject/private/private.xml
+
+qt-Release.mk
