@@ -13,6 +13,7 @@
 class CalibrationThread;
 class TrackingThread;
 class BrowserWindow;
+class Calibration;
 
 
 class ThreadManager : public QObject {
@@ -23,6 +24,14 @@ public:
     ThreadManager(BrowserWindow *parent);
     virtual ~ThreadManager();
     void startCalibration();
+    
+    signals: 
+    void calibrate(void);
+    
+public slots:
+    void error(QString message);
+    void track(Calibration calib);
+    
 private:
     
     BrowserWindow *parent;

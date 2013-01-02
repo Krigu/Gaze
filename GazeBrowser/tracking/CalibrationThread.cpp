@@ -10,7 +10,6 @@
 #include "ActionManager.hpp"
 #include "../threads/Sleeper.hpp"
 
-
 using namespace std;
 
 CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock) 
@@ -18,7 +17,12 @@ CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera,
 }
 
 void CalibrationThread::run()
-{
+{   
+    if(!cameraLock->tryLock()){
+        emit error("Cannot calibrate, is the camera in use?");
+        return;
+    }
+    
     try{
         Calibration *calib;
         bool calibrated=false;
@@ -29,25 +33,14 @@ void CalibrationThread::run()
             if(!calibrated)
                 delete calib;
         }
-        
-        ActionManager *manager = new ActionManager;
-        QThread *thread = new QThread;
-        TrackingThread *trackingThread = new TrackingThread(calib);
-        
-        connect(trackingThread, SIGNAL(estimatedPoint(cv::Point)), manager, SLOT(measuredPoint(cv::Point)));
-        
-        // TODO: worst hack ever, remove as soon as possible
-        connect(this, SIGNAL(jsCommand(QString)), trackingThread, SLOT(testRun(void)));
-        
-        trackingThread->moveToThread(thread);
-        thread->start();
-        
-        emit jsCommand("");
-        
-        //trackingThread->start();
    
-        cout << "CalibrationThread is dead!" << endl;
+        cameraLock->unlock();
+        
+        if(calibrated)
+            emit(track(*calib));
+        
     } catch(GazeException& e) {
+        cameraLock->unlock();
         emit error(e.what());
     }
 }

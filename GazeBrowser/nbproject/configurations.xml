@@ -27,7 +27,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="threads" displayName="threads" projectFiles="true">
-        <itemPath>threads/CustomMutexLocker.hpp</itemPath>
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>
         <itemPath>threads/ThreadManager.cpp</itemPath>
