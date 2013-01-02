@@ -210,8 +210,19 @@ void BrowserWindow::goToPage() {
  */
 
 void BrowserWindow::highlightAllLinks() {
-    QString code = "$('a').each( function () { $(this).css('background-color', 'yellow') } )";
-    view->page()->mainFrame()->evaluateJavaScript(code);
+    QWebElementCollection linkElements = view->page()->mainFrame()->findAllElements("a");
+ 
+    QWebElement element;
+    for(int i = 0; i < linkElements.count(); i++)
+    {
+        element = linkElements.at(i);
+        
+        cout << "X/Y: " << element.geometry().x() << "/ " << element.geometry().y() << " " << element.geometry().height() << "-" << element.geometry().width()  << endl;
+        
+    }
+    
+    
+
 }
 
 void BrowserWindow::scrollUp() {

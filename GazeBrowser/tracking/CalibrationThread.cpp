@@ -1,6 +1,8 @@
 
 #include <iostream>
 
+#include <opencv2/core/core.hpp>
+
 #include "CalibrationThread.hpp"
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"
@@ -30,7 +32,12 @@ void CalibrationThread::run()
                 delete calib;
         }
         
+        GazeAction* back = new GazeAction("Back: ", cv::Rect(-400,0, 400, 880), 10);
+        GazeAction* forward = new GazeAction("Forward: ", cv::Rect(1440,0, 400, 880), 10);
+        
         ActionManager *manager = new ActionManager;
+        manager->addGazeAction(back);
+        manager->addGazeAction(forward);
         QThread *thread = new QThread;
         TrackingThread *trackingThread = new TrackingThread(calib);
         
