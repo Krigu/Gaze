@@ -12,7 +12,6 @@
             <sourceRootList>
                 <sourceRootElem>ui</sourceRootElem>
                 <sourceRootElem>html</sourceRootElem>
-                <sourceRootElem>tracking</sourceRootElem>
                 <sourceRootElem>threads</sourceRootElem>
                 <sourceRootElem>actions</sourceRootElem>
             </sourceRootList>
