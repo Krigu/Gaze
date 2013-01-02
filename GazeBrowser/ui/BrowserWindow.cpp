@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <algorithm>
 
 #include <QtNetwork>
 #include <QtWebKit>
@@ -9,6 +10,8 @@
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
+#include "ImageWindow.h"
+#include "ImageLinkLabel.h"
 
 using namespace std;
 
@@ -52,24 +55,24 @@ void BrowserWindow::init() {
     // add our own webpage to control the user-agent
     webpage = new GazeWebPage;
     view->setPage(webpage);
-    
+
     eye_widget = new CVWidget;
     eye_widget->setWindowModality(Qt::WindowModal);
     eye_widget->setAttribute(Qt::WA_DeleteOnClose, false); //only hide the widget
-    
+
     bookmarksWin = new BookmarksWindow(settings);
     bookmarksWin->setWindowModality(Qt::WindowModal);
     bookmarksWin->setAttribute(Qt::WA_DeleteOnClose, false);
-    
+
     settingsWin = new SettingsWindow();
     settingsWin->setWindowModality(Qt::WindowModal);
     settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
-    
+
     setupMenus();
-    
+
     // register the OpenCV datatypes for a later emitting
     qRegisterMetaType< cv::Mat > ("cv::Mat");
-    
+
     setCentralWidget(view);
 }
 
@@ -116,17 +119,16 @@ void BrowserWindow::setupMenus() {
  * we trigger the setUpCamera(). if we do this in the constructor
  * we would block the whole UI until openCV has opened the camera.
  */
-void BrowserWindow::showEvent(QShowEvent *event){
+void BrowserWindow::showEvent(QShowEvent *event) {
     Q_UNUSED(event);
     QTimer::singleShot(1000, this, SLOT(setUpCamera()));
 }
-
 
 /**
  * opens a connection to the webcam .openCV has problems, if VideoCapture 
  * is created outside the main thread...
  */
-void BrowserWindow::setUpCamera(){
+void BrowserWindow::setUpCamera() {
     source = new LiveSource;
 }
 
@@ -156,7 +158,7 @@ void BrowserWindow::finishLoading(bool) {
 
     // TODO: cleanup code and don't check for every site
     if (view->page()->mainFrame()->url().toString() == "qrc:/" && !isCalibrating) {
-        QString html = "$('#%1').append("               
+        QString html = "$('#%1').append("
                 "\"<a href='%2'><img src='http://gaze.frickler.ch/screenshot/?screenshot_url=%3' alt=''></a>"
                 ""
                 "<br>"
@@ -188,14 +190,11 @@ void BrowserWindow::goToPage() {
             tr("Go to page"),
             tr("URL:"),
             QLineEdit::Normal,
-            "http://www.", &ok);
+            "", &ok);
     if (ok && !text.isEmpty()) {
-        // Check prefix
-        if (!(text.startsWith("http://", Qt::CaseInsensitive) || text.startsWith("https://", Qt::CaseInsensitive))) {
-            text = "http://" + text;
-        }
 
-        view->load(QUrl(text));
+
+        view->load(QUrl::fromUserInput(text));
     }
 }
 
@@ -211,17 +210,70 @@ void BrowserWindow::goToPage() {
 
 void BrowserWindow::highlightAllLinks() {
     QWebElementCollection linkElements = view->page()->mainFrame()->findAllElements("a");
- 
+
     QWebElement element;
-    for(int i = 0; i < linkElements.count(); i++)
-    {
+
+
+    ImageWindow* win = new ImageWindow(view);
+    win->setWindowModality(Qt::WindowModal);
+    // TODO: take window size
+    win->resize(800, 800);
+
+    // get viewport of browser window
+    QPoint vp = view->page()->mainFrame()->scrollPosition();
+
+    for (int i = 0; i < linkElements.count(); i++) {
         element = linkElements.at(i);
-        
-        cout << "X/Y: " << element.geometry().x() << "/ " << element.geometry().y() << " " << element.geometry().height() << "-" << element.geometry().width()  << endl;
-        
+
+        // Don't show hidden links
+        if (element.geometry().width() == 0)
+            continue;
+
+        int x = element.geometry().x();
+        int y = element.geometry().y();
+        int w = view->size().width();
+        int h = view->size().height();                
+
+        // only draw if in viewport
+        if ((vp.x() <= x && x <= (vp.x() + w)) &&
+                (vp.y() <= y && y <= (vp.y() + h))) {
+
+            cout << "X/Y: " << x << "/" << y << endl;
+
+            QImage* image = new QImage(view->page()->viewportSize(), QImage::Format_ARGB32);
+            QPainter* painter = new QPainter(image);
+            // Take an image with some offset
+            QRect r;
+            r.setX(max(0, x - vp.x() - 30));
+            r.setY(max(0, y - vp.y() - 30));
+            r.setWidth(element.geometry().width() + 60);
+            r.setHeight(element.geometry().height() + 60);
+
+            view->page()->mainFrame()->render(painter, r);
+            painter->end();
+
+            // Copy image
+            QImage q = image->copy(r);
+            // If greater than 250, shrink
+            // TODO: calculate from screen size
+            if (q.width() > 250)
+                q = q.scaledToWidth(250);
+            
+            if (q.height() > 250)
+                q = q.scaledToHeight(250);
+
+            Link l;
+            l.image = q;
+            l.href = element.attribute("href");
+
+            win->addLink(l);
+
+        }
     }
-    
-    
+    // TODO release of memory from window
+    win->show();
+
+
 
 }
 
@@ -279,13 +331,13 @@ void BrowserWindow::calibrate() {
     connect(calibrator, SIGNAL(cvImage(cv::Mat)), this, SLOT(showCvImage(cv::Mat)));
 
     connect(this, SIGNAL(startThread(void)), calibrator, SLOT(run(void)));
-    
+
     QThread *calThread = new QThread;
     calibrator->moveToThread(calThread);
     calThread->start();
-    
+
     emit startThread();
-    
+
     //calibrator->start();
 }
 
@@ -301,7 +353,7 @@ void BrowserWindow::execJsCommand(QString command) {
 void BrowserWindow::quit_gazebrowser() {
     // todo valid?
     delete settings;
-    
+
     QApplication::exit(0);
 }
 
