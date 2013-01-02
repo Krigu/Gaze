@@ -7,8 +7,10 @@
 #include "BookmarksWindow.hpp"
 #include "SettingsWindow.hpp"
 
-#include "tracking/CalibrationThread.hpp"
+#include "threads/calibration/CalibrationThread.hpp"
 #include "video/ImageSource.hpp"
+
+#include "threads/ThreadManager.hpp"
 
 class GazeWebPage : public QWebPage {
  public:
@@ -24,6 +26,10 @@ class GazeWebPage : public QWebPage {
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
+// let the thread manager access our members
+friend class ThreadManager; 
+        
+    
 public:
     BrowserWindow(const QUrl& url);
     BrowserWindow();
@@ -72,7 +78,8 @@ private:
     GazeWebPage *webpage;
     CVWidget *eye_widget;
     BookmarksWindow *bookmarksWin;
-    CalibrationThread *calibrator;
+    ThreadManager *tManager;
+    //CalibrationThread *calibrator;
     SettingsWindow *settingsWin;
     ImageSource *source;
     int progress;

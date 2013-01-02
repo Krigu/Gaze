@@ -32,15 +32,15 @@ void GazeAction::focus() {
         triggerAction();
         hitCounter = 0;
     }
-    cout << actionName << " hits: " << hitCounter << endl;
+    //cout << actionName << " hits: " << hitCounter << endl;
 }
 
 void GazeAction::unfocus() {
     hitCounter = 0;
-    cout << actionName << " hits: " << hitCounter << endl;
+    //cout << actionName << " hits: " << hitCounter << endl;
 }
 
 void GazeAction::triggerAction() {
     
-    cout << "Triggered action " << actionName;
+    //cout << "Triggered action " << actionName;
 }

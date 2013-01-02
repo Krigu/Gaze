@@ -11,7 +11,7 @@
 #include <QtCore>
 #include <opencv2/core/core.hpp>
 
-#include "../tracking/GazeAction.hpp"
+#include "GazeAction.hpp"
 
 class ActionManager : public QObject {
     Q_OBJECT

@@ -8,19 +8,21 @@
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
 #include "exception/GazeExceptions.hpp"
-#include "TrackingThread.hpp"
-#include "ActionManager.hpp"
-#include "../threads/Sleeper.hpp"
-
+#include "../Sleeper.hpp"
 
 using namespace std;
 
-CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera) 
-       : width(width), height(height), camera(camera){
+CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock) 
+       : width(width), height(height), camera(camera), cameraLock(cameraLock){
 }
 
 void CalibrationThread::run()
-{
+{   
+    if(!cameraLock->tryLock()){
+        emit error("Cannot calibrate, is the camera in use?");
+        return;
+    }
+    
     try{
         Calibration *calib;
         bool calibrated=false;
@@ -31,31 +33,14 @@ void CalibrationThread::run()
             if(!calibrated)
                 delete calib;
         }
-        
-        GazeAction* back = new GazeAction("Back: ", cv::Rect(-400,0, 400, 880), 10);
-        GazeAction* forward = new GazeAction("Forward: ", cv::Rect(1440,0, 400, 880), 10);
-        
-        ActionManager *manager = new ActionManager;
-        manager->addGazeAction(back);
-        manager->addGazeAction(forward);
-        QThread *thread = new QThread;
-        TrackingThread *trackingThread = new TrackingThread(calib);
-        
-        qRegisterMetaType< cv::Point > ("cv::Point");
-        connect(trackingThread, SIGNAL(estimatedPoint(cv::Point)), manager, SLOT(measuredPoint(cv::Point)));
-        
-        // TODO: worst hack ever, remove as soon as possible
-        connect(this, SIGNAL(jsCommand(QString)), trackingThread, SLOT(testRun(void)));
-        
-        trackingThread->moveToThread(thread);
-        thread->start();
-        
-        emit jsCommand("");
-        
-        //trackingThread->start();
    
-        cout << "CalibrationThread is dead!" << endl;
+        cameraLock->unlock();
+        
+        if(calibrated)
+            emit(track(*calib));
+        
     } catch(GazeException& e) {
+        cameraLock->unlock();
         emit error(e.what());
     }
 }

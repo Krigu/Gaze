@@ -14,23 +14,24 @@ private:
     int width;
     int height;
     ImageSource *camera;
+    QMutex *cameraLock;
     vector<Point2f> measurements;
     
     bool calibrate(Calibration & calibration);
 
 public:
-    CalibrationThread(int width, int height, ImageSource *camera);
+    CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock);
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-    
+   
+public slots:
+    void run(void);
     
 signals:
     void jsCommand(QString);
     void error(QString);
+    void track(Calibration);
     void cvImage(cv::Mat);
 
-public slots:
-    void run(void);
 };
-
 #endif

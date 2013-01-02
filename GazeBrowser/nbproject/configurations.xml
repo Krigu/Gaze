@@ -26,19 +26,29 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="actions" displayName="actions" projectFiles="true">
+        <itemPath>actions/ActionManager.cpp</itemPath>
+        <itemPath>actions/ActionManager.hpp</itemPath>
+        <itemPath>actions/GazeAction.cpp</itemPath>
+        <itemPath>actions/GazeAction.hpp</itemPath>
+      </logicalFolder>
       <logicalFolder name="threads" displayName="threads" projectFiles="true">
+        <logicalFolder name="f1" displayName="calibration" projectFiles="true">
+          <itemPath>threads/calibration/CalibrationThread.cpp</itemPath>
+          <itemPath>threads/calibration/CalibrationThread.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="idle" displayName="idle" projectFiles="true">
+          <itemPath>threads/idle/IdleThread.cpp</itemPath>
+          <itemPath>threads/idle/IdleThread.hpp</itemPath>
+        </logicalFolder>
+        <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
+          <itemPath>threads/tracking/TrackingThread.cpp</itemPath>
+          <itemPath>threads/tracking/TrackingThread.hpp</itemPath>
+        </logicalFolder>
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>
-      </logicalFolder>
-      <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
-        <itemPath>tracking/ActionManager.cpp</itemPath>
-        <itemPath>tracking/ActionManager.hpp</itemPath>
-        <itemPath>tracking/CalibrationThread.cpp</itemPath>
-        <itemPath>tracking/CalibrationThread.hpp</itemPath>
-        <itemPath>tracking/GazeAction.cpp</itemPath>
-        <itemPath>tracking/GazeAction.hpp</itemPath>
-        <itemPath>tracking/TrackingThread.cpp</itemPath>
-        <itemPath>tracking/TrackingThread.hpp</itemPath>
+        <itemPath>threads/ThreadManager.cpp</itemPath>
+        <itemPath>threads/ThreadManager.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="ui" displayName="ui" projectFiles="true">
         <itemPath>ui/AutoSaveSpinbox.cpp</itemPath>
@@ -75,8 +85,8 @@
   <sourceRootList>
     <Elem>ui</Elem>
     <Elem>html</Elem>
-    <Elem>tracking</Elem>
     <Elem>threads</Elem>
+    <Elem>actions</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -103,8 +113,6 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
-            <linkerLibLibItem>GLU</linkerLibLibItem>
-            <linkerLibLibItem>GL</linkerLibLibItem>
             <linkerLibProjectItem>
               <makeArtifact PL="../GazeLib"
                             CT="3"

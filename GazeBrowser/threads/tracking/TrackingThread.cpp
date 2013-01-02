@@ -18,14 +18,19 @@
 using std::cout;
 using std::endl;
 
-TrackingThread::TrackingThread(Calibration *calibData) : calibData(calibData) {
+TrackingThread::TrackingThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock) {
 }
 
 TrackingThread::~TrackingThread() {
 }
 
-void TrackingThread::testRun() {
+void TrackingThread::track(Calibration calibration) {
 
+    if(!cameraLock->tryLock()){
+        emit error("Cannot track, is the camera in use?");
+        return;
+    }
+    
     srand(time(NULL));
 
     int x, y;
@@ -44,13 +49,25 @@ void TrackingThread::testRun() {
         emit estimatedPoint(p);
     }
     
-    testRun();
+    cameraLock->unlock();
+    
+    track(calibration);
 }
 
 void TrackingThread::imageProcessed(Mat& resultImage) {
-
+    //TODO move the sleep into another (non-UI) thread?
+    Sleeper::msleep(33);
+    emit cvImage(resultImage);
 }
 
 void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
+    //TODO move the sleep into another (non-UI) thread?
+    Sleeper::msleep(33);
+    emit cvImage(resultImage);
+   
+    if(result == MEASURE_OK){
+            //measurements.push_back(gazeVector);
+    }
 
+    std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 }
