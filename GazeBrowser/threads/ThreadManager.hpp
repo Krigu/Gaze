@@ -9,12 +9,11 @@
 #define	THREADMANAGER_HPP
 
 #include <QtCore>
+#include <calibration/Calibration.hpp>
 
 class CalibrationThread;
 class TrackingThread;
 class BrowserWindow;
-class Calibration;
-
 
 class ThreadManager : public QObject {
     
@@ -27,10 +26,11 @@ public:
     
     signals: 
     void calibrate(void);
+    void track(Calibration);
     
 public slots:
     void error(QString message);
-    void track(Calibration &calib);
+    void calibrationFinished(Calibration calib);
     
 private:
     

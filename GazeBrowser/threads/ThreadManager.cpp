@@ -43,10 +43,12 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent) {
     
     connect(this, SIGNAL(calibrate(void)), calibrator, SLOT(run(void)));
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(error(QString)));
-    connect(calibrator, SIGNAL(track(Calibration)), this, SLOT(track(Calibration)));
-    
+    connect(calibrator, SIGNAL(track(Calibration)), this, SLOT(calibrationFinished(Calibration)));
     connect(calibrator, SIGNAL(jsCommand(QString)), parent, SLOT(execJsCommand(QString)));
     connect(calibrator, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
+    
+    connect(tracker, SIGNAL(error(QString)), this, SLOT(error(QString)));
+    connect(this, SIGNAL(track(Calibration)), tracker, SLOT(track(Calibration)));
     
 }
 
@@ -67,7 +69,6 @@ void ThreadManager::error(QString message) {
     parent->alertMessage(message);
 }
 
-void ThreadManager::track(Calibration &calib){
-    // TODO start the Tracker thread here
-    std::cout << "tracking now" << std::endl;
+void ThreadManager::calibrationFinished(Calibration calib){
+    emit track(calib);
 }

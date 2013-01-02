@@ -17,7 +17,7 @@ class TrackingThread : public QObject, public TrackerCallback {
     Q_OBJECT
     
 public:
-    TrackingThread(Calibration *calibData);
+    TrackingThread(ImageSource *camera, QMutex *cameraLock);
     virtual ~TrackingThread();
     
     void imageProcessed(Mat& resultImage);
@@ -27,10 +27,15 @@ public:
     void estimatedPoint(cv::Point);
     
 public slots:
-    void testRun(void);
+    void track(Calibration calibration);
     
+signals:
+    void error(QString);
+    void cvImage(cv::Mat);
+
 private:
-    Calibration *calibData;
+    ImageSource *camera;
+    QMutex *cameraLock;
 };
 
 #endif	/* TRACKINGTHREAD_HPP */
