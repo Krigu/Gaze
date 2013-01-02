@@ -9,8 +9,8 @@
 #include <QtGui>
 #include <QtWebKit>
 
-#include "ImageWindow.h"
-#include "ImageLinkLabel.h"
+#include "ImageWindow.hpp"
+#include "ImageLinkLabel.hpp"
 
 using namespace std;
 

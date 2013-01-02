@@ -10,8 +10,8 @@
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
-#include "ImageWindow.h"
-#include "ImageLinkLabel.h"
+#include "ImageWindow.hpp"
+#include "ImageLinkLabel.hpp"
 #include "threads/ThreadManager.hpp"
 
 
