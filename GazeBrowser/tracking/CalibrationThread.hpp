@@ -30,7 +30,7 @@ public slots:
 signals:
     void jsCommand(QString);
     void error(QString);
-    void track(Calibration);
+    void track(Calibration&);
     void cvImage(cv::Mat);
 
 };

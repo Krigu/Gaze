@@ -30,7 +30,7 @@ public:
     
 public slots:
     void error(QString message);
-    void track(Calibration calib);
+    void track(Calibration &calib);
     
 private:
     

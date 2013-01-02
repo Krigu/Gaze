@@ -34,7 +34,7 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent) {
                         cameraLock
                  );
     
-    tracker = new TrackingThread(NULL); //TODO NULL????
+    tracker = new TrackingThread(parent->source, cameraLock);
     
     calibrator->moveToThread(calibrationThread);
     tracker->moveToThread(trackingThread);
@@ -67,7 +67,7 @@ void ThreadManager::error(QString message) {
     parent->alertMessage(message);
 }
 
-void ThreadManager::track(Calibration calib){
+void ThreadManager::track(Calibration &calib){
     // TODO start the Tracker thread here
     std::cout << "tracking now" << std::endl;
 }
