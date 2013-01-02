@@ -9,6 +9,7 @@
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
 #include "MessageWindow.hpp"
+#include "threads/ThreadManager.hpp"
 
 using namespace std;
 
@@ -38,9 +39,7 @@ void BrowserWindow::init() {
 
     progress = 0;
     isCalibrating = false;
-    calibrator = NULL;
-    source = NULL;
-
+    
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     view = new QWebView(this);
@@ -66,9 +65,6 @@ void BrowserWindow::init() {
     settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
     
     setupMenus();
-    
-    // register the OpenCV datatypes for a later emitting
-    qRegisterMetaType< cv::Mat > ("cv::Mat");
     
     setCentralWidget(view);
 }
@@ -128,6 +124,8 @@ void BrowserWindow::showEvent(QShowEvent *event){
  */
 void BrowserWindow::setUpCamera(){
     source = new LiveSource;
+    //TODO document this, the UI must have been loaded before we start this
+    tManager = new ThreadManager(this);
 }
 
 /*
@@ -262,20 +260,7 @@ void BrowserWindow::start_calibration() {
 }
 
 void BrowserWindow::calibrate() {
-    calibrator = new CalibrationThread(view->width(), view->height(), source);
-    connect(calibrator, SIGNAL(jsCommand(QString)), this, SLOT(execJsCommand(QString)));
-    connect(calibrator, SIGNAL(error(QString)), this, SLOT(alertMessage(QString)));
-    connect(calibrator, SIGNAL(cvImage(cv::Mat)), this, SLOT(showCvImage(cv::Mat)));
-
-    connect(this, SIGNAL(startThread(void)), calibrator, SLOT(run(void)));
-    
-    QThread *calThread = new QThread;
-    calibrator->moveToThread(calThread);
-    calThread->start();
-    
-    emit startThread();
-    
-    //calibrator->start();
+    tManager->startCalibration();
 }
 
 void BrowserWindow::execJsCommand(QString command) {

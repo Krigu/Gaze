@@ -29,6 +29,8 @@
       <logicalFolder name="threads" displayName="threads" projectFiles="true">
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>
+        <itemPath>threads/ThreadManager.cpp</itemPath>
+        <itemPath>threads/ThreadManager.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
         <itemPath>tracking/ActionManager.cpp</itemPath>
@@ -135,6 +137,12 @@
             <pElem>../GazeLib</pElem>
           </incDir>
         </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
         <linkerTool>
           <linkerLibItems>
             <linkerLibLibItem>opencv_core</linkerLibLibItem>
@@ -160,13 +168,6 @@
             <linkerOptionItem>`pkg-config --libs opencv`</linkerOptionItem>
           </linkerLibItems>
         </linkerTool>
- 
-        <fortranCompilerTool>
-          <developmentMode>5</developmentMode>
-        </fortranCompilerTool>
-        <asmTool>
-          <developmentMode>5</developmentMode>
-        </asmTool>
       </compileType>
     </conf>
   </confs>

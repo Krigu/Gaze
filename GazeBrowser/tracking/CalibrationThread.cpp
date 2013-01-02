@@ -13,8 +13,8 @@
 
 using namespace std;
 
-CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera) 
-       : width(width), height(height), camera(camera){
+CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock) 
+       : width(width), height(height), camera(camera), cameraLock(cameraLock){
 }
 
 void CalibrationThread::run()
@@ -34,7 +34,6 @@ void CalibrationThread::run()
         QThread *thread = new QThread;
         TrackingThread *trackingThread = new TrackingThread(calib);
         
-        qRegisterMetaType< cv::Point > ("cv::Point");
         connect(trackingThread, SIGNAL(estimatedPoint(cv::Point)), manager, SLOT(measuredPoint(cv::Point)));
         
         // TODO: worst hack ever, remove as soon as possible
