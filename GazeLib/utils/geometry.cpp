@@ -121,19 +121,19 @@ bool isRectangle(vector<cv::Point> points, int tolerance) {
     float area = 0.5 * abs((p3.x - p1.x) * (p4.y - p2.y) + (p4.x - p2.x) * (p1.y - p3.y));
     if (area < 1)
         return false;
-    
+
     cv::Mat input(points, false);
 
     LOG_D("Points " << points);
-    
+
     cv::RotatedRect r = cv::minAreaRect(input);
 
     float enclosingArea = r.size.width * r.size.height;
     float ratio = enclosingArea / area;
 
     // TODO: Add const for ratio
-    bool result = ratio < 1.5 && (fmod(fabs(r.angle)+ tolerance, 90) <= 2 * tolerance);
-    LOG_D("Area: " << area << " Enclosing area: " << enclosingArea 
+    bool result = ratio < 1.5 && (fmod(fabs(r.angle) + tolerance, 90) <= 2 * tolerance);
+    LOG_D("Area: " << area << " Enclosing area: " << enclosingArea
             << " Rotation: " << r.angle << " Ratio: " << ratio << " Result:" << result);
 
     return result;
@@ -215,5 +215,21 @@ void orientateFourPoints(std::vector< cv::Point >& points) {
 
     if (points.at(2).y > points.at(3).y)
         swap(points.at(2), points.at(3));
+
+}
+
+bool isPointInRect(cv::Point& p, cv::Rect& rect) {
+
+    return (rect.x < p.x && p.x < (rect.x + rect.width)) &&
+            (rect.y < p.y && p.y < (rect.y + rect.height));
+
+}
+
+int normal(int mean, int stdev) {
+
+    float f1 = (float) rand() / (float) (RAND_MAX + 1.);
+    float f2 = (float) rand() / (float) (RAND_MAX + 1.);
+
+    return mean + stdev * cos(2 * PI * f1) * sqrt(-log(f2));
 
 }

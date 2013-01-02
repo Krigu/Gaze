@@ -5,10 +5,13 @@
 
 #include "../../cattin/IplExtractProfile.h"
 
+#include "../../utils/log.hpp"
+#include "../../utils/geometry.hpp"
+
 using namespace cv;
 using namespace std;
 
-#include "../../utils/log.hpp"
+
 
 #if __DEBUG_STARBURST == 1
 #include "../../utils/gui.hpp"

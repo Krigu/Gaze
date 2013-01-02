@@ -6,8 +6,6 @@
 
 #include "Ransac.hpp"
 
-#define PI 3.14159265358979323846
-
 class Starburst {
 private:
 	cv::Rect search_area;

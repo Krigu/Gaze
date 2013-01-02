@@ -1,6 +1,8 @@
 
 #include <iostream>
 
+#include <opencv2/core/core.hpp>
+
 #include "CalibrationThread.hpp"
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"

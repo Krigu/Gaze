@@ -13,6 +13,7 @@
 #include "TrackingThread.hpp"
 #include "calibration/Calibration.hpp"
 #include "../threads/Sleeper.hpp"
+#include "utils/geometry.hpp"
 
 using std::cout;
 using std::endl;
@@ -23,23 +24,33 @@ TrackingThread::TrackingThread(Calibration *calibData) : calibData(calibData) {
 TrackingThread::~TrackingThread() {
 }
 
-void TrackingThread::testRun()
-{
-    unsigned long i=0;
-    while(true){
+void TrackingThread::testRun() {
+
+    srand(time(NULL));
+
+    int x, y;
+    cout << "X: ";
+    cin >> x;
+    cout << "Y: ";
+    cin >> y;
+
+    unsigned long i = 0;
+    while (i < 35) {
         cout << "I'm Tracking! " << ++i << endl;
-        Sleeper::msleep(2000);
+        Sleeper::msleep(500);
         Point p;
-        p.x = -5;
-        p.y = 5;
+        p.x = normal(x, 40);
+        p.y = normal(y, 30);
         emit estimatedPoint(p);
     }
-}
-
-void TrackingThread::imageProcessed(Mat& resultImage){
-
-}
-void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector){
-
-}
     
+    testRun();
+}
+
+void TrackingThread::imageProcessed(Mat& resultImage) {
+
+}
+
+void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
+
+}

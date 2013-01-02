@@ -13,6 +13,8 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#define PI 3.14159265358979323846
+
 /**
  * Calculate to absolute distance between to points
  */
@@ -62,5 +64,9 @@ void bestFitCircle(float * x, float * y, float * radius,
 bool isRectangle(std::vector< cv::Point > points, int tolerance);
 
 void orientateFourPoints(std::vector< cv::Point >& points );
+
+bool isPointInRect(cv::Point& p, cv::Rect& rect);
+
+int normal(int mean, int stdev);
 
 #endif /* GEOMETRY_HPP_ */

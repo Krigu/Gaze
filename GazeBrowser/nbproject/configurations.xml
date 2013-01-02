@@ -37,6 +37,8 @@
         <itemPath>tracking/ActionManager.hpp</itemPath>
         <itemPath>tracking/CalibrationThread.cpp</itemPath>
         <itemPath>tracking/CalibrationThread.hpp</itemPath>
+        <itemPath>tracking/GazeAction.cpp</itemPath>
+        <itemPath>tracking/GazeAction.hpp</itemPath>
         <itemPath>tracking/TrackingThread.cpp</itemPath>
         <itemPath>tracking/TrackingThread.hpp</itemPath>
       </logicalFolder>
