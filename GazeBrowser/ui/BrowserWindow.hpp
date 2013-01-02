@@ -12,8 +12,8 @@
 
 class GazeWebPage : public QWebPage {
  public:
-    GazeWebPage(){
-        QWebPage::QWebPage(); 
+    GazeWebPage() : QWebPage(){
+      //  QWebPage::QWebPage(); 
     }
     QString userAgentForUrl(const QUrl &url ) const{
         //TODO OS and Version in User-Agent?
