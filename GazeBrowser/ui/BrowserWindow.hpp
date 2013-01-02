@@ -18,6 +18,7 @@ class GazeWebPage : public QWebPage {
       //  QWebPage::QWebPage(); 
     }
     QString userAgentForUrl(const QUrl &url ) const{
+        Q_UNUSED(url);
         //TODO OS and Version in User-Agent?
         return QString("GazeBrowser");
     }
