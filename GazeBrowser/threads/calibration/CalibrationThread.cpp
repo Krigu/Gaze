@@ -8,9 +8,7 @@
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
 #include "exception/GazeExceptions.hpp"
-#include "TrackingThread.hpp"
-#include "ActionManager.hpp"
-#include "../threads/Sleeper.hpp"
+#include "../Sleeper.hpp"
 
 using namespace std;
 

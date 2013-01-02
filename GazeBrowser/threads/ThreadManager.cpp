@@ -10,9 +10,9 @@
 #include <iostream>
 
 #include "ThreadManager.hpp"
-#include "tracking/CalibrationThread.hpp"
+#include "calibration/CalibrationThread.hpp"
 #include "tracking/TrackingThread.hpp"
-#include "ui/BrowserWindow.hpp"
+#include "../ui/BrowserWindow.hpp"
 #include "calibration/Calibration.hpp"
 
 ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent) {
