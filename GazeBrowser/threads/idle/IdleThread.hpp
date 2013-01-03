@@ -11,8 +11,6 @@
 #include <QtCore>
 #include <opencv2/core/core.hpp>
 
-#include "../ThreadManager.hpp"
-
 class ImageSource;
 
 class IdleThread : public QObject {
@@ -31,7 +29,7 @@ public slots:
     signals:
     void error(QString);
     void cvImage(cv::Mat);
-    void hasStopped(PROGRAM_EVENTS);
+    void hasStopped();
     
 private:
     ImageSource *camera;

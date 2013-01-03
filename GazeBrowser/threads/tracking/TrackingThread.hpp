@@ -10,7 +10,6 @@
 
 #include <QtCore>
 #include "detection/GazeTracker.hpp"
-#include "../ThreadManager.hpp"
 
 class CalibrationData;
 
@@ -35,7 +34,7 @@ public slots:
 signals:
     void error(QString);
     void cvImage(cv::Mat);
-    void hasStopped(PROGRAM_EVENTS);
+    void hasStopped();
 
 private:
     ImageSource *camera;

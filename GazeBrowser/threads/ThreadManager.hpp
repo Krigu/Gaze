@@ -24,7 +24,9 @@ enum PROGRAM_STATES {
 enum PROGRAM_EVENTS {
     EV_GO_IDLE,
     EV_CALIBRATE, 
+    EV_CALIBRATION_FINISHED,
     EV_TRACKING,
+    EV_START,
     EV_ERROR
 };
 
@@ -49,6 +51,7 @@ public:
     virtual ~ThreadManager();
     void calibrate();
     void goIdle();
+    void resumeTracking();
     
     signals: 
     void runCalibration(void);
@@ -58,12 +61,15 @@ public:
 public slots:
     void error(QString message);
     void calibrationFinished(Calibration calib);
-    void threadStopped(PROGRAM_EVENTS nextEvent);
+    void threadStopped();
     
 private:
     
     BrowserWindow *parent;
     PROGRAM_STATES state;
+    
+    // holds the calibration for tracking
+    Calibration *calibration;
     
     // our threads "application logic"
     CalibrationThread *calibrator;
@@ -78,6 +84,7 @@ private:
     // the Camera-Lock
     QMutex *cameraLock;
     
+    // the state transitions for the state machine
     state_transitions *transitions;
     int num_of_transitions;
     
@@ -87,6 +94,7 @@ private:
     bool fsmProcessEvent(PROGRAM_EVENTS event);
     void fsmGoIdle();
     void fsmCalibrate();
+    void fsmTrack();
     void fsmStopIdle();
     void fsmStopCalibration();
     void fsmStopTracking();

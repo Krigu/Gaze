@@ -41,6 +41,7 @@ public slots:
 
     signals: 
         void isTracking(bool);
+        void canResumeTracking(bool);
     
 protected slots:
 
@@ -58,6 +59,7 @@ protected slots:
     void show_eye_widget();
     void start_calibration();
     void stop_tracking();
+    void resume_tracking();
 
     void quit_gazebrowser();
     void preferences();
@@ -87,7 +89,7 @@ private:
     void calibrate();
     void setupMenus();
     void alertMessage(QString message);
-    void trackingStarted(bool isTracking);
+    void trackingStatus(bool trackingActive, bool isCalibrated);
     
  private slots:
      void setUpCamera();

@@ -4,7 +4,6 @@
 #include <QtCore>
 #include "video/ImageSource.hpp"
 #include "detection/GazeTracker.hpp"
-#include "../ThreadManager.hpp"
 
 class Calibration;
 
@@ -36,7 +35,7 @@ signals:
     void error(QString);
     void calibrationFinished(Calibration);
     void cvImage(cv::Mat);
-    void hasStopped(PROGRAM_EVENTS);
+    void hasStopped();
 
 };
 #endif

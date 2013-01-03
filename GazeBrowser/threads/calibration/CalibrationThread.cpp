@@ -38,10 +38,11 @@ void CalibrationThread::run()
    
         cameraLock->unlock();
         
+        //TODO *calib is probably leaked here...
         if(calibrated)
             emit(calibrationFinished(*calib));
         else if (!running)
-            emit hasStopped(EV_GO_IDLE);
+            emit hasStopped();
         
     } catch(GazeException& e) {
         cameraLock->unlock();

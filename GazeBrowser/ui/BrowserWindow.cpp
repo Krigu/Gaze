@@ -102,18 +102,28 @@ void BrowserWindow::setupMenus() {
     zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
 
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
+    
     QAction *calibrateMenuAction = new QAction("Calibration", this);
     connect(this, SIGNAL(isTracking(bool)), calibrateMenuAction, SLOT(setDisabled(bool)));
     connect(calibrateMenuAction, SIGNAL(triggered()), this, SLOT(start_calibration()));
     gazeMenu->addAction(calibrateMenuAction);
     gazeMenu->addSeparator();
-    QAction *stopMenuAction = new QAction("stop tracking", this);
+    
+    QAction *stopMenuAction = new QAction("Stop tracking", this);
     stopMenuAction->setDisabled(true);
     connect(this, SIGNAL(isTracking(bool)), stopMenuAction, SLOT(setEnabled(bool)));
     connect(stopMenuAction, SIGNAL(triggered()), this, SLOT(stop_tracking()));
     //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addAction(stopMenuAction);
+    
+    QAction *continueMenuAction = new QAction("Resume tracking", this);
+    continueMenuAction->setDisabled(true);
+    connect(this, SIGNAL(canResumeTracking(bool)), continueMenuAction, SLOT(setEnabled(bool)));
+    connect(continueMenuAction, SIGNAL(triggered()), this, SLOT(resume_tracking()));
+    //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
+    gazeMenu->addAction(continueMenuAction);
     gazeMenu->addSeparator();
+    
     //TODO remove findLinks!
     gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
     gazeMenu->addSeparator();
@@ -338,6 +348,10 @@ void BrowserWindow::stop_tracking() {
     tManager->goIdle();
 }
 
+void BrowserWindow::resume_tracking() {
+    tManager->resumeTracking();
+}
+
 void BrowserWindow::calibrate() {
     tManager->calibrate();
 }
@@ -387,6 +401,10 @@ void BrowserWindow::showBookmarkPage() {
 void BrowserWindow::show_eye_widget() {
     eye_widget->show();
 }
-void BrowserWindow::trackingStarted(bool tracking){
-    emit isTracking(tracking);
+void BrowserWindow::trackingStatus(bool trackingActive, bool isCalibrated){
+    emit isTracking(trackingActive);
+    if(trackingActive)
+        emit canResumeTracking(false);
+    else
+        emit canResumeTracking(isCalibrated);
 }

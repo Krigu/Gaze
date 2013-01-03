@@ -50,7 +50,7 @@ void IdleThread::displayCamera(void){
     cameraLock->unlock();
     
     // notify the other threads
-    emit hasStopped(EV_CALIBRATE);
+    emit hasStopped();
 }
 
 void IdleThread::stop() {

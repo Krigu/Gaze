@@ -52,10 +52,11 @@ void TrackingThread::track(Calibration calibration) {
     }
     
     cameraLock->unlock();
+    
     if(running)
         track(calibration);
     else
-        emit hasStopped(EV_GO_IDLE);
+        emit hasStopped();
 }
 
 void TrackingThread::imageProcessed(Mat& resultImage) {

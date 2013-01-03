@@ -17,7 +17,7 @@
 #include "idle/IdleThread.hpp"
 #include "actions/ActionManager.hpp"
 
-ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP){
+ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP), calibration(NULL){
     
     // register the OpenCV datatypes for emitting them afterwards
     qRegisterMetaType< cv::Mat > ("cv::Mat");
@@ -62,16 +62,16 @@ void ThreadManager::setUpSignalHandling() {
     connect(this, SIGNAL(runIdleThread(void)), idle, SLOT(displayCamera(void)));
     
     // the callback signal when a thread has stopped
-    connect(calibrator, SIGNAL(hasStopped(PROGRAM_EVENTS)), this, SLOT(threadStopped(PROGRAM_EVENTS)));
-    connect(tracker, SIGNAL(hasStopped(PROGRAM_EVENTS)), this, SLOT(threadStopped(PROGRAM_EVENTS)));
-    connect(idle, SIGNAL(hasStopped(PROGRAM_EVENTS)), this, SLOT(threadStopped(PROGRAM_EVENTS)));
+    connect(calibrator, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
+    connect(tracker, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
+    connect(idle, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
     
     // signals for displaying an error-message
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(tracker, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(idle, SIGNAL(error(QString)), this, SLOT(error(QString)));
     
-    // the signals for the calibratino animation and for starting the tracker
+    // the signals for the calibration animation and for starting the tracker
     connect(calibrator, SIGNAL(calibrationFinished(Calibration)), this, SLOT(calibrationFinished(Calibration)));
     connect(calibrator, SIGNAL(jsCommand(QString)), parent, SLOT(execJsCommand(QString)));
     
@@ -104,6 +104,10 @@ void ThreadManager::goIdle(){
     fsmProcessEvent(EV_GO_IDLE);
 }
 
+void ThreadManager::resumeTracking(){
+    fsmProcessEvent(EV_TRACKING);
+}
+
 /*
  *
  * thread callback functions
@@ -116,12 +120,13 @@ void ThreadManager::error(QString message) {
 }
 
 void ThreadManager::calibrationFinished(Calibration calib){
-    state = ST_TRACKING;
-    emit runTracker(calib);
+    this->calibration = new Calibration(calib);
+    fsmProcessEvent(EV_CALIBRATION_FINISHED);
 }
 
-void ThreadManager::threadStopped(PROGRAM_EVENTS nextEvent){
-    fsmProcessEvent(nextEvent);
+void ThreadManager::threadStopped(){
+    // previous has stopped, now we can start the next one
+    fsmProcessEvent(EV_START);
 }
 
 /*
@@ -134,18 +139,23 @@ void ThreadManager::fsmSetupStateMachine(){
     state_transitions tmp[] = {
     
         {ST_STARTED_UP, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmGoIdle},
+        
+        {ST_IDLE, EV_START, ST_IDLE, &ThreadManager::fsmGoIdle},
         {ST_IDLE, EV_CALIBRATE, ST_CALIBRATING, &ThreadManager::fsmStopIdle},
+        {ST_IDLE, EV_TRACKING, ST_TRACKING, &ThreadManager::fsmStopIdle}, 
         {ST_IDLE, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
         
-        {ST_CALIBRATING, EV_CALIBRATE, ST_CALIBRATING, &ThreadManager::fsmCalibrate},
-        {ST_CALIBRATING, EV_GO_IDLE, ST_STARTED_UP, &ThreadManager::fsmStopCalibration},
+        {ST_CALIBRATING, EV_START, ST_CALIBRATING, &ThreadManager::fsmCalibrate},
+        {ST_CALIBRATING, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmStopCalibration},
+        {ST_CALIBRATING, EV_CALIBRATION_FINISHED, ST_TRACKING, &ThreadManager::fsmTrack},
         {ST_CALIBRATING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
-        //{ST_CALIBRATING, EV_TRACKING, NULL}, <-- see calibrationFinished()
         
-        {ST_TRACKING, EV_GO_IDLE, ST_STARTED_UP,  &ThreadManager::fsmStopTracking},
+        {ST_TRACKING, EV_START, ST_TRACKING, &ThreadManager::fsmTrack},
+        {ST_TRACKING, EV_GO_IDLE, ST_IDLE,  &ThreadManager::fsmStopTracking},
         {ST_TRACKING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
         
         // ST_ERROR is a sink. the application wont recover from here
+        {ST_ERROR, EV_START, ST_ERROR, &ThreadManager::fsmPermanentError},
         {ST_ERROR, EV_GO_IDLE, ST_ERROR, &ThreadManager::fsmPermanentError},
         {ST_ERROR, EV_CALIBRATE, ST_ERROR, &ThreadManager::fsmPermanentError},
         {ST_ERROR, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
@@ -176,13 +186,25 @@ bool ThreadManager::fsmProcessEvent(PROGRAM_EVENTS event){
 }
 
 void ThreadManager::fsmGoIdle(){
-    parent->trackingStarted(false);
+    parent->trackingStatus(false, this->calibration != NULL);
     emit runIdleThread();
 }
 
 void ThreadManager::fsmCalibrate(){
-    parent->trackingStarted(true);
+    // is this a recalibration?
+    if(this->calibration != NULL){
+        delete calibration;
+        calibration = NULL;
+    }
+    
+    parent->trackingStatus(true, false);
     emit runCalibration();
+}
+
+void ThreadManager::fsmTrack(){
+    parent->trackingStatus(true, false);
+    //TODO are the parentheses around -> needed?
+    emit runTracker(*(this->calibration));
 }
 
 void ThreadManager::fsmStopIdle(){
