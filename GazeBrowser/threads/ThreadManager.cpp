@@ -112,6 +112,7 @@ void ThreadManager::goIdle(){
 
 void ThreadManager::error(QString message) {
     parent->alertMessage(message);
+    fsmProcessEvent(EV_ERROR);
 }
 
 void ThreadManager::calibrationFinished(Calibration calib){
@@ -133,14 +134,21 @@ void ThreadManager::fsmSetupStateMachine(){
     state_transitions tmp[] = {
     
         {ST_STARTED_UP, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmGoIdle},
-        {ST_IDLE, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmGoIdle},
         {ST_IDLE, EV_CALIBRATE, ST_CALIBRATING, &ThreadManager::fsmStopIdle},
+        {ST_IDLE, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
         
         {ST_CALIBRATING, EV_CALIBRATE, ST_CALIBRATING, &ThreadManager::fsmCalibrate},
-        {ST_CALIBRATING, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmStopCalibration},
+        {ST_CALIBRATING, EV_GO_IDLE, ST_STARTED_UP, &ThreadManager::fsmStopCalibration},
+        {ST_CALIBRATING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
         //{ST_CALIBRATING, EV_TRACKING, NULL}, <-- see calibrationFinished()
         
-        {ST_TRACKING, EV_GO_IDLE, ST_IDLE,  &ThreadManager::fsmStopTracking},
+        {ST_TRACKING, EV_GO_IDLE, ST_STARTED_UP,  &ThreadManager::fsmStopTracking},
+        {ST_TRACKING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
+        
+        // ST_ERROR is a sink. the application wont recover from here
+        {ST_ERROR, EV_GO_IDLE, ST_ERROR, &ThreadManager::fsmPermanentError},
+        {ST_ERROR, EV_CALIBRATE, ST_ERROR, &ThreadManager::fsmPermanentError},
+        {ST_ERROR, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
         
     };
     
@@ -187,4 +195,8 @@ void ThreadManager::fsmStopCalibration(){
 
 void ThreadManager::fsmStopTracking(){
     tracker->stop();
+}
+
+void ThreadManager::fsmPermanentError(){
+    parent->alertMessage("Application is in ST_ERROR state. Please restart the Application");
 }

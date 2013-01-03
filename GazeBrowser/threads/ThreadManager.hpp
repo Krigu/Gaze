@@ -17,13 +17,15 @@ enum PROGRAM_STATES {
     ST_STARTED_UP,
     ST_IDLE,
     ST_CALIBRATING,
-    ST_TRACKING
+    ST_TRACKING, 
+    ST_ERROR
 };
 
 enum PROGRAM_EVENTS {
     EV_GO_IDLE,
     EV_CALIBRATE, 
-    EV_TRACKING
+    EV_TRACKING,
+    EV_ERROR
 };
 
 typedef struct {
@@ -88,6 +90,7 @@ private:
     void fsmStopIdle();
     void fsmStopCalibration();
     void fsmStopTracking();
+    void fsmPermanentError();
     
     // copying the ThreadManager makes absolutely no sense, 
     // let's therefore disable it
