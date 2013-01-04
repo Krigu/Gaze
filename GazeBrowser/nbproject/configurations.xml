@@ -47,6 +47,7 @@
         </logicalFolder>
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>
+        <itemPath>threads/StateMachineDefinition.hpp</itemPath>
         <itemPath>threads/ThreadManager.cpp</itemPath>
         <itemPath>threads/ThreadManager.hpp</itemPath>
       </logicalFolder>

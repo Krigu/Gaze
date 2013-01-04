@@ -50,9 +50,10 @@ void IdleThread::displayCamera(void){
     cameraLock->unlock();
     
     // notify the other threads
-    emit hasStopped();
+    emit hasStopped(nextStateAfterStop);
 }
 
-void IdleThread::stop() {
+void IdleThread::stop(PROGRAM_STATES nextState) {
+    this->nextStateAfterStop = nextState;
     this->running = false;
 }

@@ -7,8 +7,6 @@
 
 #include <opencv2/core/core.hpp>
 
-#include <iostream>
-
 #include "ThreadManager.hpp"
 #include "calibration/CalibrationThread.hpp"
 #include "tracking/TrackingThread.hpp"
@@ -23,7 +21,7 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_S
     qRegisterMetaType< cv::Mat > ("cv::Mat");
     qRegisterMetaType< cv::Point > ("cv::Point");
     qRegisterMetaType< Calibration >("Calibration");
-    qRegisterMetaType< PROGRAM_EVENTS >("PROGRAM_EVENTS");
+    qRegisterMetaType< PROGRAM_EVENTS >("PROGRAM_STATES");
     
     trackingThread = new QThread;
     calibrationThread = new QThread;
@@ -62,9 +60,9 @@ void ThreadManager::setUpSignalHandling() {
     connect(this, SIGNAL(runIdleThread(void)), idle, SLOT(displayCamera(void)));
     
     // the callback signal when a thread has stopped
-    connect(calibrator, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
-    connect(tracker, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
-    connect(idle, SIGNAL(hasStopped()), this, SLOT(threadStopped()));
+    connect(calibrator, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
+    connect(tracker, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
+    connect(idle, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
     
     // signals for displaying an error-message
     connect(calibrator, SIGNAL(error(QString)), this, SLOT(error(QString)));
@@ -124,8 +122,9 @@ void ThreadManager::calibrationFinished(Calibration calib){
     fsmProcessEvent(EV_CALIBRATION_FINISHED);
 }
 
-void ThreadManager::threadStopped(){
+void ThreadManager::threadStopped(PROGRAM_STATES nextState){
     // previous has stopped, now we can start the next one
+    this->state = nextState;
     fsmProcessEvent(EV_START);
 }
 
@@ -175,8 +174,7 @@ bool ThreadManager::fsmProcessEvent(PROGRAM_EVENTS event){
         if(this->state == transitions[i].state
            && event == transitions[i].event) {
             
-            (this->*transitions[i].func)();
-            this->state = transitions[i].next_state;
+            (this->*transitions[i].func)(transitions[i].next_state);
             
             processed = true;
             break;
@@ -185,40 +183,43 @@ bool ThreadManager::fsmProcessEvent(PROGRAM_EVENTS event){
     return processed;
 }
 
-void ThreadManager::fsmGoIdle(){
+void ThreadManager::fsmGoIdle(PROGRAM_STATES nextState){
+    this->state = nextState;
     parent->trackingStatus(false, this->calibration != NULL);
     emit runIdleThread();
 }
 
-void ThreadManager::fsmCalibrate(){
+void ThreadManager::fsmCalibrate(PROGRAM_STATES nextState){
     // is this a recalibration?
     if(this->calibration != NULL){
         delete calibration;
         calibration = NULL;
     }
-    
+    this->state = nextState;
     parent->trackingStatus(true, false);
     emit runCalibration();
 }
 
-void ThreadManager::fsmTrack(){
+void ThreadManager::fsmTrack(PROGRAM_STATES nextState){
     parent->trackingStatus(true, false);
+    this->state = nextState;
     //TODO are the parentheses around -> needed?
     emit runTracker(*(this->calibration));
 }
 
-void ThreadManager::fsmStopIdle(){
-    idle->stop();
+void ThreadManager::fsmStopIdle(PROGRAM_STATES nextState){
+    idle->stop(nextState);
 }
 
-void ThreadManager::fsmStopCalibration(){
-    calibrator->stop();
+void ThreadManager::fsmStopCalibration(PROGRAM_STATES nextState){
+    calibrator->stop(nextState);
 }
 
-void ThreadManager::fsmStopTracking(){
-    tracker->stop();
+void ThreadManager::fsmStopTracking(PROGRAM_STATES nextState){
+    tracker->stop(nextState);
 }
 
-void ThreadManager::fsmPermanentError(){
+void ThreadManager::fsmPermanentError(PROGRAM_STATES nextState){
+    this->state = nextState;
     parent->alertMessage("Application is in ST_ERROR state. Please restart the Application");
 }

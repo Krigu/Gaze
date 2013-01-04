@@ -14,6 +14,7 @@
 #include "calibration/Calibration.hpp"
 #include "../threads/Sleeper.hpp"
 #include "utils/geometry.hpp"
+#include "threads/ThreadManager.hpp"
 
 using std::cout;
 using std::endl;
@@ -56,7 +57,7 @@ void TrackingThread::track(Calibration calibration) {
     if(running)
         track(calibration);
     else
-        emit hasStopped();
+        emit hasStopped(nextStateAfterStop);
 }
 
 void TrackingThread::imageProcessed(Mat& resultImage) {
@@ -77,6 +78,7 @@ void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Poi
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 }
 
-void TrackingThread::stop() {
+void TrackingThread::stop(PROGRAM_STATES nextState) {
+    this->nextStateAfterStop = nextState;
     this->running = false;
 }

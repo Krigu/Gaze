@@ -11,31 +11,7 @@
 #include <QtCore>
 #include <calibration/Calibration.hpp>
 
-class ThreadManager;
-
-enum PROGRAM_STATES {
-    ST_STARTED_UP,
-    ST_IDLE,
-    ST_CALIBRATING,
-    ST_TRACKING, 
-    ST_ERROR
-};
-
-enum PROGRAM_EVENTS {
-    EV_GO_IDLE,
-    EV_CALIBRATE, 
-    EV_CALIBRATION_FINISHED,
-    EV_TRACKING,
-    EV_START,
-    EV_ERROR
-};
-
-typedef struct {
-    PROGRAM_STATES state;
-    PROGRAM_EVENTS event;
-    PROGRAM_STATES next_state;
-    void (ThreadManager::*func)(void);
-} state_transitions;
+#include "StateMachineDefinition.hpp"
 
 class CalibrationThread;
 class TrackingThread;
@@ -61,7 +37,7 @@ public:
 public slots:
     void error(QString message);
     void calibrationFinished(Calibration calib);
-    void threadStopped();
+    void threadStopped(PROGRAM_STATES nextState);
     
 private:
     
@@ -92,13 +68,13 @@ private:
     
     void fsmSetupStateMachine();
     bool fsmProcessEvent(PROGRAM_EVENTS event);
-    void fsmGoIdle();
-    void fsmCalibrate();
-    void fsmTrack();
-    void fsmStopIdle();
-    void fsmStopCalibration();
-    void fsmStopTracking();
-    void fsmPermanentError();
+    void fsmGoIdle(PROGRAM_STATES nextState);
+    void fsmCalibrate(PROGRAM_STATES nextState);
+    void fsmTrack(PROGRAM_STATES nextState);
+    void fsmStopIdle(PROGRAM_STATES nextState);
+    void fsmStopCalibration(PROGRAM_STATES nextState);
+    void fsmStopTracking(PROGRAM_STATES nextState);
+    void fsmPermanentError(PROGRAM_STATES nextState);
     
     // copying the ThreadManager makes absolutely no sense, 
     // let's therefore disable it

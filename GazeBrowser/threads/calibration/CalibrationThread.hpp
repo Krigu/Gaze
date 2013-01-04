@@ -5,6 +5,8 @@
 #include "video/ImageSource.hpp"
 #include "detection/GazeTracker.hpp"
 
+#include "../StateMachineDefinition.hpp"
+
 class Calibration;
 
 class CalibrationThread : public QObject, public TrackerCallback {
@@ -17,6 +19,7 @@ private:
     QMutex *cameraLock;
     vector<Point2f> measurements;
     bool running;
+    PROGRAM_STATES nextStateAfterStop;
     
     bool calibrate(Calibration & calibration);
 
@@ -24,7 +27,7 @@ public:
     CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock);
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-    void stop();
+    void stop(PROGRAM_STATES nextState);
     
 public slots:
     void run(void);
@@ -35,7 +38,7 @@ signals:
     void error(QString);
     void calibrationFinished(Calibration);
     void cvImage(cv::Mat);
-    void hasStopped();
+    void hasStopped(PROGRAM_STATES);
 
 };
 #endif

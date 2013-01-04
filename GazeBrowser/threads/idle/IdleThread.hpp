@@ -11,6 +11,8 @@
 #include <QtCore>
 #include <opencv2/core/core.hpp>
 
+#include "../StateMachineDefinition.hpp"
+
 class ImageSource;
 
 class IdleThread : public QObject {
@@ -20,7 +22,7 @@ class IdleThread : public QObject {
 public:
     IdleThread(ImageSource *camera, QMutex *cameraLock);
     virtual ~IdleThread();
-    void stop();
+    void stop(PROGRAM_STATES nextState);
      
 public slots:
     void displayCamera(void);
@@ -29,12 +31,13 @@ public slots:
     signals:
     void error(QString);
     void cvImage(cv::Mat);
-    void hasStopped();
+    void hasStopped(PROGRAM_STATES);
     
 private:
     ImageSource *camera;
     QMutex *cameraLock;
     bool running;
+    PROGRAM_STATES nextStateAfterStop;
     
 };
 

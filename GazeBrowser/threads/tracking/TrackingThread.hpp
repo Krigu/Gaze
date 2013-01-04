@@ -11,6 +11,8 @@
 #include <QtCore>
 #include "detection/GazeTracker.hpp"
 
+#include "../StateMachineDefinition.hpp"
+
 class CalibrationData;
 
 class TrackingThread : public QObject, public TrackerCallback {
@@ -22,7 +24,7 @@ public:
     
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-    void stop();
+    void stop(PROGRAM_STATES nextState);
     
     signals:
     void estimatedPoint(cv::Point);
@@ -34,12 +36,13 @@ public slots:
 signals:
     void error(QString);
     void cvImage(cv::Mat);
-    void hasStopped();
+    void hasStopped(PROGRAM_STATES);
 
 private:
     ImageSource *camera;
     QMutex *cameraLock;
     bool running;
+    PROGRAM_STATES nextStateAfterStop;
 };
 
 #endif	/* TRACKINGTHREAD_HPP */

@@ -42,7 +42,7 @@ void CalibrationThread::run()
         if(calibrated)
             emit(calibrationFinished(*calib));
         else if (!running)
-            emit hasStopped();
+            emit hasStopped(nextStateAfterStop);
         
     } catch(GazeException& e) {
         cameraLock->unlock();
@@ -61,8 +61,8 @@ bool CalibrationThread::calibrate(Calibration & calibration){
      cout << "Begin calib" << endl;
      tracker.initializeCalibration();
      cout << "After calib" << endl;
-     for(unsigned short i=0;i<3;i++){
-         for(unsigned short j=0;j<3;j++){
+     for(unsigned short i=0;i<3 && running;i++){
+         for(unsigned short j=0;j<3 && running;j++){
             int point_x = width / 2 * j + x_offset; 
             int point_y = height / 2 * i + y_offset;
              
@@ -83,7 +83,10 @@ bool CalibrationThread::calibrate(Calibration & calibration){
          }
      }
      
-     return calibration.calibrate(100,3);
+     if(running)
+        return calibration.calibrate(100,3);
+     else
+         return false;
 }
 
 void CalibrationThread::imageProcessed(Mat& resultImage){
@@ -104,6 +107,7 @@ void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 }
 
-void CalibrationThread::stop(){
+void CalibrationThread::stop(PROGRAM_STATES nextState){
+    this->nextStateAfterStop = nextState;
     this->running = false;
 }
