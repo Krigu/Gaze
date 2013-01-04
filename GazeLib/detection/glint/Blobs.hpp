@@ -23,11 +23,8 @@ private:
 public:
 	Blobs(std::vector<std::vector<cv::Point> > & contours);
 
-	void removeInvalidShape();
-
 	void blobCenters(std::vector<cv::Point> & points);
-	// TODO: Remove. only for debug
-	int blobSize();
+
 
 };
 

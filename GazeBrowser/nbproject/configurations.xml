@@ -114,6 +114,8 @@
             <linkerLibLibItem>opencv_imgproc</linkerLibLibItem>
             <linkerLibLibItem>opencv_objdetect</linkerLibLibItem>
             <linkerLibLibItem>opencv_video</linkerLibLibItem>
+            <linkerLibLibItem>GLU</linkerLibLibItem>
+            <linkerLibLibItem>GL</linkerLibLibItem>
             <linkerLibProjectItem>
               <makeArtifact PL="../GazeLib"
                             CT="3"

@@ -66,9 +66,6 @@ bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
 
     LOG_D("Countours size: " << contours.size());
     Blobs blobs = Blobs(contours);
-    LOG_D("Blobs size after thresholding: " << blobs.blobSize());
-    blobs.removeInvalidShape();
-    LOG_D("Blobs size after removing invalid shape: " << blobs.blobSize());
     blobs.blobCenters(glintCenters);
     LOG_D("Blobs size: " << glintCenters);
 
@@ -148,7 +145,6 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
     reduce(nighbourMat, column_sum, 1, CV_REDUCE_SUM, CV_32S);
     LOG_D("Sum: " << column_sum);
 
-    // TODO: This beautiful piece of code might be reviewed by Mr. C++
     // Principle idea: Iterate over nighborMat and only consider lines
     // with at least 4 glints (3 nightbours). Those line creates a new cluster of glints.
     for (int row = 0; row < nighbourMat.rows; ++row) {
@@ -160,6 +156,7 @@ void FindGlints::findClusters(vector<cv::Point>& blobs,
                     glints.push_back(blobs.at(col));
                 }
             }
+            // Check if glintcluster has a blobs which are rectangular aligned
             if (findRectangularCluster(glints)) {
                 GlintCluster glintCluster(glints, lastMeasurement);
                 clusters.push_back(glintCluster);

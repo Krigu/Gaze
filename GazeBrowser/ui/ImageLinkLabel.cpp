@@ -5,7 +5,6 @@
  * Created on January 2, 2013, 7:28 PM
  */
 
-#include <QtCore/qglobal.h>
 
 #include "ImageLinkLabel.hpp"
 
