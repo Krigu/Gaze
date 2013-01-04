@@ -18,6 +18,7 @@ class GazeWebPage : public QWebPage {
       //  QWebPage::QWebPage(); 
     }
     QString userAgentForUrl(const QUrl &url ) const{
+        Q_UNUSED(url);
         //TODO OS and Version in User-Agent?
         return QString("GazeBrowser");
     }
@@ -36,12 +37,11 @@ public:
 
 public slots:
     void execJsCommand(QString command);
-    void alertMessage(QString message);
     void showCvImage(cv::Mat mat);
 
-    //TODO remove!!
-    signals:
-        void startThread(void);
+    signals: 
+        void isTracking(bool);
+        void canResumeTracking(bool);
     
 protected slots:
 
@@ -58,6 +58,8 @@ protected slots:
     void forward();
     void show_eye_widget();
     void start_calibration();
+    void stop_tracking();
+    void resume_tracking();
 
     void quit_gazebrowser();
     void preferences();
@@ -79,7 +81,6 @@ private:
     CVWidget *eye_widget;
     BookmarksWindow *bookmarksWin;
     ThreadManager *tManager;
-    //CalibrationThread *calibrator;
     SettingsWindow *settingsWin;
     ImageSource *source;
     int progress;
@@ -87,6 +88,8 @@ private:
     bool isCalibrating;
     void calibrate();
     void setupMenus();
+    void alertMessage(QString message);
+    void trackingStatus(bool trackingActive, bool isCalibrated);
     
  private slots:
      void setUpCamera();

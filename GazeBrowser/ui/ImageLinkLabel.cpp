@@ -5,6 +5,7 @@
  * Created on January 2, 2013, 7:28 PM
  */
 
+
 #include "ImageLinkLabel.hpp"
 
 ImageLinkLabel::ImageLinkLabel(Link link) : link(link) {
@@ -16,5 +17,6 @@ ImageLinkLabel::~ImageLinkLabel() {
 }
 
 void ImageLinkLabel::mousePressEvent(QMouseEvent * event) {
+    Q_UNUSED(event);
     emit clicked(link.href);
 }

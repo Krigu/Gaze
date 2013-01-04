@@ -20,17 +20,21 @@ class IdleThread : public QObject {
 public:
     IdleThread(ImageSource *camera, QMutex *cameraLock);
     virtual ~IdleThread();
-    
+    void stop();
+     
 public slots:
     void displayCamera(void);
+
     
     signals:
     void error(QString);
     void cvImage(cv::Mat);
+    void hasStopped();
     
 private:
     ImageSource *camera;
     QMutex *cameraLock;
+    bool running;
     
 };
 

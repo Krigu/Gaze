@@ -71,3 +71,6 @@ Package-Debug.bash
 /StaticImageStarburst/nbproject/private/private.xml
 
 qt-Release.mk
+/BlobPupil/build/
+/BlobPupil/dist/
+BlobPupil
