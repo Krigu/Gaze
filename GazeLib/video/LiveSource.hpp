@@ -15,12 +15,14 @@
 
 class LiveSource : public ImageSource {
 private:
-	cv::VideoCapture *videoCapture;
+    cv::VideoCapture *videoCapture;
+protected:
+    void init();
 public:
-	LiveSource();
-	LiveSource(int channel);
-	virtual ~LiveSource();
-	virtual bool nextGrayFrame(cv::Mat& frame);
+    LiveSource();
+    LiveSource(int channel);
+    virtual ~LiveSource();
+    virtual bool nextGrayFrame(cv::Mat& frame);
 };
 
 #endif /* LIVESOURCE_H_ */

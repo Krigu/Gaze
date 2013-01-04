@@ -7,23 +7,30 @@
 
 #include "LiveSource.hpp"
 
+#include <iostream>
+
 using namespace std;
 using namespace cv;
 
 LiveSource::LiveSource() {
     videoCapture = new VideoCapture(0);
-    // Set resolution for Microsoft Life cam
-    videoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-    videoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 720);
+    init();
 }
 
 LiveSource::LiveSource(int channel) {
     videoCapture = new VideoCapture(channel);
+    init();
 }
 
 LiveSource::~LiveSource() {
     videoCapture->release();
     delete videoCapture;
+}
+
+void LiveSource::init(){
+    // Set resolution for Microsoft Life cam
+    videoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+    videoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 720);
 }
 
 bool LiveSource::nextGrayFrame(cv::Mat& frame) {
