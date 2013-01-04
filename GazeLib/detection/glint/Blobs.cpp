@@ -35,19 +35,6 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
 }
 
 /**
- * Removes all blobs which don't have a roundish form
- */
-void Blobs::removeInvalidShape() {
-    std::vector<Blob>::iterator iter;
-    for (iter = blobs.begin(); iter != blobs.end();) {
-        if (iter->centerX == 0 || iter->centerY == 0)
-            iter = blobs.erase(iter);
-        else
-            ++iter;
-    }
-}
-
-/**
  * Returns a vector with all blob centers
  */
 void Blobs::blobCenters(std::vector<cv::Point> & points) {
@@ -59,8 +46,4 @@ void Blobs::blobCenters(std::vector<cv::Point> & points) {
         Point p(iter->centerX, iter->centerY);
         points.push_back(p);
     }
-}
-
-int Blobs::blobSize() {
-    return blobs.size();
 }
