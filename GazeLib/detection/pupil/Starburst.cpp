@@ -172,7 +172,9 @@ bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point,
  */
 bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {
-	const float angle = 2 * PI / num_of_lines; // in radiants!
+	const double angle = 2 * PI / num_of_lines; // in radiants!
+    const double lower_angle_limit = 130 * PI / 180; // 
+    const double upper_angle_limit = 230 * PI / 180; // 
 
 	bool found=false;
 
@@ -197,9 +199,24 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
             Point2f edgePoint;
             bool success = followRay(gray, start_point, current_angle, edgePoint, LINE_LENGTH, threshold);
             
-            if(success)
+            if(success){
                 points.push_back(edgePoint);
-            
+                // now send some rays from the edgePoint into the other direction
+                // we use +/- 50 dec around the ray in the other direction
+                double new_angle = fmod((current_angle + lower_angle_limit), PI2);
+                double target_angle = fmod((current_angle + upper_angle_limit), PI2);
+                
+                while(new_angle < target_angle){
+                    Point2f new_edge;
+                    bool success = followRay(gray, edgePoint, new_angle, 
+                                    new_edge, LINE_LENGTH, threshold);
+                    
+                    if(success)
+                        points.push_back(new_edge);
+                    
+                    new_angle += angle;
+                }
+            }
 		}
 
 		// calculate the mean of all points

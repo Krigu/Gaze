@@ -14,6 +14,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #define PI 3.14159265358979323846
+#define PI2 6.28318530717958647692
 
 /**
  * Calculate to absolute distance between to points
