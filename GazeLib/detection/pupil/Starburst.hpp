@@ -26,6 +26,9 @@ public:
 private:
 	bool starburst(cv::Mat &image, cv::Point2f &center, float &radius,
 			int num_of_lines);
+    bool followRay(cv::Mat &gray, const cv::Point2f &start_point, 
+            const double current_angle, cv::Point2f &edgePoint, 
+            const int line_length, const int edge_threshold);
 	void remove_glints(cv::Mat &gray, std::vector<cv::Point> glint_centers,
 			short interpolation_size);
 	void smooth_vector(std::vector<unsigned char>& vector);
