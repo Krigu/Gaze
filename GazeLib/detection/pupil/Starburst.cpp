@@ -129,8 +129,8 @@ bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point,
                 if(onEdge)
                     continue;
 
-                float x = start_point.x + (i-2) * dx;
-                float y = start_point.y + (i-2) * dy;
+                float x = start_point.x + i * dx;
+                float y = start_point.y + i * dy;
                 Point2f p = Point2f(x, y);
                 edgesInCurrentProfile.push_back(p);
                 onEdge=true;
