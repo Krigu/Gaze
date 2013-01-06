@@ -105,9 +105,7 @@ void GazeTracker::track(unsigned int duration) {
     double ticks = 0;
     double maxTicks = 0;
     if (duration > 0)
-        maxTicks = duration * getTickFrequency();
-    else
-        maxTicks = std::numeric_limits<double>::max();
+        maxTicks = duration * getTickFrequency();   
 
     // Find eye 
     findEyeRegion(currentFrame, glintCenter);
@@ -175,7 +173,7 @@ void GazeTracker::track(unsigned int duration) {
 
         ticks = getTickCount() - startTick;
         
-    } while (ticks < maxTicks);
+    } while (maxTicks == 0 || ticks < maxTicks);
 }
 
 MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter) {

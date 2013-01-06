@@ -23,6 +23,7 @@ const unsigned int GazeConfig::NUM_OF_SMOOTHING_FRAMES;
 // Glints Configuration
 //
 
+// TODO: remove glint threshold
 int GazeConfig::GLINT_THRESHOLD;
 int GazeConfig::GLINT_DISTANCE_TOLERANCE;
 int GazeConfig::GLINT_DISTANCE;
