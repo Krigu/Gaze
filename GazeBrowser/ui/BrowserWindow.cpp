@@ -33,6 +33,8 @@ BrowserWindow::BrowserWindow() {
 
 void BrowserWindow::init() {
 
+    screenSize = QApplication::desktop()->screenGeometry().size();
+
     settings = new QSettings("gazebrowser.ini", QSettings::IniFormat);
 
     QFile file;
@@ -43,7 +45,7 @@ void BrowserWindow::init() {
 
     progress = 0;
     isCalibrating = false;
-    
+
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     view = new QWebView(this);
@@ -68,54 +70,71 @@ void BrowserWindow::init() {
     settingsWin->setWindowModality(Qt::WindowModal);
     settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
 
+
+    setUpNavigation();
+
+    QVBoxLayout* hLayout = new QVBoxLayout();
+    hLayout->setMargin(0);
+    hLayout->addWidget(view);
+    hLayout->addWidget(navigationWidget);
+
+    // Set layout in QWidget
+    QWidget *window = new QWidget();
+    window->setLayout(hLayout);
+
     setupMenus();
-    setCentralWidget(view);
+    setCentralWidget(window);
 }
 
 void BrowserWindow::setupMenus() {
     // Add the Slot to the quit button
     // on mac this will be showed in the unified menu bar
+
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QAction *quitAction = new QAction("Quit Browser", this);
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
-    fileMenu->addAction("Bookmarks", this, SLOT(bookmarks()));
-    fileMenu->addAction("Preferences", this, SLOT(preferences()));
+    fileMenu->addAction(tr("Bookmarks"), this, SLOT(bookmarks()));
+    fileMenu->addAction(tr("Preferences"), this, SLOT(preferences()));
     fileMenu->addSeparator();
     fileMenu->addAction(quitAction);
 
 
     QMenu *navMenu = menuBar()->addMenu(tr("&Navigation"));
-    navMenu->addAction("Back", this, SLOT(back()));
-    navMenu->addAction("Forward", this, SLOT(forward()));
+    navMenu->addAction(tr("Back"), this, SLOT(back()));
+    navMenu->addAction(tr("Forward"), this, SLOT(forward()));
     navMenu->addSeparator();
-    navMenu->addAction("Scroll Up", this, SLOT(scrollUp()));
-    navMenu->addAction("Scroll Down", this, SLOT(scrollDown()));
+    navMenu->addAction(tr("Scroll Up"), this, SLOT(scrollUp()));
+    navMenu->addAction(tr("Scroll Down"), this, SLOT(scrollDown()));
     navMenu->addSeparator();
-    navMenu->addAction("Go to page", this, SLOT(goToPage()));
-    navMenu->addAction("Show Bookmarks", this, SLOT(showBookmarkPage()));
+    navMenu->addAction(tr("Go to page"), this, SLOT(goToPage()));
+    navMenu->addAction(tr("Show Bookmarks"), this, SLOT(showBookmarkPage()));
 
-    QMenu *browserMenu = menuBar()->addMenu(tr("&View"));
+    QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
     // Zoom
-    QMenu *zoomMenu = browserMenu->addMenu(tr("&Zoom"));
-    zoomMenu->addAction("Zoom in", this, SLOT(zoomIn()));
-    zoomMenu->addAction("Zoom out", this, SLOT(zoomOut()));
+    QMenu *zoomMenu = viewMenu->addMenu(tr("&Zoom"));
+    zoomMenu->addAction(tr("Zoom in"), this, SLOT(zoomIn()));
+    zoomMenu->addAction(tr("Zoom out"), this, SLOT(zoomOut()));
+    // Navigationbar
+    zoomMenu->addSeparator();
+    viewMenu->addAction(tr("Show navigation bar"), this, SLOT(showNavigationWidget()));
+    viewMenu->addAction(tr("Hide navigation bar"), this, SLOT(hideNavigationWidget()));
 
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
-    
+
     QAction *calibrateMenuAction = new QAction("Calibration", this);
     connect(this, SIGNAL(isTracking(bool)), calibrateMenuAction, SLOT(setDisabled(bool)));
     connect(calibrateMenuAction, SIGNAL(triggered()), this, SLOT(start_calibration()));
     gazeMenu->addAction(calibrateMenuAction);
     gazeMenu->addSeparator();
-    
+
     QAction *stopMenuAction = new QAction("Stop tracking", this);
     stopMenuAction->setDisabled(true);
     connect(this, SIGNAL(isTracking(bool)), stopMenuAction, SLOT(setEnabled(bool)));
     connect(stopMenuAction, SIGNAL(triggered()), this, SLOT(stop_tracking()));
     //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addAction(stopMenuAction);
-    
+
     QAction *continueMenuAction = new QAction("Resume tracking", this);
     continueMenuAction->setDisabled(true);
     connect(this, SIGNAL(canResumeTracking(bool)), continueMenuAction, SLOT(setEnabled(bool)));
@@ -123,9 +142,9 @@ void BrowserWindow::setupMenus() {
     //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addAction(continueMenuAction);
     gazeMenu->addSeparator();
-    
+
     //TODO remove findLinks!
-    gazeMenu->addAction("Find Links", this, SLOT(highlightAllLinks()));
+    gazeMenu->addAction("Find Links", this, SLOT(showLinks()));
     gazeMenu->addSeparator();
     gazeMenu->addAction("Show the Eye Widget", this, SLOT(show_eye_widget()));
 
@@ -137,6 +156,7 @@ void BrowserWindow::setupMenus() {
  * we would block the whole UI until openCV has opened the camera.
  */
 void BrowserWindow::showEvent(QShowEvent *event) {
+
     Q_UNUSED(event);
     QTimer::singleShot(1000, this, SLOT(setUpCamera()));
 }
@@ -146,6 +166,7 @@ void BrowserWindow::showEvent(QShowEvent *event) {
  * is created outside the main thread...
  */
 void BrowserWindow::setUpCamera() {
+
     source = new LiveSource;
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
@@ -162,11 +183,13 @@ void BrowserWindow::setUpCamera() {
 void BrowserWindow::adjustTitle() {
     if (progress <= 0 || progress >= 100)
         setWindowTitle(view->title());
+
     else
         setWindowTitle(QString("%1 (%2%)").arg(view->title()).arg(progress));
 }
 
 void BrowserWindow::setProgress(int p) {
+
     progress = p;
     adjustTitle();
 }
@@ -197,6 +220,9 @@ void BrowserWindow::finishLoading(bool) {
             }
         }
         settings->endGroup();
+        hideNavigationWidget();
+    } else {
+        showNavigationWidget();
     }
 
     if (isCalibrating)
@@ -213,7 +239,6 @@ void BrowserWindow::goToPage() {
             "", &ok);
     if (ok && !text.isEmpty()) {
 
-
         view->load(QUrl::fromUserInput(text));
     }
 }
@@ -228,7 +253,7 @@ void BrowserWindow::goToPage() {
  *  - zoomIn() and zoomOut()
  */
 
-void BrowserWindow::highlightAllLinks() {
+void BrowserWindow::showLinks() {
     QWebElementCollection linkElements = view->page()->mainFrame()->findAllElements("a");
 
     QWebElement element;
@@ -237,7 +262,7 @@ void BrowserWindow::highlightAllLinks() {
     ImageWindow* win = new ImageWindow(view);
     win->setWindowModality(Qt::WindowModal);
     // TODO: take window size
-    win->resize(800, 800);
+    win->resize(view->width(), view->height());
 
     // get viewport of browser window
     QPoint vp = view->page()->mainFrame()->scrollPosition();
@@ -252,7 +277,7 @@ void BrowserWindow::highlightAllLinks() {
         int x = element.geometry().x();
         int y = element.geometry().y();
         int w = view->size().width();
-        int h = view->size().height();                
+        int h = view->size().height();
 
         // only draw if in viewport
         if ((vp.x() <= x && x <= (vp.x() + w)) &&
@@ -278,7 +303,7 @@ void BrowserWindow::highlightAllLinks() {
             // TODO: calculate from screen size
             if (q.width() > 250)
                 q = q.scaledToWidth(250);
-            
+
             if (q.height() > 250)
                 q = q.scaledToHeight(250);
 
@@ -298,30 +323,36 @@ void BrowserWindow::highlightAllLinks() {
 }
 
 void BrowserWindow::scrollUp() {
+
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() - $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
 void BrowserWindow::scrollDown() {
+
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() + $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
 void BrowserWindow::forward() {
+
     view->forward();
 }
 
 void BrowserWindow::back() {
+
     view->back();
 }
 
 void BrowserWindow::zoomIn() {
+
     qreal zoomFactor = view->zoomFactor();
     zoomFactor++;
     view->setZoomFactor(zoomFactor);
 }
 
 void BrowserWindow::zoomOut() {
+
     qreal zoomFactor = view->zoomFactor();
     zoomFactor--;
     view->setZoomFactor(zoomFactor);
@@ -336,6 +367,7 @@ void BrowserWindow::zoomOut() {
  */
 
 void BrowserWindow::start_calibration() {
+    hideNavigationWidget();
     isCalibrating = true;
     QFile file;
     file.setFileName(":/calibration.html");
@@ -345,18 +377,22 @@ void BrowserWindow::start_calibration() {
 }
 
 void BrowserWindow::stop_tracking() {
+
     tManager->goIdle();
 }
 
 void BrowserWindow::resume_tracking() {
+
     tManager->resumeTracking();
 }
 
 void BrowserWindow::calibrate() {
+
     tManager->calibrate();
 }
 
 void BrowserWindow::execJsCommand(QString command) {
+
     view->page()->mainFrame()->evaluateJavaScript(command);
 }
 
@@ -367,30 +403,37 @@ void BrowserWindow::execJsCommand(QString command) {
 
 void BrowserWindow::quit_gazebrowser() {
     // todo valid?
+
     delete settings;
 
     QApplication::exit(0);
 }
 
 void BrowserWindow::alertMessage(QString message) {
+
     MessageWindow m;
     m.showException(message);
 }
 
 void BrowserWindow::preferences() {
+
     settingsWin->show();
 }
 
 void BrowserWindow::bookmarks() {
+
     bookmarksWin->resize(500, 300);
     bookmarksWin->show();
 }
 
 void BrowserWindow::showCvImage(cv::Mat mat) {
+
     eye_widget->sendImage(&mat);
 }
 
 void BrowserWindow::showBookmarkPage() {
+    hideNavigationWidget();
+    
     QFile file;
     file.setFileName(":/bookmarks.html");
     file.open(QIODevice::ReadOnly);
@@ -399,12 +442,59 @@ void BrowserWindow::showBookmarkPage() {
 }
 
 void BrowserWindow::show_eye_widget() {
+
     eye_widget->show();
 }
-void BrowserWindow::trackingStatus(bool trackingActive, bool isCalibrated){
+
+void BrowserWindow::trackingStatus(bool trackingActive, bool isCalibrated) {
     emit isTracking(trackingActive);
-    if(trackingActive)
+    if (trackingActive)
         emit canResumeTracking(false);
+
     else
         emit canResumeTracking(isCalibrated);
+}
+
+void BrowserWindow::setUpNavigation() {
+
+    QPushButton *back = new QPushButton("", this);
+    QPixmap pixmapBack(":img/back.png");
+    QIcon iconBack(pixmapBack);
+    back->setIcon(iconBack);
+    back->setIconSize(pixmapBack.rect().size());
+    connect(back, SIGNAL(clicked()), this, SLOT(back()));
+
+    QPushButton *forward = new QPushButton("", this);
+    QPixmap pixmapForward(":img/forward.png");
+    QIcon iconForward(pixmapForward);
+    forward->setIcon(iconForward);
+    forward->setIconSize(pixmapForward.rect().size());
+    connect(forward, SIGNAL(clicked()), this, SLOT(forward()));
+
+    QPushButton *links = new QPushButton("", this);
+    QPixmap pixmapLinks(":img/links.png");
+    QIcon iconLinks(pixmapLinks);
+    links->setIcon(iconLinks);
+    links->setIconSize(pixmapLinks.rect().size());
+    connect(links, SIGNAL(clicked()), this, SLOT(showLinks()));
+
+    QHBoxLayout * navigationBox = new QHBoxLayout();
+
+    navigationBox->addWidget(back);
+    navigationBox->addWidget(links);
+    navigationBox->addWidget(forward);
+
+    navigationWidget = new QWidget();
+    navigationWidget->setLayout(navigationBox);
+    navigationWidget->setMaximumSize(screenSize.width(), 135);
+    navigationWidget->setBackgroundRole(QPalette::Dark);
+    navigationWidget->setAutoFillBackground(true);
+}
+
+void BrowserWindow::showNavigationWidget() {
+    navigationWidget->setVisible(true);
+}
+
+void BrowserWindow::hideNavigationWidget() {
+    navigationWidget->setVisible(false);
 }

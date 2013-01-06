@@ -7,14 +7,21 @@
         <!-- this file is displayed when the calibration is started//-->
         <file alias="/calibration.html">html/calibration.html</file>
        
-      	<!-- this file is displayed when the calibration is started//-->
+        <!-- this file is displayed when the calibration is started//-->
         <file alias="/bookmarks.html">html/bookmarks.html</file>
 
         <!-- these files are used within the calibration page
-             and are accessed using the qrc:// url //-->
+        and are accessed using the qrc:// url //-->
         <file alias="js/calibration.js">html/js/calibration.js</file>
         <file alias="img/circle.jpg">html/img/circle.jpg</file>
         <file alias="img/circle_full.jpg">html/img/circle_full.jpg</file>
         <file alias="img/mario.gif">html/img/mario.gif</file>
+        
+        
+        <!--  All resources for the browser -->
+        <file alias="img/back.png">resources/back.png</file>
+        <file alias="img/forward.png">resources/forward.png</file>
+        <file alias="img/links.png">resources/links.png</file>
+        
     </qresource>
 </RCC>

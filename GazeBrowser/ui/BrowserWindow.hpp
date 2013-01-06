@@ -51,7 +51,7 @@ protected slots:
     void finishLoading(bool);
 
     // Gaze actions
-    void highlightAllLinks();
+    void showLinks();
     void scrollUp();
     void scrollDown();
     void back();
@@ -68,6 +68,8 @@ protected slots:
     // View actions
     void zoomIn();
     void zoomOut();
+    void showNavigationWidget();  
+    void hideNavigationWidget();
     void init();
     
     // Navigation actions
@@ -86,10 +88,14 @@ private:
     int progress;
     QSettings * settings;
     bool isCalibrating;
+    QWidget*  navigationWidget;
+    QSize screenSize;
+    
     void calibrate();
     void setupMenus();
     void alertMessage(QString message);
     void trackingStatus(bool trackingActive, bool isCalibrated);
+    void setUpNavigation();
     
  private slots:
      void setUpCamera();
