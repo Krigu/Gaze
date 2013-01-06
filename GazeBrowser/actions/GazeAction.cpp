@@ -12,7 +12,7 @@
 
 using namespace std;
 
-GazeAction::GazeAction(std::string name, cv::Rect region, int minHits) : actionName(name), region(region), minHits(minHits) {
+GazeAction::GazeAction(std::string name, cv::Rect region, int minHits, gazeActionCallback& callback) : actionName(name), region(region), minHits(minHits), actionCallback(callback) {
 }
 
 GazeAction::~GazeAction() {
@@ -41,6 +41,6 @@ void GazeAction::unfocus() {
 }
 
 void GazeAction::triggerAction() {
-    
+    (*actionCallback)( );
     //cout << "Triggered action " << actionName;
 }

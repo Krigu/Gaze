@@ -12,9 +12,11 @@
 
 #include <opencv2/core/core.hpp>
 
+typedef void (*gazeActionCallback)();
+
 class GazeAction {
 public:
-    GazeAction(std::string name, cv::Rect region, int minHits);
+    GazeAction(std::string name, cv::Rect region, int minHits, gazeActionCallback& callback);
     virtual ~GazeAction();
     
     std::string getActionName() const;
@@ -28,6 +30,7 @@ private:
     cv::Rect region;
     int hitCounter;
     int minHits;
+    gazeActionCallback actionCallback;
 };
 
 #endif	/* GAZEACTION_HPP */
