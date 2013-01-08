@@ -30,8 +30,7 @@ void CalibrationThread::run()
         bool calibrated=false;
         while(!calibrated && running){
             calib = new Calibration;
-            //calibrated = calibrate(*calib);
-            calibrated = true;
+            calibrated = calibrate(*calib);
             if(!calibrated)
                 delete calib;
         }
