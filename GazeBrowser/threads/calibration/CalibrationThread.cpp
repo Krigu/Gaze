@@ -90,16 +90,22 @@ bool CalibrationThread::calibrate(Calibration & calibration){
 }
 
 bool CalibrationThread::imageProcessed(Mat& resultImage){
-    //TODO move the sleep into another (non-UI) thread?
+#ifdef __APPLE__
+    // openCV on OSX does not block when capturing a frame. without this
+    // we would emit 4000 frames a second and block the whole UI
     Sleeper::msleep(33);
+#endif   
     emit cvImage(resultImage);
     
     return running;
 }
 
 bool CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
-    //TODO move the sleep into another (non-UI) thread?
+#ifdef __APPLE__
+    // openCV on OSX does not block when capturing a frame. without this
+    // we would emit 4000 frames a second and block the whole UI
     Sleeper::msleep(33);
+#endif   
     emit cvImage(resultImage);
    
     if(result == MEASURE_OK){

@@ -45,7 +45,11 @@ void TrackingThread::track(Calibration calibration) {
     unsigned long i = 0;
     while (i < 35 && running) {
         cout << "I'm Tracking! " << ++i << endl;
-        Sleeper::msleep(500);
+#ifdef __APPLE__
+        // openCV on OSX does not block when capturing a frame. without this
+        // we would emit 4000 frames a second and block the whole UI
+        Sleeper::msleep(33);
+#endif   
         Point p;
         p.x = normal(x, 40);
         p.y = normal(y, 30);
@@ -61,8 +65,11 @@ void TrackingThread::track(Calibration calibration) {
 }
 
 bool TrackingThread::imageProcessed(Mat& resultImage) {
-    //TODO move the sleep into another (non-UI) thread?
+#ifdef __APPLE__
+    // openCV on OSX does not block when capturing a frame. without this
+    // we would emit 4000 frames a second and block the whole UI
     Sleeper::msleep(33);
+#endif   
     emit cvImage(resultImage);
     
     return running;
