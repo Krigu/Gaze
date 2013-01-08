@@ -11,26 +11,32 @@
 #include <string>
 
 #include <opencv2/core/core.hpp>
+#include <QtCore>
 
-typedef void (*gazeActionCallback)();
+class GazeAction : public QObject {
+    Q_OBJECT
 
-class GazeAction {
 public:
-    GazeAction(std::string name, cv::Rect region, int minHits, gazeActionCallback& callback);
+    GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits);
     virtual ~GazeAction();
-    
+
     std::string getActionName() const;
     cv::Rect getRegion() const;
-    
+
     void focus();
     void unfocus();
-    void triggerAction();
+signals:
+    void commitAction(cv::Point);
+    void prepareAction(cv::Point,int,int);
+    void abortAction();
+
 private:
     std::string actionName;
-    cv::Rect region;
+    cv::Rect region;    
+    int prepareHits;
+    int commitHits;
     int hitCounter;
-    int minHits;
-    gazeActionCallback actionCallback;
+
 };
 
 #endif	/* GAZEACTION_HPP */

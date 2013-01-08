@@ -12,6 +12,8 @@
 
 #include "threads/ThreadManager.hpp"
 
+class ActionManager;
+
 class GazeWebPage : public QWebPage {
  public:
     GazeWebPage() : QWebPage(){
@@ -50,12 +52,21 @@ protected slots:
     void setProgress(int p);
     void finishLoading(bool);
 
-    // Gaze actions
+    // Browser actions
     void showLinks();
     void scrollUp();
     void scrollDown();
     void back();
     void forward();
+    // Overloaded methods for the gaze action callbacks
+    void showLinks(cv::Point p);
+    void scrollUp(cv::Point p);
+    void scrollDown(cv::Point p);
+    void back(cv::Point p);
+    void forward(cv::Point p);
+    // select link
+    void openLink(cv::Point p);
+    
     void show_eye_widget();
     void start_calibration();
     void stop_tracking();
@@ -88,14 +99,16 @@ private:
     int progress;
     QSettings * settings;
     bool isCalibrating;
-    QWidget*  navigationWidget;
+    QWidget *navigationWidget;
     QSize screenSize;
+    ActionManager *actionManager;
     
     void calibrate();
     void setupMenus();
     void alertMessage(QString message);
     void trackingStatus(bool trackingActive, bool isCalibrated);
     void setUpNavigation();
+    void setUpGazeActions();
     
  private slots:
      void setUpCamera();
