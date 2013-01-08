@@ -8,11 +8,15 @@
 
 #include <iostream>
 
+#include "utils/geometry.hpp"
+
 #include "GazeAction.hpp"
 
 using namespace std;
 
-GazeAction::GazeAction(std::string name, cv::Rect region, int minHits, gazeActionCallback& callback) : actionName(name), region(region), minHits(minHits), actionCallback(callback) {
+GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits) : actionName(name), region(region), prepareHits(prepareHits), commitHits(commitHits), hitCounter(0) {
+
+    cout << "Region: " << region.x << "/" << region.y << "-" << region.width << " - " << region.height << endl;
 }
 
 GazeAction::~GazeAction() {
@@ -28,19 +32,24 @@ cv::Rect GazeAction::getRegion() const {
 
 void GazeAction::focus() {
     hitCounter++;
-    if (hitCounter >= minHits){
-        triggerAction();
+    if (hitCounter >= commitHits) {
+        cout << actionName << " commitAction " << endl;        
+        emit commitAction(calcRectBarycenter(region));
         hitCounter = 0;
+        return;
     }
-    //cout << actionName << " hits: " << hitCounter << endl;
+    if (hitCounter >= prepareHits) {
+        cout << actionName << " prepareAction " << endl;
+        emit prepareAction(calcRectBarycenter(region), hitCounter, commitHits);
+        return;
+    }
+
 }
 
 void GazeAction::unfocus() {
+    if (hitCounter >= prepareHits) {
+        cout << actionName << " abortAction " << endl;
+        emit abortAction();
+    }
     hitCounter = 0;
-    //cout << actionName << " hits: " << hitCounter << endl;
-}
-
-void GazeAction::triggerAction() {
-    (*actionCallback)( );
-    //cout << "Triggered action " << actionName;
 }

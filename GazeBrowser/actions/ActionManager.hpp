@@ -8,6 +8,9 @@
 #ifndef ACTIONMANAGER_HPP
 #define	ACTIONMANAGER_HPP
 
+#include <map>
+#include <vector>
+
 #include <QtCore>
 #include <opencv2/core/core.hpp>
 
@@ -17,16 +20,18 @@ class ActionManager : public QObject {
     Q_OBJECT
 
 public:
-    ActionManager();
+    ActionManager(std::map<int, std::vector<GazeAction*> > actionMap);
     virtual ~ActionManager();
 
-    void addGazeAction(GazeAction * action);
+    void clearActions();
+    void setMode(int mode);
 
 public slots:
-    void measuredPoint(cv::Point p);
+    void estimatedPoint(cv::Point p);
 
 private:
-    std::vector<GazeAction*> actions;
+    std::map<int, std::vector<GazeAction*> > actionMap;
+    int mode;
 };
 
 #endif	/* ACTIONMANAGER_HPP */

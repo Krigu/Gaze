@@ -14,25 +14,43 @@
 
 using namespace std;
 
-ActionManager::ActionManager() {
+ActionManager::ActionManager(std::map<int, std::vector<GazeAction*> > actionMap) : actionMap(actionMap), mode(0) {
 }
 
 ActionManager::~ActionManager() {
 }
 
-void ActionManager::addGazeAction(GazeAction * action) {
-    actions.push_back(action);
+void ActionManager::setMode(int actionMode) {
+    if (actionMode >= actionMap.size()) {
+        mode = 0;
+    } else {
+        mode = actionMode;
+    }
 }
 
-void ActionManager::measuredPoint(cv::Point p) {
-    std::vector<GazeAction*>::iterator iter;
-    for (iter = actions.begin(); iter != actions.end(); iter++) {
-        cv::Rect r = (*iter)->getRegion();
-        if (isPointInRect(p, r)) {
-            (*iter)->focus();           
-        } else {
-            (*iter)->unfocus();
+void ActionManager::estimatedPoint(cv::Point p) {
+    cout << "ActionManager Point: " << p << "Mode: " << mode << "First: " << actionMap.begin()->first << endl;
+    
+    
+    // TODO check memory stuff (copy too much?)
+    map<int, vector<GazeAction*> >::iterator mapIter = actionMap.find(mode);
+    if (mapIter != actionMap.end()) {
+
+        vector< GazeAction* > actions = mapIter->second;
+        
+        std::vector<GazeAction*>::iterator iter;
+        for (iter = actions.begin(); iter != actions.end(); iter++) {
+            cv::Rect r = (*iter)->getRegion();
+            if (isPointInRect(p, r)) {
+                (*iter)->focus();
+            } else {
+                (*iter)->unfocus();
+            }
         }
     }
 
+}
+
+void ActionManager::clearActions() {
+    actionMap.clear();
 }

@@ -77,6 +77,10 @@ void ThreadManager::setUpSignalHandling() {
     connect(calibrator, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
     connect(tracker, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
     connect(idle, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
+    
+    // connect tracker thread with actionmanager to determine gaze action
+    connect(tracker, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
+    
 }
 
 ThreadManager::~ThreadManager() {
