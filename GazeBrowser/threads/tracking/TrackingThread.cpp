@@ -34,6 +34,7 @@ void TrackingThread::track(Calibration calibration) {
     
     running = true;
     
+    /*
     srand(time(NULL));
 
     int x, y;
@@ -54,7 +55,11 @@ void TrackingThread::track(Calibration calibration) {
         p.x = normal(x, 40);
         p.y = normal(y, 30);
         emit estimatedPoint(p);
-    }
+    }*/
+    
+    GazeTracker tracker(*camera, this);
+    tracker.initializeCalibration();
+    tracker.track();
     
     cameraLock->unlock();
     
@@ -82,14 +87,11 @@ bool TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Poi
     Sleeper::msleep(33);
 #endif   
     
-    emit cvImage(resultImage);
-   
     if(result == MEASURE_OK){
-            //measurements.push_back(gazeVector);
+        emit estimatedPoint(calibration->calcCoordinates(gazeVector));
     }
+    emit cvImage(resultImage);
 
-    std::cout << "Measured: " << result << " " << gazeVector << std::endl;
-    
     return running;
 }
 

@@ -13,7 +13,7 @@
 
 #include "../StateMachineDefinition.hpp"
 
-class CalibrationData;
+class Calibration;
 
 class TrackingThread : public QObject, public TrackerCallback {
     Q_OBJECT
@@ -40,6 +40,7 @@ private:
     QMutex *cameraLock;
     bool running;
     PROGRAM_STATES nextStateAfterStop;
+    Calibration *calibration;
 };
 
 #endif	/* TRACKINGTHREAD_HPP */
