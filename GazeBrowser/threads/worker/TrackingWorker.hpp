@@ -15,12 +15,12 @@
 
 class Calibration;
 
-class TrackingThread : public QObject, public TrackerCallback {
+class TrackingWorker : public QObject, public TrackerCallback {
     Q_OBJECT
 
 public:
-    TrackingThread(ImageSource *camera, QMutex *cameraLock);
-    virtual ~TrackingThread();
+    TrackingWorker(ImageSource *camera, QMutex *cameraLock);
+    virtual ~TrackingWorker();
 
     bool imageProcessed(Mat& resultImage);
     bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);

@@ -3,7 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "CalibrationThread.hpp"
+#include "CalibrationWorker.hpp"
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
@@ -12,11 +12,11 @@
 
 using namespace std;
 
-CalibrationThread::CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock) 
+CalibrationWorker::CalibrationWorker(int width, int height, ImageSource *camera, QMutex *cameraLock) 
        : width(width), height(height), camera(camera), cameraLock(cameraLock), running(false){
 }
 
-void CalibrationThread::run()
+void CalibrationWorker::run()
 {   
     if(!cameraLock->tryLock()){
         emit error("Cannot calibrate, is the camera in use?");
@@ -49,7 +49,7 @@ void CalibrationThread::run()
     }
 }
 
-bool CalibrationThread::calibrate(Calibration & calibration){
+bool CalibrationWorker::calibrate(Calibration & calibration){
      int x_offset = 40;
      int y_offset = 40;
      
@@ -88,7 +88,7 @@ bool CalibrationThread::calibrate(Calibration & calibration){
          return false;
 }
 
-bool CalibrationThread::imageProcessed(Mat& resultImage){
+bool CalibrationWorker::imageProcessed(Mat& resultImage){
 #ifdef __APPLE__
     // openCV on OSX does not block when capturing a frame. without this
     // we would emit 4000 frames a second and block the whole UI
@@ -99,7 +99,7 @@ bool CalibrationThread::imageProcessed(Mat& resultImage){
     return running;
 }
 
-bool CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
+bool CalibrationWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
 #ifdef __APPLE__
     // openCV on OSX does not block when capturing a frame. without this
     // we would emit 4000 frames a second and block the whole UI
@@ -116,7 +116,7 @@ bool CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, 
     return running;
 }
 
-void CalibrationThread::stop(PROGRAM_STATES nextState){
+void CalibrationWorker::stop(PROGRAM_STATES nextState){
     this->nextStateAfterStop = nextState;
     this->running = false;
 }

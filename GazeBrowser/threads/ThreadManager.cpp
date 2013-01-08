@@ -8,11 +8,11 @@
 #include <opencv2/core/core.hpp>
 
 #include "ThreadManager.hpp"
-#include "calibration/CalibrationThread.hpp"
-#include "tracking/TrackingThread.hpp"
+#include "worker/CalibrationWorker.hpp"
+#include "worker/TrackingWorker.hpp"
+#include "worker/IdleWorker.hpp"
 #include "../ui/BrowserWindow.hpp"
 #include "calibration/Calibration.hpp"
-#include "idle/IdleThread.hpp"
 #include "actions/ActionManager.hpp"
 
 ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP), calibration(NULL){
@@ -30,14 +30,14 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_S
     cameraLock = new QMutex(QMutex::NonRecursive);
     
     // this will fail if the UI has not been displayed yet
-    calibrator = new CalibrationThread(parent->view->width(), 
+    calibrator = new CalibrationWorker(parent->view->width(), 
                         parent->view->height(), 
                         parent->source,
                         cameraLock
                  );
     
-    tracker = new TrackingThread(parent->source, cameraLock);
-    idle = new IdleThread(parent->source, cameraLock);
+    tracker = new TrackingWorker(parent->source, cameraLock);
+    idle = new IdleWorker(parent->source, cameraLock);
     
     calibrator->moveToThread(calibrationThread);
     tracker->moveToThread(trackingThread);

@@ -13,10 +13,10 @@
 
 #include "StateMachineDefinition.hpp"
 
-class CalibrationThread;
-class TrackingThread;
+class CalibrationWorker;
+class TrackingWorker;
 class BrowserWindow;
-class IdleThread;
+class IdleWorker;
 
 class ThreadManager : public QObject {
     
@@ -43,9 +43,9 @@ private:
     Calibration *calibration;
     
     // our threads "application logic"
-    CalibrationThread *calibrator;
-    TrackingThread *tracker;
-    IdleThread *idle;
+    CalibrationWorker *calibrator;
+    TrackingWorker *tracker;
+    IdleWorker *idle;
     
     // the threads
     QThread *trackingThread;

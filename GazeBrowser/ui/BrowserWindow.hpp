@@ -7,7 +7,7 @@
 #include "BookmarksWindow.hpp"
 #include "SettingsWindow.hpp"
 
-#include "threads/calibration/CalibrationThread.hpp"
+#include "threads/worker/CalibrationWorker.hpp"
 #include "video/ImageSource.hpp"
 
 #include "threads/ThreadManager.hpp"

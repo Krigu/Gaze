@@ -10,7 +10,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "TrackingThread.hpp"
+#include "TrackingWorker.hpp"
 #include "calibration/Calibration.hpp"
 #include "../threads/Sleeper.hpp"
 #include "utils/geometry.hpp"
@@ -19,13 +19,13 @@
 using std::cout;
 using std::endl;
 
-TrackingThread::TrackingThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
+TrackingWorker::TrackingWorker(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
 }
 
-TrackingThread::~TrackingThread() {
+TrackingWorker::~TrackingWorker() {
 }
 
-void TrackingThread::track(Calibration calibration) {
+void TrackingWorker::track(Calibration calibration) {
 
     if(!cameraLock->tryLock()){
         emit error("Cannot track, is the camera in use?");
@@ -69,7 +69,7 @@ void TrackingThread::track(Calibration calibration) {
         emit hasStopped(nextStateAfterStop);
 }
 
-bool TrackingThread::imageProcessed(Mat& resultImage) {
+bool TrackingWorker::imageProcessed(Mat& resultImage) {
 #ifdef __APPLE__
     // openCV on OSX does not block when capturing a frame. without this
     // we would emit 4000 frames a second and block the whole UI
@@ -80,7 +80,7 @@ bool TrackingThread::imageProcessed(Mat& resultImage) {
     return running;
 }
 
-bool TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
+bool TrackingWorker::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
 #ifdef __APPLE__
     // openCV on OSX does not block when capturing a frame. without this
     // we would emit 4000 frames a second and block the whole UI
@@ -95,7 +95,7 @@ bool TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Poi
     return running;
 }
 
-void TrackingThread::stop(PROGRAM_STATES nextState) {
+void TrackingWorker::stop(PROGRAM_STATES nextState) {
     this->nextStateAfterStop = nextState;
     this->running = false;
 }

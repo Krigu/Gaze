@@ -5,15 +5,15 @@
  * Created on January 2, 2013, 5:33 PM
  */
 
-#include "IdleThread.hpp"
+#include "IdleWorker.hpp"
 #include "video/LiveSource.hpp"
 #include "../Sleeper.hpp"
 #include "threads/ThreadManager.hpp"
 
-IdleThread::IdleThread(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
+IdleWorker::IdleWorker(ImageSource *camera, QMutex *cameraLock) : camera(camera), cameraLock(cameraLock), running(false) {
 }
 
-IdleThread::~IdleThread() {
+IdleWorker::~IdleWorker() {
 }
 
 /**
@@ -21,7 +21,7 @@ IdleThread::~IdleThread() {
  * the eye_widget. this method only works wit LiveSource (real webcams). 
  * when started with a VideoSource (movie files) an error is displayed.
  */
-void IdleThread::displayCamera(void){
+void IdleWorker::displayCamera(void){
     if(!cameraLock->tryLock()){
         emit error("Idle-Thread: is the camera in use?");
         return;
@@ -57,7 +57,7 @@ void IdleThread::displayCamera(void){
     emit hasStopped(nextStateAfterStop);
 }
 
-void IdleThread::stop(PROGRAM_STATES nextState) {
+void IdleWorker::stop(PROGRAM_STATES nextState) {
     this->nextStateAfterStop = nextState;
     this->running = false;
 }

@@ -33,17 +33,13 @@
         <itemPath>actions/GazeAction.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="threads" displayName="threads" projectFiles="true">
-        <logicalFolder name="f1" displayName="calibration" projectFiles="true">
-          <itemPath>threads/calibration/CalibrationThread.cpp</itemPath>
-          <itemPath>threads/calibration/CalibrationThread.hpp</itemPath>
-        </logicalFolder>
-        <logicalFolder name="idle" displayName="idle" projectFiles="true">
-          <itemPath>threads/idle/IdleThread.cpp</itemPath>
-          <itemPath>threads/idle/IdleThread.hpp</itemPath>
-        </logicalFolder>
-        <logicalFolder name="tracking" displayName="tracking" projectFiles="true">
-          <itemPath>threads/tracking/TrackingThread.cpp</itemPath>
-          <itemPath>threads/tracking/TrackingThread.hpp</itemPath>
+        <logicalFolder name="worker" displayName="worker" projectFiles="true">
+          <itemPath>threads/worker/CalibrationWorker.cpp</itemPath>
+          <itemPath>threads/worker/CalibrationWorker.hpp</itemPath>
+          <itemPath>threads/worker/IdleWorker.cpp</itemPath>
+          <itemPath>threads/worker/IdleWorker.hpp</itemPath>
+          <itemPath>threads/worker/TrackingWorker.cpp</itemPath>
+          <itemPath>threads/worker/TrackingWorker.hpp</itemPath>
         </logicalFolder>
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>

@@ -9,7 +9,7 @@
 
 class Calibration;
 
-class CalibrationThread : public QObject, public TrackerCallback {
+class CalibrationWorker : public QObject, public TrackerCallback {
     Q_OBJECT
 
 private:
@@ -24,7 +24,7 @@ private:
     bool calibrate(Calibration & calibration);
 
 public:
-    CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock);
+    CalibrationWorker(int width, int height, ImageSource *camera, QMutex *cameraLock);
     bool imageProcessed(Mat& resultImage);
     bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
     

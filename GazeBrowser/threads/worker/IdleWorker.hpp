@@ -15,13 +15,13 @@
 
 class ImageSource;
 
-class IdleThread : public QObject {
+class IdleWorker : public QObject {
     
     Q_OBJECT
     
 public:
-    IdleThread(ImageSource *camera, QMutex *cameraLock);
-    virtual ~IdleThread();
+    IdleWorker(ImageSource *camera, QMutex *cameraLock);
+    virtual ~IdleWorker();
      
 public slots:
     void displayCamera(void);
