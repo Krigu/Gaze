@@ -99,6 +99,69 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 	}
 }
 
+bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point, 
+            const double current_angle, Point2f &edgePoint, 
+            const int line_length, const int edge_threshold){
+    bool edgeFound=false;
+    
+    bool done;
+    double dx, dy;
+    dx = dy = 0;
+
+    vector<unsigned char> profile = IplExtractProfile(&gray,
+            start_point.x, start_point.y, 0, line_length, current_angle, done,
+            dx, dy);
+
+    //smooth_vector(profile);
+
+    int vectorSize = profile.size();
+    bool onEdge=false;
+
+    //short edgeNum=0;
+    if (vectorSize > 5) {
+        vector<Point2f> edgesInCurrentProfile;
+        for (int i = 5; i < vectorSize; i++) {
+            unsigned char current = profile.at(i);
+            unsigned char last = profile.at(i - 5);
+
+            if (current > (last + edge_threshold)) {
+
+                if(onEdge)
+                    continue;
+
+                float x = start_point.x + i * dx;
+                float y = start_point.y + i * dy;
+                Point2f p = Point2f(x, y);
+                edgesInCurrentProfile.push_back(p);
+                onEdge=true;
+                //break;
+
+            } else {
+                onEdge = false;
+            }
+        }
+
+        if(!edgesInCurrentProfile.empty()){
+            vector<Point2f>::iterator edge;
+            
+            if(GazeConfig::DETECT_PUPIL){
+                // the pupil is the first edge
+                edge = edgesInCurrentProfile.begin();
+            } else {
+                if(edgesInCurrentProfile.size()>=2)
+                    edge = edgesInCurrentProfile.begin()+1;
+                else
+                    edge = edgesInCurrentProfile.begin();
+            }  
+            edgePoint.x = edge->x;
+            edgePoint.y = edge->y;
+            edgeFound = true;
+        }
+    }
+    
+    return edgeFound;
+}
+
 /**
  * 
  * @param gray a grayscale image of the eye
@@ -109,7 +172,9 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
  */
 bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {
-	const float angle = 2 * PI / num_of_lines; // in radiants!
+	const double angle = 2 * PI / num_of_lines; // in radiants!
+    const double lower_angle_limit = 130 * PI / 180; // 
+    const double upper_angle_limit = 230 * PI / 180; // 
 
 	bool found=false;
 
@@ -119,6 +184,9 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
     const int LINE_LENGTH=150;
     
+    //TODO performance issue here?
+    int threshold = (GazeConfig::DETECT_PUPIL) ? 30 : 15;
+    
 	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
 
 		points.clear();
@@ -127,61 +195,28 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		for (unsigned short angleNum = 0; angleNum < num_of_lines; angleNum++) {
 			// calculate the current degree
 			const double current_angle = angle * angleNum;
-
-			bool done;
-			double dx, dy;
-			dx = dy = 0;
-
-			vector<unsigned char> profile = IplExtractProfile(&gray,
-					start_point.x, start_point.y, 0, LINE_LENGTH, current_angle, done,
-					dx, dy);
-
-            //smooth_vector(profile);
             
-			int vectorSize = profile.size();
-            bool onEdge=false;
+            Point2f edgePoint;
+            bool success = followRay(gray, start_point, current_angle, edgePoint, LINE_LENGTH, threshold);
             
-            //TODO performance issue here?
-            int threashold = (GazeConfig::DETECT_PUPIL) ? 30 : 15;
-            
-            //short edgeNum=0;
-			if (vectorSize > 5) {
-                vector<Point2f> edgesInCurrentProfile;
-				for (int i = 5; i < vectorSize; i++) {
-					unsigned char current = profile.at(i);
-					unsigned char last = profile.at(i - 5);
-
-					if (current > (last + threashold)) {
-                        
-                        if(onEdge)
-                            continue;
-                        
-						float x = start_point.x + (i-2) * dx;
-						float y = start_point.y + (i-2) * dy;
-						Point2f p = Point2f(x, y);
-						edgesInCurrentProfile.push_back(p);
-                        onEdge=true;
-						//break;
-                        
-					} else {
-                        onEdge = false;
-                    }
-				}
+            if(success){
+                points.push_back(edgePoint);
+                // now send some rays from the edgePoint into the other direction
+                // we use +/- 50 dec around the ray in the other direction
+                double new_angle = fmod((current_angle + lower_angle_limit), PI2);
+                double target_angle = fmod((current_angle + upper_angle_limit), PI2);
                 
-                if(edgesInCurrentProfile.size()>0){
-                    if(GazeConfig::DETECT_PUPIL){
-                        // the pupil is the first edge
-                        points.push_back(edgesInCurrentProfile.at(0));
-                    } else {
-                        if(edgesInCurrentProfile.size()>=2)
-                            points.push_back(edgesInCurrentProfile.at(1));
-                        else
-                            points.push_back(edgesInCurrentProfile.at(0));
-                    }                    
+                while(new_angle < target_angle){
+                    Point2f new_edge;
+                    bool success = followRay(gray, edgePoint, new_angle, 
+                                    new_edge, LINE_LENGTH, threshold);
+                    
+                    if(success)
+                        points.push_back(new_edge);
+                    
+                    new_angle += angle;
                 }
-
-                
-			} 
+            }
 		}
 
 		// calculate the mean of all points
