@@ -29,11 +29,6 @@ public:
     void goIdle();
     void resumeTracking();
     
-    signals: 
-    void runCalibration(void);
-    void runTracker(Calibration);
-    void runIdleThread(void);
-    
 public slots:
     void error(QString message);
     void calibrationFinished(Calibration calib);

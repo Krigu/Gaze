@@ -27,10 +27,11 @@ public:
     CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock);
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-    void stop(PROGRAM_STATES nextState);
+    
     
 public slots:
     void run(void);
+    void stop(PROGRAM_STATES nextState);
 
     
 signals:

@@ -42,23 +42,19 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_S
     calibrator->moveToThread(calibrationThread);
     tracker->moveToThread(trackingThread);
     idle->moveToThread(idleThread);
+
+    // connect all threads with their signals and slots
+    setUpSignalHandling();
+    
     calibrationThread->start();
     trackingThread->start();
     idleThread->start();
-    
-    // connect all threads with their signals and slots
-    setUpSignalHandling();
     
     // setup the state machine
     fsmSetupStateMachine();
 }
 
 void ThreadManager::setUpSignalHandling() {
-    // the signals for starting the threads
-    connect(this, SIGNAL(runCalibration(void)), calibrator, SLOT(run(void)));
-    connect(this, SIGNAL(runTracker(Calibration)), tracker, SLOT(track(Calibration)));
-    connect(this, SIGNAL(runIdleThread(void)), idle, SLOT(displayCamera(void)));
-    
     // the callback signal when a thread has stopped
     connect(calibrator, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
     connect(tracker, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
@@ -186,7 +182,7 @@ bool ThreadManager::fsmProcessEvent(PROGRAM_EVENTS event){
 void ThreadManager::fsmGoIdle(PROGRAM_STATES nextState){
     this->state = nextState;
     parent->trackingStatus(false, this->calibration != NULL);
-    emit runIdleThread();
+    QMetaObject::invokeMethod(idle, "displayCamera", Qt::QueuedConnection);
 }
 
 void ThreadManager::fsmCalibrate(PROGRAM_STATES nextState){
@@ -197,26 +193,26 @@ void ThreadManager::fsmCalibrate(PROGRAM_STATES nextState){
     }
     this->state = nextState;
     parent->trackingStatus(true, false);
-    emit runCalibration();
+    QMetaObject::invokeMethod(calibrator, "run", Qt::QueuedConnection);
 }
 
 void ThreadManager::fsmTrack(PROGRAM_STATES nextState){
     parent->trackingStatus(true, false);
     this->state = nextState;
     //TODO are the parentheses around -> needed?
-    emit runTracker(*(this->calibration));
+    QMetaObject::invokeMethod(tracker, "track", Qt::QueuedConnection, Q_ARG(Calibration, *(this->calibration)));
 }
 
 void ThreadManager::fsmStopIdle(PROGRAM_STATES nextState){
-    idle->stop(nextState);
+    QMetaObject::invokeMethod(idle, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 
 void ThreadManager::fsmStopCalibration(PROGRAM_STATES nextState){
-    calibrator->stop(nextState);
+    QMetaObject::invokeMethod(calibrator, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 
 void ThreadManager::fsmStopTracking(PROGRAM_STATES nextState){
-    tracker->stop(nextState);
+    QMetaObject::invokeMethod(tracker, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 
 void ThreadManager::fsmPermanentError(PROGRAM_STATES nextState){

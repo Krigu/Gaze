@@ -22,11 +22,11 @@ class IdleThread : public QObject {
 public:
     IdleThread(ImageSource *camera, QMutex *cameraLock);
     virtual ~IdleThread();
-    void stop(PROGRAM_STATES nextState);
      
 public slots:
     void displayCamera(void);
-
+    void stop(PROGRAM_STATES nextState);
+    
     
     signals:
     void error(QString);

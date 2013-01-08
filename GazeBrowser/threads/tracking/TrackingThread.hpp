@@ -24,13 +24,14 @@ public:
     
     void imageProcessed(Mat& resultImage);
     void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
-    void stop(PROGRAM_STATES nextState);
+    
     
     signals:
     void estimatedPoint(cv::Point);
     
 public slots:
     void track(Calibration calibration);
+    void stop(PROGRAM_STATES nextState);
 
     
 signals:
