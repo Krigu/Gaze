@@ -29,8 +29,8 @@ public:
     virtual ~TrackerCallback(){
         
     };
-    virtual void imageProcessed(Mat &resultImage) = 0;
-    virtual void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) = 0;
+    virtual bool imageProcessed(Mat &resultImage) = 0;
+    virtual bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) = 0;
 };
 
 class GazeTracker {

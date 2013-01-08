@@ -63,7 +63,8 @@ void GazeTracker::findEyeRegion(Mat & frame,
             if (tracker_callback != NULL) {
                 Mat fullFrame = frame.clone();
                 rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
-                tracker_callback->imageProcessed(fullFrame);
+                if(!tracker_callback->imageProcessed(fullFrame))
+                    return;
             }
         }
 
@@ -114,6 +115,8 @@ void GazeTracker::track(unsigned int duration) {
 
     double startTick = getTickCount();
 
+    bool continueTracking = true;
+    
     // main loop
     do {
         // Get next frame
@@ -169,11 +172,11 @@ void GazeTracker::track(unsigned int duration) {
 
         // notify our callback about the processed frames...
         if (this->tracker_callback != NULL)
-            tracker_callback->imageProcessed(currentFrame, result, smoothed_gaze_vec);
+            continueTracking = tracker_callback->imageProcessed(currentFrame, result, smoothed_gaze_vec);
 
         ticks = getTickCount() - startTick;
         
-    } while (maxTicks == 0 || ticks < maxTicks);
+    } while (continueTracking && (maxTicks == 0 || ticks < maxTicks));
 }
 
 MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f glintCenter) {

@@ -60,13 +60,15 @@ void TrackingThread::track(Calibration calibration) {
         emit hasStopped(nextStateAfterStop);
 }
 
-void TrackingThread::imageProcessed(Mat& resultImage) {
+bool TrackingThread::imageProcessed(Mat& resultImage) {
     //TODO move the sleep into another (non-UI) thread?
     Sleeper::msleep(33);
     emit cvImage(resultImage);
+    
+    return running;
 }
 
-void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
+bool TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector) {
     //TODO move the sleep into another (non-UI) thread?
     Sleeper::msleep(33);
     emit cvImage(resultImage);
@@ -76,6 +78,8 @@ void TrackingThread::imageProcessed(Mat &resultImage, MeasureResult &result, Poi
     }
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
+    
+    return running;
 }
 
 void TrackingThread::stop(PROGRAM_STATES nextState) {

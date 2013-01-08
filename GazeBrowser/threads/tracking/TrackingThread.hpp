@@ -22,8 +22,8 @@ public:
     TrackingThread(ImageSource *camera, QMutex *cameraLock);
     virtual ~TrackingThread();
 
-    void imageProcessed(Mat& resultImage);
-    void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
+    bool imageProcessed(Mat& resultImage);
+    bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
     
 public slots:
     void track(Calibration calibration);

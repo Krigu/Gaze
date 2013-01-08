@@ -89,13 +89,15 @@ bool CalibrationThread::calibrate(Calibration & calibration){
          return false;
 }
 
-void CalibrationThread::imageProcessed(Mat& resultImage){
+bool CalibrationThread::imageProcessed(Mat& resultImage){
     //TODO move the sleep into another (non-UI) thread?
     Sleeper::msleep(33);
     emit cvImage(resultImage);
+    
+    return running;
 }
 
-void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
+bool CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
     //TODO move the sleep into another (non-UI) thread?
     Sleeper::msleep(33);
     emit cvImage(resultImage);
@@ -105,6 +107,8 @@ void CalibrationThread::imageProcessed(Mat& resultImage, MeasureResult &result, 
     }
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
+
+    return running;
 }
 
 void CalibrationThread::stop(PROGRAM_STATES nextState){

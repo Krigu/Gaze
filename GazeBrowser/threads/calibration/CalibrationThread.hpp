@@ -25,8 +25,8 @@ private:
 
 public:
     CalibrationThread(int width, int height, ImageSource *camera, QMutex *cameraLock);
-    void imageProcessed(Mat& resultImage);
-    void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
+    bool imageProcessed(Mat& resultImage);
+    bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
     
     
 public slots:
