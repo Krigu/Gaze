@@ -285,7 +285,7 @@ void BrowserWindow::showEvent(QShowEvent *event) {
  */
 void BrowserWindow::setUpCamera() {
 
-    source = new LiveSource;
+    source = new LiveSource(1);
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
     tManager->goIdle();
@@ -573,8 +573,8 @@ void BrowserWindow::bookmarks() {
 }
 
 void BrowserWindow::showCvImage(cv::Mat mat) {
-
-    eye_widget->sendImage(&mat);
+    if (eye_widget->isVisible())
+        eye_widget->sendImage(&mat);
 }
 
 void BrowserWindow::showBookmarkPage() {
