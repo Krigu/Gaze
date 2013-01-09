@@ -111,7 +111,7 @@ void BrowserWindow::setUpGazeActions() {
     connect(actBack, SIGNAL(commitAction(cv::Point)), SLOT(back(cv::Point)));
 
     // Screen bottom center
-    Rect buttonLinks(w, h - 150, wThird, 150);
+    Rect buttonLinks(wThird, h - 150, wThird, 150);
     GazeAction *actLinks = new GazeAction("Links", buttonLinks, prepareHits, commitHits);
     connect(actLinks, SIGNAL(commitAction(cv::Point)), SLOT(showLinks(cv::Point)));
 
@@ -123,18 +123,19 @@ void BrowserWindow::setUpGazeActions() {
     // Above Screen
     Rect scrollUp(0, -500, w, 500);
     GazeAction *actScrollUp = new GazeAction("Up", scrollUp, prepareHits, commitHits);
-    connect(actScrollUp, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
+    connect(actScrollUp, SIGNAL(commitAction(cv::Point)), SLOT(scrollUp(cv::Point)));
 
     // Bellow screen
     Rect scrollDown(0, h, w, 500);
     GazeAction *actScrollDown = new GazeAction("Down", scrollDown, prepareHits, commitHits);
-    connect(actScrollDown, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
+    connect(actScrollDown, SIGNAL(commitAction(cv::Point)), SLOT(scrollDown(cv::Point)));
 
     // Left of screen
-    Rect scrollLeft(-500, 0, w, h);
+    Rect scrollLeft(-500, 0, 500, h);
     GazeAction *actScrollLeft = new GazeAction("Left", scrollLeft, prepareHits, commitHits);
     connect(actScrollLeft, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
 
+    // Scroll right
     Rect scrollRight(w, 0, 500, h);
     GazeAction *actScrollRight = new GazeAction("Right", scrollRight, prepareHits, commitHits);
     connect(actScrollRight, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
@@ -145,8 +146,8 @@ void BrowserWindow::setUpGazeActions() {
     browserWindowActions.push_back(actForward);
     browserWindowActions.push_back(actScrollDown);
     browserWindowActions.push_back(actScrollUp);
-    browserWindowActions.push_back(actScrollRight);
-    browserWindowActions.push_back(actScrollLeft);
+//    browserWindowActions.push_back(actScrollRight);
+//    browserWindowActions.push_back(actScrollLeft);
 
     vector<GazeAction*> bookmarkWindowActions;
     // First link
@@ -392,7 +393,7 @@ void BrowserWindow::showLinks() {
     ImageWindow* win = new ImageWindow(view);
     win->setWindowModality(Qt::WindowModal);
     // TODO: take window size
-    win->resize(view->width(), view->height());
+    win->resize(screenSize.width(), screenSize.height());
 
     // get viewport of browser window
     QPoint vp = view->page()->mainFrame()->scrollPosition();
@@ -406,8 +407,8 @@ void BrowserWindow::showLinks() {
 
         int x = element.geometry().x();
         int y = element.geometry().y();
-        int w = view->size().width();
-        int h = view->size().height();
+        int w = screenSize.width();
+        int h = screenSize.height();
 
         // only draw if in viewport
         if ((vp.x() <= x && x <= (vp.x() + w)) &&
@@ -578,9 +579,6 @@ void BrowserWindow::showCvImage(cv::Mat mat) {
 }
 
 void BrowserWindow::showBookmarkPage() {
-    hideNavigationWidget();
-    // Track only gaze actions for bookmarks page
-    actionManager->setMode(1);
     view->load(QUrl("qrc:/bookmarks.html"));
 }
 
