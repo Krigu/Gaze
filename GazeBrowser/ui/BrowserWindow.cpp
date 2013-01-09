@@ -318,7 +318,7 @@ void BrowserWindow::finishLoading(bool) {
     view->page()->mainFrame()->evaluateJavaScript(jQuery);
 
     // TODO: cleanup code and don't check for every site
-    if (view->page()->mainFrame()->url().toString() == "qrc:/" && !isCalibrating) {
+    if (view->page()->mainFrame()->url().toString() == "qrc:/bookmarks.html") {
         QString html = "$('#%1').append("
                 "\"<a href='%2'><img src='http://gaze.frickler.ch/screenshot/?screenshot_url=%3' alt=''></a>"
                 ""
@@ -338,6 +338,11 @@ void BrowserWindow::finishLoading(bool) {
             }
         }
         settings->endGroup();
+
+    } 
+    
+    // Set Gaze Action Mode
+    if (view->page()->mainFrame()->url().toString().startsWith("qrc:/")) {
         hideNavigationWidget();
         // Track only gaze actions for bookmarks page
         actionManager->setMode(1);
@@ -514,11 +519,7 @@ void BrowserWindow::zoomOut() {
 void BrowserWindow::start_calibration() {
     hideNavigationWidget();
     isCalibrating = true;
-    QFile file;
-    file.setFileName(":/calibration.html");
-    file.open(QIODevice::ReadOnly);
-    view->setHtml(file.readAll(), QUrl("qrc:/"));
-    file.close();
+    view->load(QUrl("qrc:/calibration.html"));
 }
 
 void BrowserWindow::stop_tracking() {
@@ -580,11 +581,7 @@ void BrowserWindow::showBookmarkPage() {
     hideNavigationWidget();
     // Track only gaze actions for bookmarks page
     actionManager->setMode(1);
-    QFile file;
-    file.setFileName(":/bookmarks.html");
-    file.open(QIODevice::ReadOnly);
-    view->setHtml(file.readAll(), QUrl("qrc:/"));
-    file.close();
+    view->load(QUrl("qrc:/bookmarks.html"));
 }
 
 void BrowserWindow::show_eye_widget() {
@@ -599,6 +596,7 @@ void BrowserWindow::trackingStatus(bool trackingActive, bool isCalibrated) {
 
     else
         emit canResumeTracking(isCalibrated);
+
 }
 
 void BrowserWindow::showNavigationWidget() {
