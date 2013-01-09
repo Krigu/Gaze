@@ -18,6 +18,7 @@ class GazeWebPage : public QWebPage {
  public:
     GazeWebPage() : QWebPage(){
       //  QWebPage::QWebPage(); 
+        settings()->setMaximumPagesInCache(10000);
     }
     QString userAgentForUrl(const QUrl &url ) const{
         Q_UNUSED(url);
