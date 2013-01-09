@@ -61,11 +61,15 @@ void ImageWindow::imageLabelClicked(QString href) {
         href = webview->url().host() + href;
     }
     // Consider anchors
-    if (href.startsWith("#")) {
-        href = webview->url().host() + href;
+    else if (href.startsWith("#")) {
+        href = webview->url().host() + "/"+ webview->url().path() + href;
     }
-
+    else if (!href.startsWith("http")){
+        href = webview->url().host() + "/" + href;                
+    }
+    
     qDebug() << "Link: " << href;
     webview->load(QUrl::fromUserInput(href));
+    //webview->load(url);
     close();
 }
