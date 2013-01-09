@@ -29,7 +29,7 @@ void ActionManager::setMode(int actionMode) {
 }
 
 void ActionManager::estimatedPoint(cv::Point p) {
-    cout << "ActionManager Point: " << p << "Mode: " << mode << "First: " << actionMap.begin()->first << endl;
+    cout << "ActionManager Point: " << p << "Mode: " << mode << endl;
     
     
     // TODO check memory stuff (copy too much?)

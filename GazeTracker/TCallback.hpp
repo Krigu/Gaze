@@ -17,8 +17,8 @@ public:
     TCallback();
     TCallback(const TCallback& orig);
     virtual ~TCallback();
-    virtual void imageProcessed(Mat &result);
-    virtual void imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
+    virtual bool imageProcessed(Mat &result);
+    virtual bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
 private:
     Calibration calib;
 };

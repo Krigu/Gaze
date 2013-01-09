@@ -115,9 +115,10 @@ bool CalibrationWorker::imageProcessed(Mat& resultImage, MeasureResult &result, 
 #ifdef __APPLE__
     // openCV on OSX does not block when capturing a frame. without this
     // we would emit 4000 frames a second and block the whole UI
-    Sleeper::msleep(33);
+    //Sleeper::msleep(33);
 #endif   
-    emit cvImage(resultImage);
+    if (!calibrated)
+        emit cvImage(resultImage);
    
     if(result == MEASURE_OK){
         if(calibrated){
