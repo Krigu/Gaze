@@ -76,7 +76,7 @@ void ThreadManager::setUpSignalHandling() {
     
     // connect tracker thread with actionmanager to determine gaze action
     connect(tracker, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
-    
+    connect(calibrator, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
 }
 
 ThreadManager::~ThreadManager() {

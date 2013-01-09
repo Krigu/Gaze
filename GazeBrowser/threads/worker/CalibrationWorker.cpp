@@ -24,12 +24,14 @@ void CalibrationWorker::run()
     }
     
     running = true;
+    calibrated = false;
     
     try{
         Calibration *calib;
         bool calibrated=false;
         while(!calibrated && running){
             calib = new Calibration;
+            mCalibration = calib; //TODO: hack!
             calibrated = calibrate(*calib);
             if(!calibrated)
                 delete calib;
@@ -82,10 +84,20 @@ bool CalibrationWorker::calibrate(Calibration & calibration){
          }
      }
      
+     /*
      if(running)
         return calibration.calibrate(100,3);
      else
+         return false;*/
+     bool ready = calibration.calibrate(100,3);
+     
+     if(ready){
+         this->calibrated = true;
+         tracker.track();
+         return true;
+     } else{
          return false;
+     }
 }
 
 bool CalibrationWorker::imageProcessed(Mat& resultImage){
@@ -108,7 +120,11 @@ bool CalibrationWorker::imageProcessed(Mat& resultImage, MeasureResult &result, 
     emit cvImage(resultImage);
    
     if(result == MEASURE_OK){
+        if(calibrated){
+            emit estimatedPoint(mCalibration->calcCoordinates(gazeVector));
+        } else {
             measurements.push_back(gazeVector);
+        }
     }
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;

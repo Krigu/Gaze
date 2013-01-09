@@ -22,6 +22,8 @@ private:
     PROGRAM_STATES nextStateAfterStop;
     
     bool calibrate(Calibration & calibration);
+    bool calibrated;
+    Calibration *mCalibration;
 
 public:
     CalibrationWorker(int width, int height, ImageSource *camera, QMutex *cameraLock);
@@ -40,6 +42,7 @@ signals:
     void calibrationFinished(Calibration);
     void cvImage(cv::Mat);
     void hasStopped(PROGRAM_STATES);
+    void estimatedPoint(cv::Point);
 
 };
 #endif
