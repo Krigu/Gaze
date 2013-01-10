@@ -443,6 +443,7 @@ void BrowserWindow::showLinks() {
 }
 
 void BrowserWindow::showLinks(cv::Point p) {
+    Q_UNUSED(p);
     this->showLinks();
 }
 
@@ -453,6 +454,7 @@ void BrowserWindow::scrollUp() {
 }
 
 void BrowserWindow::scrollUp(cv::Point p) {
+    Q_UNUSED(p);
     this->scrollUp();
 }
 
@@ -463,7 +465,7 @@ void BrowserWindow::scrollDown() {
 }
 
 void BrowserWindow::scrollDown(cv::Point p) {
-
+    Q_UNUSED(p);
     this->scrollDown();
 }
 
@@ -473,7 +475,7 @@ void BrowserWindow::forward() {
 }
 
 void BrowserWindow::forward(cv::Point p) {
-
+    Q_UNUSED(p);
     this->forward();
 }
 
@@ -483,6 +485,7 @@ void BrowserWindow::back() {
 }
 
 void BrowserWindow::back(cv::Point p) {
+    Q_UNUSED(p);
     this->back();
 }
 
