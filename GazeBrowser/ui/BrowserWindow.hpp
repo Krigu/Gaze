@@ -11,6 +11,7 @@
 #include "video/ImageSource.hpp"
 
 #include "threads/ThreadManager.hpp"
+#include "GazePointer.hpp"
 
 class ActionManager;
 
@@ -103,6 +104,7 @@ private:
     QSize screenSize;
     ActionManager *actionManager;
     int cameraChannel;
+    GazePointer *gazePointer;
     
     void calibrate();
     void setupMenus();

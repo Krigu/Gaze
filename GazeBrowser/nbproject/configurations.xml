@@ -54,6 +54,8 @@
         <itemPath>ui/BrowserWindow.hpp</itemPath>
         <itemPath>ui/CVWidget.cpp</itemPath>
         <itemPath>ui/CVWidget.hpp</itemPath>
+        <itemPath>ui/GazePointer.cpp</itemPath>
+        <itemPath>ui/GazePointer.hpp</itemPath>
         <itemPath>ui/ImageLinkLabel.cpp</itemPath>
         <itemPath>ui/ImageLinkLabel.hpp</itemPath>
         <itemPath>ui/ImageWindow.cpp</itemPath>
