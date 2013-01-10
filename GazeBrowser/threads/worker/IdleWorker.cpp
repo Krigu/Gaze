@@ -23,7 +23,7 @@ IdleWorker::~IdleWorker() {
  */
 void IdleWorker::displayCamera(void){
     if(!cameraLock->tryLock()){
-        emit error("Idle-Thread: is the camera in use?");
+        emit error(tr("Idle-Thread: is the camera in use?"));
         return;
     }
     
@@ -32,7 +32,7 @@ void IdleWorker::displayCamera(void){
     LiveSource *live = dynamic_cast<LiveSource*>(camera);
     if(live == 0) {
         cameraLock->unlock();
-        emit error("Idle-Thread: Sorry, I can only display images from real cameras.");
+        emit error(tr("Idle-Thread: Sorry, I can only display images from real cameras."));
         return;
     }
     
@@ -46,7 +46,7 @@ void IdleWorker::displayCamera(void){
 #endif   
             emit cvImage(new cv::Mat(frame));
         } else {
-            emit error("Could not read an image from camera");
+            emit error(tr("Could not read an image from camera"));
             break;
         }
     }

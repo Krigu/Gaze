@@ -82,7 +82,6 @@ void BrowserWindow::init() {
     
     // add the pointer of the users gaze to the layout
     gazePointer = new GazePointer(window, Qt::WindowStaysOnTopHint);
-    gazePointer->setStyleSheet("QLabel { background-color : red; color : blue; }");
     gazePointer->hide();
     
     setupMenus();
@@ -179,7 +178,7 @@ void BrowserWindow::setupMenus() {
     // on mac this will be showed in the unified menu bar
 
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-    QAction *quitAction = new QAction("Quit Browser", this);
+    QAction *quitAction = new QAction(tr("Quit Browser"), this);
     quitAction->setMenuRole(QAction::QuitRole);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(quit_gazebrowser()));
     fileMenu->addAction(tr("Bookmarks"), this, SLOT(bookmarks()));
@@ -210,27 +209,27 @@ void BrowserWindow::setupMenus() {
 
     QMenu *gazeMenu = menuBar()->addMenu(tr("&Gaze Actions"));
 
-    QAction *calibrateMenuAction = new QAction("Calibration", this);
+    QAction *calibrateMenuAction = new QAction(tr("Calibration"), this);
     connect(this, SIGNAL(isTracking(bool)), calibrateMenuAction, SLOT(setDisabled(bool)));
     connect(calibrateMenuAction, SIGNAL(triggered()), this, SLOT(start_calibration()));
     gazeMenu->addAction(calibrateMenuAction);
     gazeMenu->addSeparator();
 
-    QAction *stopMenuAction = new QAction("Stop tracking", this);
+    QAction *stopMenuAction = new QAction(tr("Stop tracking"), this);
     stopMenuAction->setDisabled(true);
     connect(this, SIGNAL(isTracking(bool)), stopMenuAction, SLOT(setEnabled(bool)));
     connect(stopMenuAction, SIGNAL(triggered()), this, SLOT(stop_tracking()));
     //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addAction(stopMenuAction);
 
-    QAction *continueMenuAction = new QAction("Resume tracking", this);
+    QAction *continueMenuAction = new QAction(tr("Resume tracking"), this);
     continueMenuAction->setDisabled(true);
     connect(this, SIGNAL(canResumeTracking(bool)), continueMenuAction, SLOT(setEnabled(bool)));
     connect(continueMenuAction, SIGNAL(triggered()), this, SLOT(resume_tracking()));
     //gazeMenu->addAction("Calibration", this, SLOT(start_calibration()));
     gazeMenu->addAction(continueMenuAction);
     gazeMenu->addSeparator();
-    gazeMenu->addAction("Show the Eye Widget", this, SLOT(show_eye_widget()));
+    gazeMenu->addAction(tr("Show the Eye Widget"), this, SLOT(show_eye_widget()));
 
 }
 

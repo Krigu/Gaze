@@ -29,7 +29,7 @@ GazeTrackWorker::~GazeTrackWorker(){
 void GazeTrackWorker::startCalibration()
 {   
     if(!cameraLock->tryLock()){
-        emit error("Cannot calibrate, is the camera in use?");
+        emit error(tr("Cannot calibrate, is the camera in use?"));
         return;
     }
     
@@ -71,12 +71,12 @@ bool GazeTrackWorker::isCalibrated(){
 void GazeTrackWorker::startTracking(){
     
     if(!isCalibrated()){
-        emit error("Please Calibrate the System before Tracking!");
+        emit error(tr("Please Calibrate the System before Tracking!"));
         return;
     }
     
     if(!cameraLock->tryLock()){
-        emit error("Cannot track, is the camera in use?");
+        emit error(tr("Cannot track, is the camera in use?"));
         return;
     }
     
@@ -89,10 +89,10 @@ void GazeTrackWorker::startTracking(){
             tracker->track();
 
         } catch(FaceRegionNotFoundException &e){
-            emit info("No Face detected - Please hold your head still!");
+            emit info(tr("No Face detected - Please hold your head still!"));
             tracker->initializeCalibration();
         } catch(EyeRegionNotFoundException &e){
-            emit info("No Eye detected - Please hold your head still!");
+            emit info(tr("No Eye detected - Please hold your head still!"));
             tracker->initializeCalibration();
         }catch(GazeException &e){
             emit error(e.what());

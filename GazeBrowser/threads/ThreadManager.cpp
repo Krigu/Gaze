@@ -213,5 +213,5 @@ void ThreadManager::fsmStopGazeTracking(PROGRAM_STATES nextState){
 
 void ThreadManager::fsmPermanentError(PROGRAM_STATES nextState){
     this->state = nextState;
-    parent->alertError("Application is in ST_ERROR state. Please restart the Application");
+    parent->alertError(tr("Application is in ST_ERROR state. Please restart the Application"));
 }

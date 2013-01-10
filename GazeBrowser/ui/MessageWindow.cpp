@@ -30,7 +30,8 @@ void MessageWindow::showInfo(QString message, bool autohide, int durationInSecon
         
         setText(
                 QString(message)
-                    .append("\n\n This Popup will be hidden in %1 seconds.")
+                    .append("\n\n")
+                    .append(tr("This Popup will be hidden in %1 seconds."))
                     .arg(durationInSeconds)
         );
         
