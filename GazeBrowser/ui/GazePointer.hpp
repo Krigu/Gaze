@@ -23,7 +23,7 @@ public:
 
 public slots:
     void commitAction(cv::Point p);
-    void prepareAction(cv::Point p,int hitCount,int commitCount);
+    void prepareAction(cv::Point p,int percentage);
     void abortAction();
 
     protected:      

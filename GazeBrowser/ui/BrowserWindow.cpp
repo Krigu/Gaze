@@ -158,7 +158,7 @@ void BrowserWindow::setUpGazeActions() {
             GazeAction *actOpenLink = new GazeAction("Open Link", linkRect, prepareHits, commitHits);
             connect(actOpenLink, SIGNAL(commitAction(cv::Point)), SLOT(openLink(cv::Point)));
             connect(actOpenLink, SIGNAL(commitAction(cv::Point)), gazePointer, SLOT(commitAction(cv::Point)));
-            connect(actOpenLink, SIGNAL(prepareAction(cv::Point,int,int)), gazePointer, SLOT(prepareAction(cv::Point,int,int)));
+            connect(actOpenLink, SIGNAL(prepareAction(cv::Point,int)), gazePointer, SLOT(prepareAction(cv::Point,int)));
             connect(actOpenLink, SIGNAL(abortAction()), gazePointer, SLOT(abortAction()));
             bookmarkWindowActions.push_back(actOpenLink);
         }

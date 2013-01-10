@@ -27,9 +27,9 @@ void GazePointer::commitAction(cv::Point p){
     hide();
 }
 
-void GazePointer::prepareAction(cv::Point p,int hitCount,int commitCount){
+void GazePointer::prepareAction(cv::Point p,int percentage){
     //TODO: calculate percentage
-    percentage = 45;
+    this->percentage = percentage;
     percentage = percentage % 100;
     
     move(p.x,p.y);

@@ -40,7 +40,8 @@ void GazeAction::focus() {
     }
     if (hitCounter >= prepareHits) {
         //cout << actionName << " prepareAction " << endl;
-        emit prepareAction(calcRectBarycenter(region), hitCounter, commitHits);
+        int percentage = 100 / (commitHits - prepareHits) * (commitHits - hitCounter);
+        emit prepareAction(calcRectBarycenter(region), percentage);
         return;
     }
 
