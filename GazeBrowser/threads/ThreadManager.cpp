@@ -55,6 +55,7 @@ void ThreadManager::setUpSignalHandling() {
     
     // signals for displaying an error-message
     connect(gazeTracker, SIGNAL(error(QString)), this, SLOT(error(QString)));
+    connect(gazeTracker, SIGNAL(info(QString)), this, SLOT(info(QString)));
     connect(idle, SIGNAL(error(QString)), this, SLOT(error(QString)));
     
     // the signals for the calibration animation and for starting the tracker
@@ -109,8 +110,12 @@ bool ThreadManager::isCalibrated(){
  */
 
 void ThreadManager::error(QString message) {
-    parent->alertMessage(message);
+    parent->alertError(message);
     fsmProcessEvent(EV_ERROR);
+}
+
+void ThreadManager::info(QString message){
+    parent->alertInfo(message, true);
 }
 
 void ThreadManager::calibrationFinished(){
@@ -206,5 +211,5 @@ void ThreadManager::fsmStopGazeTracking(PROGRAM_STATES nextState){
 
 void ThreadManager::fsmPermanentError(PROGRAM_STATES nextState){
     this->state = nextState;
-    parent->alertMessage("Application is in ST_ERROR state. Please restart the Application");
+    parent->alertError("Application is in ST_ERROR state. Please restart the Application");
 }

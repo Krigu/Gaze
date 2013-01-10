@@ -31,6 +31,7 @@ public:
     
 public slots:
     void error(QString message);
+    void info(QString message);
     void calibrationFinished();
     void threadStopped(PROGRAM_STATES nextState);
     

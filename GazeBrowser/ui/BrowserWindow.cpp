@@ -550,10 +550,16 @@ void BrowserWindow::quit_gazebrowser() {
     QApplication::exit(0);
 }
 
-void BrowserWindow::alertMessage(QString message) {
-
+void BrowserWindow::alertError(QString message) {
+    
     MessageWindow m;
     m.showException(message);
+    
+}
+
+void BrowserWindow::alertInfo(QString message, bool autohide){
+    MessageWindow m;
+    m.showInfo(message, autohide, 4);
 }
 
 void BrowserWindow::preferences() {

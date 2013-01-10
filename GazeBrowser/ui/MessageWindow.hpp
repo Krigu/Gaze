@@ -10,10 +10,11 @@
 
 #include <QApplication>
 
-class MessageWindow : public QWidget{
+class MessageWindow : public QMessageBox{
 public:
     MessageWindow();
     void showException(QString message);
+    void showInfo(QString message, bool autohide, int durationInSeconds);
 private:
 
 };

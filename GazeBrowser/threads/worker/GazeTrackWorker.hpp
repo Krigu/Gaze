@@ -45,6 +45,7 @@ public slots:
 signals:
     void jsCommand(QString);
     void error(QString);
+    void info(QString);
     void calibrationFinished();
     void cvImage(cv::Mat*);
     void hasStopped(PROGRAM_STATES);

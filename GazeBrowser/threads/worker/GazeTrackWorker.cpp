@@ -83,12 +83,21 @@ void GazeTrackWorker::startTracking(){
     running = true;
     tracking = true;
     
-    try{
-        
-        tracker->track();
-        
-    } catch(GazeException &e){
-        emit error(e.what());
+    while(running){
+        try{
+
+            tracker->track();
+
+        } catch(FaceRegionNotFoundException &e){
+            emit info("No Face detected - Please hold your head still!");
+            tracker->initializeCalibration();
+        } catch(EyeRegionNotFoundException &e){
+            emit info("No Eye detected - Please hold your head still!");
+            tracker->initializeCalibration();
+        }catch(GazeException &e){
+            emit error(e.what());
+            break; // leave 
+        }
     }
     
     cameraLock->unlock();

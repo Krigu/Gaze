@@ -106,7 +106,8 @@ private:
     
     void calibrate();
     void setupMenus();
-    void alertMessage(QString message);
+    void alertError(QString message);
+    void alertInfo(QString message, bool autohide);
     void trackingStatus(bool trackingActive, bool isCalibrated);
     void setUpNavigation();
     void setUpGazeActions();
