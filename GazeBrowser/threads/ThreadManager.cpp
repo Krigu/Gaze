@@ -19,7 +19,7 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_S
     // register the OpenCV datatypes for emitting them afterwards
     qRegisterMetaType< cv::Mat > ("cv::Mat");
     qRegisterMetaType< cv::Point > ("cv::Point");
-    qRegisterMetaType< PROGRAM_EVENTS >("PROGRAM_STATES");
+    qRegisterMetaType< PROGRAM_STATES >("PROGRAM_STATES");
     
     gazeTrackerThread = new QThread;
     idleThread = new QThread;
