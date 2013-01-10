@@ -8,8 +8,9 @@
 #include "../StateMachineDefinition.hpp"
 
 class Calibration;
+class GazeTracker;
 
-class CalibrationWorker : public QObject, public TrackerCallback {
+class GazeTrackWorker : public QObject, public TrackerCallback {
     Q_OBJECT
 
 private:
@@ -19,27 +20,32 @@ private:
     QMutex *cameraLock;
     vector<Point2f> measurements;
     bool running;
+    bool tracking;
     PROGRAM_STATES nextStateAfterStop;
+    GazeTracker *tracker;
+    Calibration *calibration;
     
-    bool calibrate(Calibration & calibration);
-    bool calibrated;
-    Calibration *mCalibration;
+    bool calibrate();
+   
 
 public:
-    CalibrationWorker(int width, int height, ImageSource *camera, QMutex *cameraLock);
+    GazeTrackWorker(int width, int height, ImageSource *camera, QMutex *cameraLock);
+    virtual ~GazeTrackWorker();
     bool imageProcessed(Mat& resultImage);
     bool imageProcessed(Mat &resultImage, MeasureResult &result, Point2f &gazeVector);
     
     
 public slots:
-    void run(void);
+    void startCalibration(void);
+    void startTracking(void);
     void stop(PROGRAM_STATES nextState);
+    bool isCalibrated();
 
     
 signals:
     void jsCommand(QString);
     void error(QString);
-    void calibrationFinished(Calibration);
+    void calibrationFinished();
     void cvImage(cv::Mat);
     void hasStopped(PROGRAM_STATES);
     void estimatedPoint(cv::Point);

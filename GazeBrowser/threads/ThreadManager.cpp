@@ -8,46 +8,40 @@
 #include <opencv2/core/core.hpp>
 
 #include "ThreadManager.hpp"
-#include "worker/CalibrationWorker.hpp"
-#include "worker/TrackingWorker.hpp"
+#include "worker/GazeTrackWorker.hpp"
 #include "worker/IdleWorker.hpp"
 #include "../ui/BrowserWindow.hpp"
 #include "calibration/Calibration.hpp"
 #include "actions/ActionManager.hpp"
 
-ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP), calibration(NULL){
+ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP){
     
     // register the OpenCV datatypes for emitting them afterwards
     qRegisterMetaType< cv::Mat > ("cv::Mat");
     qRegisterMetaType< cv::Point > ("cv::Point");
-    qRegisterMetaType< Calibration >("Calibration");
     qRegisterMetaType< PROGRAM_EVENTS >("PROGRAM_STATES");
     
-    trackingThread = new QThread;
-    calibrationThread = new QThread;
+    gazeTrackerThread = new QThread;
     idleThread = new QThread;
     
     cameraLock = new QMutex(QMutex::NonRecursive);
     
     // this will fail if the UI has not been displayed yet
-    calibrator = new CalibrationWorker(parent->view->width(), 
+    gazeTracker = new GazeTrackWorker(parent->view->width(), 
                         parent->view->height(), 
                         parent->source,
                         cameraLock
                  );
     
-    tracker = new TrackingWorker(parent->source, cameraLock);
     idle = new IdleWorker(parent->source, cameraLock);
     
-    calibrator->moveToThread(calibrationThread);
-    tracker->moveToThread(trackingThread);
+    gazeTracker->moveToThread(gazeTrackerThread);
     idle->moveToThread(idleThread);
 
     // connect all threads with their signals and slots
     setUpSignalHandling();
     
-    calibrationThread->start();
-    trackingThread->start();
+    gazeTrackerThread->start();
     idleThread->start();
     
     // setup the state machine
@@ -56,36 +50,30 @@ ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_S
 
 void ThreadManager::setUpSignalHandling() {
     // the callback signal when a thread has stopped
-    connect(calibrator, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
-    connect(tracker, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
+    connect(gazeTracker, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
     connect(idle, SIGNAL(hasStopped(PROGRAM_STATES)), this, SLOT(threadStopped(PROGRAM_STATES)));
     
     // signals for displaying an error-message
-    connect(calibrator, SIGNAL(error(QString)), this, SLOT(error(QString)));
-    connect(tracker, SIGNAL(error(QString)), this, SLOT(error(QString)));
+    connect(gazeTracker, SIGNAL(error(QString)), this, SLOT(error(QString)));
     connect(idle, SIGNAL(error(QString)), this, SLOT(error(QString)));
     
     // the signals for the calibration animation and for starting the tracker
-    connect(calibrator, SIGNAL(calibrationFinished(Calibration)), this, SLOT(calibrationFinished(Calibration)));
-    connect(calibrator, SIGNAL(jsCommand(QString)), parent, SLOT(execJsCommand(QString)));
+    connect(gazeTracker, SIGNAL(calibrationFinished()), this, SLOT(calibrationFinished()));
+    connect(gazeTracker, SIGNAL(jsCommand(QString)), parent, SLOT(execJsCommand(QString)));
     
     // the signal for displaying an image in the eye_widget of the browser ui
-    connect(calibrator, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
-    connect(tracker, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
+    connect(gazeTracker, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
     connect(idle, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
     
     // connect tracker thread with actionmanager to determine gaze action
-    connect(tracker, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
-    connect(calibrator, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
+    connect(gazeTracker, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));
 }
 
 ThreadManager::~ThreadManager() {
     delete idle;
-    delete tracker;
-    delete calibrator;
+    delete gazeTracker;
     delete cameraLock;
-    delete calibrationThread;
-    delete trackingThread;
+    delete gazeTrackerThread;
     delete idleThread;
     delete [] transitions;
 }
@@ -106,6 +94,14 @@ void ThreadManager::resumeTracking(){
     fsmProcessEvent(EV_TRACKING);
 }
 
+bool ThreadManager::isCalibrated(){
+    // lets ask our thread
+    bool isCalibrated;
+    QMetaObject::invokeMethod(gazeTracker, "isCalibrated", Qt::DirectConnection,
+            Q_RETURN_ARG(bool, isCalibrated));
+    return isCalibrated;
+}
+
 /*
  *
  * thread callback functions
@@ -117,8 +113,7 @@ void ThreadManager::error(QString message) {
     fsmProcessEvent(EV_ERROR);
 }
 
-void ThreadManager::calibrationFinished(Calibration calib){
-    this->calibration = new Calibration(calib);
+void ThreadManager::calibrationFinished(){
     fsmProcessEvent(EV_CALIBRATION_FINISHED);
 }
 
@@ -145,12 +140,12 @@ void ThreadManager::fsmSetupStateMachine(){
         {ST_IDLE, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
         
         {ST_CALIBRATING, EV_START, ST_CALIBRATING, &ThreadManager::fsmCalibrate},
-        {ST_CALIBRATING, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmStopCalibration},
+        {ST_CALIBRATING, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmStopGazeTracking},
         {ST_CALIBRATING, EV_CALIBRATION_FINISHED, ST_TRACKING, &ThreadManager::fsmTrack},
         {ST_CALIBRATING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
         
         {ST_TRACKING, EV_START, ST_TRACKING, &ThreadManager::fsmTrack},
-        {ST_TRACKING, EV_GO_IDLE, ST_IDLE,  &ThreadManager::fsmStopTracking},
+        {ST_TRACKING, EV_GO_IDLE, ST_IDLE,  &ThreadManager::fsmStopGazeTracking},
         {ST_TRACKING, EV_ERROR, ST_IDLE, &ThreadManager::fsmGoIdle},
         
         // ST_ERROR is a sink. the application wont recover from here
@@ -185,38 +180,28 @@ bool ThreadManager::fsmProcessEvent(PROGRAM_EVENTS event){
 
 void ThreadManager::fsmGoIdle(PROGRAM_STATES nextState){
     this->state = nextState;
-    parent->trackingStatus(false, this->calibration != NULL);
+    parent->trackingStatus(false, isCalibrated());
     QMetaObject::invokeMethod(idle, "displayCamera", Qt::QueuedConnection);
 }
 
 void ThreadManager::fsmCalibrate(PROGRAM_STATES nextState){
-    // is this a recalibration?
-    if(this->calibration != NULL){
-        delete calibration;
-        calibration = NULL;
-    }
     this->state = nextState;
     parent->trackingStatus(true, false);
-    QMetaObject::invokeMethod(calibrator, "run", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(gazeTracker, "startCalibration", Qt::QueuedConnection);
 }
 
 void ThreadManager::fsmTrack(PROGRAM_STATES nextState){
     parent->trackingStatus(true, false);
     this->state = nextState;
-    //TODO are the parentheses around -> needed?
-    QMetaObject::invokeMethod(tracker, "track", Qt::QueuedConnection, Q_ARG(Calibration, *(this->calibration)));
+    QMetaObject::invokeMethod(gazeTracker, "startTracking", Qt::QueuedConnection);
 }
 
 void ThreadManager::fsmStopIdle(PROGRAM_STATES nextState){
     QMetaObject::invokeMethod(idle, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 
-void ThreadManager::fsmStopCalibration(PROGRAM_STATES nextState){
-    QMetaObject::invokeMethod(calibrator, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
-}
-
-void ThreadManager::fsmStopTracking(PROGRAM_STATES nextState){
-    QMetaObject::invokeMethod(tracker, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
+void ThreadManager::fsmStopGazeTracking(PROGRAM_STATES nextState){
+    QMetaObject::invokeMethod(gazeTracker, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 
 void ThreadManager::fsmPermanentError(PROGRAM_STATES nextState){

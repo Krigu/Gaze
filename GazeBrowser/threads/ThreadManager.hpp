@@ -13,8 +13,7 @@
 
 #include "StateMachineDefinition.hpp"
 
-class CalibrationWorker;
-class TrackingWorker;
+class GazeTrackWorker;
 class BrowserWindow;
 class IdleWorker;
 
@@ -28,10 +27,11 @@ public:
     void calibrate();
     void goIdle();
     void resumeTracking();
+    bool isCalibrated();
     
 public slots:
     void error(QString message);
-    void calibrationFinished(Calibration calib);
+    void calibrationFinished();
     void threadStopped(PROGRAM_STATES nextState);
     
 private:
@@ -39,17 +39,12 @@ private:
     BrowserWindow *parent;
     PROGRAM_STATES state;
     
-    // holds the calibration for tracking
-    Calibration *calibration;
-    
     // our threads "application logic"
-    CalibrationWorker *calibrator;
-    TrackingWorker *tracker;
+    GazeTrackWorker *gazeTracker;
     IdleWorker *idle;
     
     // the threads
-    QThread *trackingThread;
-    QThread *calibrationThread;
+    QThread *gazeTrackerThread;
     QThread *idleThread;
     
     // the Camera-Lock
@@ -67,8 +62,7 @@ private:
     void fsmCalibrate(PROGRAM_STATES nextState);
     void fsmTrack(PROGRAM_STATES nextState);
     void fsmStopIdle(PROGRAM_STATES nextState);
-    void fsmStopCalibration(PROGRAM_STATES nextState);
-    void fsmStopTracking(PROGRAM_STATES nextState);
+    void fsmStopGazeTracking(PROGRAM_STATES nextState);
     void fsmPermanentError(PROGRAM_STATES nextState);
     
     // copying the ThreadManager makes absolutely no sense, 

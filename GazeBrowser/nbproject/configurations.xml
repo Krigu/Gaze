@@ -34,12 +34,10 @@
       </logicalFolder>
       <logicalFolder name="threads" displayName="threads" projectFiles="true">
         <logicalFolder name="worker" displayName="worker" projectFiles="true">
-          <itemPath>threads/worker/CalibrationWorker.cpp</itemPath>
-          <itemPath>threads/worker/CalibrationWorker.hpp</itemPath>
+          <itemPath>threads/worker/GazeTrackWorker.cpp</itemPath>
+          <itemPath>threads/worker/GazeTrackWorker.hpp</itemPath>
           <itemPath>threads/worker/IdleWorker.cpp</itemPath>
           <itemPath>threads/worker/IdleWorker.hpp</itemPath>
-          <itemPath>threads/worker/TrackingWorker.cpp</itemPath>
-          <itemPath>threads/worker/TrackingWorker.hpp</itemPath>
         </logicalFolder>
         <itemPath>threads/Sleeper.cpp</itemPath>
         <itemPath>threads/Sleeper.hpp</itemPath>

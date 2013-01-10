@@ -3,7 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 
-#include "CalibrationWorker.hpp"
+#include "GazeTrackWorker.hpp"
 #include "calibration/Calibration.hpp"
 #include "detection/GazeTracker.hpp"
 #include "video/LiveSource.hpp"
@@ -12,11 +12,21 @@
 
 using namespace std;
 
-CalibrationWorker::CalibrationWorker(int width, int height, ImageSource *camera, QMutex *cameraLock) 
+GazeTrackWorker::GazeTrackWorker(int width, int height, ImageSource *camera, QMutex *cameraLock) 
        : width(width), height(height), camera(camera), cameraLock(cameraLock), running(false){
+    
+    tracker = new GazeTracker(*camera, this);
+    calibration = NULL;
+    
 }
 
-void CalibrationWorker::run()
+GazeTrackWorker::~GazeTrackWorker(){
+    delete tracker;
+    if(calibration != NULL)
+        delete calibration;
+}
+
+void GazeTrackWorker::startCalibration()
 {   
     if(!cameraLock->tryLock()){
         emit error("Cannot calibrate, is the camera in use?");
@@ -24,24 +34,27 @@ void CalibrationWorker::run()
     }
     
     running = true;
-    calibrated = false;
+    tracking = false;
+    
+    // is this a recalibration?
+    if(calibration !=NULL){
+        delete calibration;
+        calibration=NULL;
+    }
     
     try{
-        Calibration *calib;
         bool calibrated=false;
         while(!calibrated && running){
-            calib = new Calibration;
-            mCalibration = calib; //TODO: hack!
-            calibrated = calibrate(*calib);
+            calibration = new Calibration;
+            calibrated = calibrate();
             if(!calibrated)
-                delete calib;
+                delete calibration;
         }
    
         cameraLock->unlock();
         
-        //TODO *calib is probably leaked here...
         if(calibrated)
-            emit(calibrationFinished(*calib));
+            emit(calibrationFinished());
         else if (!running)
             emit hasStopped(nextStateAfterStop);
         
@@ -51,17 +64,46 @@ void CalibrationWorker::run()
     }
 }
 
-bool CalibrationWorker::calibrate(Calibration & calibration){
+bool GazeTrackWorker::isCalibrated(){
+    return calibration != NULL;
+}
+
+void GazeTrackWorker::startTracking(){
+    
+    if(!isCalibrated()){
+        emit error("Please Calibrate the System before Tracking!");
+        return;
+    }
+    
+    if(!cameraLock->tryLock()){
+        emit error("Cannot track, is the camera in use?");
+        return;
+    }
+    
+    running = true;
+    tracking = true;
+    
+    try{
+        
+        tracker->track();
+        
+    } catch(GazeException &e){
+        emit error(e.what());
+    }
+    
+    cameraLock->unlock();
+    
+}
+
+bool GazeTrackWorker::calibrate(){
      int x_offset = 40;
      int y_offset = 40;
      
      int height = this->height - 2 * y_offset;
      int width =  this->width - 2 * x_offset;
+     
+     tracker->initializeCalibration();
 
-     GazeTracker tracker(*camera, this);
-     cout << "Begin calib" << endl;
-     tracker.initializeCalibration();
-     cout << "After calib" << endl;
      for(unsigned short i=0;i<3 && running;i++){
          for(unsigned short j=0;j<3 && running;j++){
             int point_x = width / 2 * j + x_offset; 
@@ -77,63 +119,42 @@ bool CalibrationWorker::calibrate(Calibration & calibration){
             
             Point2f p(point_x, point_y);
             measurements.clear();
-            tracker.track(5);
+            tracker->track(5);
             CalibrationData data(p, measurements);
-            calibration.addCalibrationData(data);
+            calibration->addCalibrationData(data);
             cout << "Point: " << p << "Vector: " << data.getMeasuredMedianVector() << endl;
          }
      }
      
-     /*
      if(running)
-        return calibration.calibrate(100,3);
+        return calibration->calibrate(100,3);
      else
-         return false;*/
-     bool ready = calibration.calibrate(100,3);
-     
-     if(ready){
-         this->calibrated = true;
-         tracker.track();
-         return true;
-     } else{
          return false;
-     }
 }
 
-bool CalibrationWorker::imageProcessed(Mat& resultImage){
-#ifdef __APPLE__
-    // openCV on OSX does not block when capturing a frame. without this
-    // we would emit 4000 frames a second and block the whole UI
-    Sleeper::msleep(33);
-#endif   
+bool GazeTrackWorker::imageProcessed(Mat& resultImage){
     emit cvImage(resultImage);
-    
     return running;
 }
 
-bool CalibrationWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
-#ifdef __APPLE__
-    // openCV on OSX does not block when capturing a frame. without this
-    // we would emit 4000 frames a second and block the whole UI
-    //Sleeper::msleep(33);
-#endif   
-    if (!calibrated)
-        emit cvImage(resultImage);
-   
+bool GazeTrackWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector){
     if(result == MEASURE_OK){
-        if(calibrated){
-            emit estimatedPoint(mCalibration->calcCoordinates(gazeVector));
+        if(tracking){
+            emit estimatedPoint(calibration->calcCoordinates(gazeVector));
         } else {
             measurements.push_back(gazeVector);
         }
     }
+    
+    if (!tracking)
+        emit cvImage(resultImage);
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 
     return running;
 }
 
-void CalibrationWorker::stop(PROGRAM_STATES nextState){
+void GazeTrackWorker::stop(PROGRAM_STATES nextState){
     this->nextStateAfterStop = nextState;
     this->running = false;
 }
