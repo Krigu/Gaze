@@ -1,10 +1,22 @@
 
 #include <QtGui>
 #include "ui/BrowserWindow.hpp"
+#include <string>
 
 int main(int argc, char * argv[]) {
     QApplication app(argc, argv);
 
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+            QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+
+    QTranslator myappTranslator;
+    myappTranslator.load(
+           //QString::fromStdString(GazeConfig::inWorkingDir("translation/gazebrowser_de")));
+           "gazebrowser_" + QLocale::system().name());
+    app.installTranslator(&myappTranslator);
+    
     BrowserWindow *browser;
     
     // was the camera number passed as an argument?
