@@ -9,6 +9,7 @@
 #define	IMAGEWINDOW_H
 
 #include <QWidget>
+#include <opencv2/core/core.hpp>
 
 class QImage;
 class QLabel;
@@ -22,20 +23,31 @@ class ImageWindow : public QWidget {
     Q_OBJECT
 
 public:
-    // imagesPerPage should be a    multiple of 3
-    ImageWindow(QWebView* webview, int imagesPerPage = 9);
+    ImageWindow(QWebView* webview);
     virtual ~ImageWindow();
 
     void addLink(Link link);
+    void clearLinks();
 public slots:
     void imageLabelClicked(QString str);
+    void forward(cv::Point);
+    void back(cv::Point = cv::Point());
+    void openLink(cv::Point);
+    void closeWindow(cv::Point);
+
+
+signals:
+    void hideWindow();
+
+
 protected:
     void showEvent(QShowEvent* event);
+    void hideEvent(QHideEvent* event);
+    void displayLinks();   
 private:
     QWebView* webview;
     int imagesPerPage;
     int page;
-    
     
     std::vector<Link> links;
 

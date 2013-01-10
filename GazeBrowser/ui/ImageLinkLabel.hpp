@@ -18,8 +18,9 @@ struct Link {
 class ImageLinkLabel : public QLabel {
     Q_OBJECT
 public:
-    ImageLinkLabel(Link link);
+    ImageLinkLabel();
     virtual ~ImageLinkLabel();
+    void setLink(Link link);
 
 signals:
     void clicked(QString href);

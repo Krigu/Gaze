@@ -14,7 +14,19 @@
 
 using namespace std;
 
-ImageWindow::ImageWindow(QWebView* webview, int imagesPerPage) : webview(webview), imagesPerPage(imagesPerPage), page(0) {
+ImageWindow::ImageWindow(QWebView* webview) : webview(webview), imagesPerPage(12), page(0) {
+    
+    QGridLayout *generalLayout = new QGridLayout;
+   
+    for (int i = 0; i < imagesPerPage; i++) {
+
+        ImageLinkLabel *myLabel = new ImageLinkLabel();
+        connect(myLabel, SIGNAL(clicked(QString)), this, SLOT(imageLabelClicked(QString)));
+
+        generalLayout->addWidget(myLabel, i / 4, i % 4, Qt::AlignCenter);
+    }    
+    
+    setLayout(generalLayout);
 
 }
 
@@ -25,32 +37,36 @@ void ImageWindow::addLink(Link link) {
     links.push_back(link);
 }
 
+void ImageWindow::clearLinks() {
+    links.clear();
+}
+
 void ImageWindow::showEvent(QShowEvent* event) {
 
     QWidget::showEvent(event);
+        
+    displayLinks();
+    
+}
 
-    QGridLayout *generalLayout = new QGridLayout;
+void ImageWindow::hideEvent( QHideEvent * event ){
+    emit hideWindow();
+}
+
+void ImageWindow::displayLinks(){
 
     int start = page * imagesPerPage;
     int amountOfLinks = links.size();
     int end = min(amountOfLinks, page * imagesPerPage + imagesPerPage);
-    int linkCount = 0;
-
-    for (int i = start; i < end; i++) {
-        if (linkCount > amountOfLinks)
-            break;
-
-        ImageLinkLabel *myLabel = new ImageLinkLabel(links.at(i));
-        connect(myLabel, SIGNAL(clicked(QString)), this, SLOT(imageLabelClicked(QString)));
-
-        generalLayout->addWidget(myLabel, i / 3, i % 3, Qt::AlignCenter);
-
-    }
-
-
-
-    setLayout(generalLayout);
-
+    
+    QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
+    int j = 0;
+    
+    for (int i = start; i < end; i++, j++) {
+        list.at(j)->setLink(links.at(i));
+    }    
+       
+ 
 }
 
 void ImageWindow::imageLabelClicked(QString href) {
@@ -59,17 +75,46 @@ void ImageWindow::imageLabelClicked(QString href) {
     if (href.startsWith("/")) {
         //href = href.mid(1);
         href = webview->url().host() + href;
-    }
-    // Consider anchors
+    }// Consider anchors
     else if (href.startsWith("#")) {
-        href = webview->url().host() + "/"+ webview->url().path() + href;
+        href = webview->url().host() + "/" + webview->url().path() + href;
+    } else if (!href.startsWith("http")) {
+        href = webview->url().host() + "/" + href;
     }
-    else if (!href.startsWith("http")){
-        href = webview->url().host() + "/" + href;                
-    }
-    
+
     qDebug() << "Link: " << href;
     webview->load(QUrl::fromUserInput(href));
-    //webview->load(url);
+
+    close();
+}
+
+
+void ImageWindow::forward(cv::Point p) {
+    Q_UNUSED(p);
+    
+    int maxPages = (links.size() + imagesPerPage - 1) / imagesPerPage;
+    page = min(page + 1, maxPages - 1);
+    displayLinks();
+}
+
+void ImageWindow::back(cv::Point p) {
+    Q_UNUSED(p);
+    page = max(0, page - 1);
+    displayLinks();
+}
+
+void ImageWindow::openLink(cv::Point p) {
+    int w = size().width();
+    int h = size().height();
+
+    // get link from point    
+    unsigned int index = page * imagesPerPage + (p.y / (h / 3) * 3) + p.x / (w / 4);
+
+    if (index < links.size())
+        imageLabelClicked(links.at(index).href);
+}
+
+void ImageWindow::closeWindow(cv::Point) {
+
     close();
 }
