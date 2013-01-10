@@ -35,8 +35,7 @@ friend class ThreadManager;
         
     
 public:
-    BrowserWindow(const QUrl& url);
-    BrowserWindow();
+    BrowserWindow(const int cameraChannel=0);
 
 public slots:
     void execJsCommand(QString command);
@@ -103,6 +102,7 @@ private:
     QWidget *navigationWidget;
     QSize screenSize;
     ActionManager *actionManager;
+    int cameraChannel;
     
     void calibrate();
     void setupMenus();

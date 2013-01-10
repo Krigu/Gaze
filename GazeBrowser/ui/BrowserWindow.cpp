@@ -18,16 +18,7 @@
 
 using namespace std;
 
-BrowserWindow::BrowserWindow(const QUrl& url) {
-
-    init();
-    view->load(url);
-
-    // Change to bookmark mode
-    actionManager->setMode(1);
-}
-
-BrowserWindow::BrowserWindow() {
+BrowserWindow::BrowserWindow(const int cameraChannel) : cameraChannel(cameraChannel) {
 
     init();
     showBookmarkPage();
@@ -286,7 +277,7 @@ void BrowserWindow::showEvent(QShowEvent *event) {
  */
 void BrowserWindow::setUpCamera() {
 
-    source = new LiveSource(1);
+    source = new LiveSource(cameraChannel);
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
     tManager->goIdle();
