@@ -120,6 +120,7 @@ void ThreadManager::info(QString message){
 
 void ThreadManager::calibrationFinished(){
     fsmProcessEvent(EV_CALIBRATION_FINISHED);
+    this->parent->showBookmarkPage();
 }
 
 void ThreadManager::threadStopped(PROGRAM_STATES nextState){
