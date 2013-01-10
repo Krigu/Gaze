@@ -573,9 +573,10 @@ void BrowserWindow::bookmarks() {
     bookmarksWin->show();
 }
 
-void BrowserWindow::showCvImage(cv::Mat mat) {
+void BrowserWindow::showCvImage(cv::Mat *mat) {
     if (eye_widget->isVisible())
-        eye_widget->sendImage(&mat);
+        eye_widget->sendImage(mat);
+    delete mat;
 }
 
 void BrowserWindow::showBookmarkPage() {

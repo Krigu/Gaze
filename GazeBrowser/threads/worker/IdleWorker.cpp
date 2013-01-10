@@ -44,7 +44,7 @@ void IdleWorker::displayCamera(void){
             // we would emit 4000 frames a second and block the whole UI
             Sleeper::msleep(33);
 #endif   
-            emit cvImage(frame);
+            emit cvImage(new cv::Mat(frame));
         } else {
             emit error("Could not read an image from camera");
             break;

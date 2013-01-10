@@ -40,7 +40,7 @@ public:
 
 public slots:
     void execJsCommand(QString command);
-    void showCvImage(cv::Mat mat);
+    void showCvImage(cv::Mat *mat);
 
     signals: 
         void isTracking(bool);

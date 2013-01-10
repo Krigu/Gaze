@@ -46,7 +46,7 @@ signals:
     void jsCommand(QString);
     void error(QString);
     void calibrationFinished();
-    void cvImage(cv::Mat);
+    void cvImage(cv::Mat*);
     void hasStopped(PROGRAM_STATES);
     void estimatedPoint(cv::Point);
 

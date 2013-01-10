@@ -17,7 +17,7 @@
 ThreadManager::ThreadManager(BrowserWindow *parent) : parent(parent), state(ST_STARTED_UP){
     
     // register the OpenCV datatypes for emitting them afterwards
-    qRegisterMetaType< cv::Mat > ("cv::Mat");
+    qRegisterMetaType< cv::Mat* > ("cv::Mat*");
     qRegisterMetaType< cv::Point > ("cv::Point");
     qRegisterMetaType< PROGRAM_STATES >("PROGRAM_STATES");
     
@@ -62,8 +62,8 @@ void ThreadManager::setUpSignalHandling() {
     connect(gazeTracker, SIGNAL(jsCommand(QString)), parent, SLOT(execJsCommand(QString)));
     
     // the signal for displaying an image in the eye_widget of the browser ui
-    connect(gazeTracker, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
-    connect(idle, SIGNAL(cvImage(cv::Mat)), parent, SLOT(showCvImage(cv::Mat)));
+    connect(gazeTracker, SIGNAL(cvImage(cv::Mat*)), parent, SLOT(showCvImage(cv::Mat*)));
+    connect(idle, SIGNAL(cvImage(cv::Mat*)), parent, SLOT(showCvImage(cv::Mat*)));
     
     // connect tracker thread with actionmanager to determine gaze action
     connect(gazeTracker, SIGNAL(estimatedPoint(cv::Point)), parent->actionManager, SLOT(estimatedPoint(cv::Point)));

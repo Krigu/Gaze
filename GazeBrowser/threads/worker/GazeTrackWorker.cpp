@@ -133,7 +133,7 @@ bool GazeTrackWorker::calibrate(){
 }
 
 bool GazeTrackWorker::imageProcessed(Mat& resultImage){
-    emit cvImage(resultImage);
+    emit cvImage(new Mat(resultImage));
     return running;
 }
 
@@ -147,7 +147,7 @@ bool GazeTrackWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Po
     }
     
     if (!tracking)
-        emit cvImage(resultImage);
+        emit cvImage(new Mat(resultImage));
 
     std::cout << "Measured: " << result << " " << gazeVector << std::endl;
 

@@ -30,7 +30,7 @@ public slots:
     
     signals:
     void error(QString);
-    void cvImage(cv::Mat);
+    void cvImage(cv::Mat*);
     void hasStopped(PROGRAM_STATES);
     
 private:
