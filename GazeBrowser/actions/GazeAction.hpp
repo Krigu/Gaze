@@ -27,7 +27,7 @@ public:
     void unfocus();
 signals:
     void commitAction(cv::Point);
-    void prepareAction(cv::Point,int,int);
+    void prepareAction(cv::Point,int);
     void abortAction();
 
 private:

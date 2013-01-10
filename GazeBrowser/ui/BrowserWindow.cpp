@@ -5,6 +5,8 @@
 #include <QtNetwork>
 #include <QtWebKit>
 #include <QtGui/qapplication.h>
+#include <QtGui/qlabel.h>
+#include <QtCore/qdatetime.h>
 
 #include "BrowserWindow.hpp"
 #include "video/LiveSource.hpp"
@@ -19,7 +21,7 @@
 using namespace std;
 
 BrowserWindow::BrowserWindow(const int cameraChannel) : cameraChannel(cameraChannel) {
-
+    
     init();
     showBookmarkPage();
 
@@ -86,9 +88,16 @@ void BrowserWindow::init() {
     // Set layout in QWidget
     QWidget *window = new QWidget();
     window->setLayout(hLayout);
-
+    
+    // add the pointer of the users gaze to the layout
+    gazePointer = new GazePointer(window, Qt::WindowStaysOnTopHint);
+    gazePointer->setStyleSheet("QLabel { background-color : red; color : blue; }");
+    gazePointer->hide();
+    
     setupMenus();
     setCentralWidget(window);
+    
+    setUpGazeActions();
 
     setUpGazeActions();
 
@@ -165,6 +174,9 @@ void BrowserWindow::setUpGazeActions() {
             Rect linkRect(x, y, wThird, hThird);
             GazeAction *actOpenLink = new GazeAction("Open Link", linkRect, prepareHits, commitHits);
             connect(actOpenLink, SIGNAL(commitAction(cv::Point)), SLOT(openLink(cv::Point)));
+            connect(actOpenLink, SIGNAL(commitAction(cv::Point)), gazePointer, SLOT(commitAction(cv::Point)));
+            connect(actOpenLink, SIGNAL(prepareAction(cv::Point,int)), gazePointer, SLOT(prepareAction(cv::Point,int)));
+            connect(actOpenLink, SIGNAL(abortAction()), gazePointer, SLOT(abortAction()));
             bookmarkWindowActions.push_back(actOpenLink);
         }
     }
@@ -330,6 +342,7 @@ void BrowserWindow::showEvent(QShowEvent *event) {
 
     Q_UNUSED(event);
     QTimer::singleShot(1000, this, SLOT(setUpCamera()));
+    
 }
 
 /**
@@ -342,6 +355,7 @@ void BrowserWindow::setUpCamera() {
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
     tManager->goIdle();
+    
 }
 
 /*

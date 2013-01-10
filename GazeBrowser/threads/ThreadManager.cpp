@@ -120,6 +120,7 @@ void ThreadManager::info(QString message){
 
 void ThreadManager::calibrationFinished(){
     fsmProcessEvent(EV_CALIBRATION_FINISHED);
+    this->parent->showBookmarkPage();
 }
 
 void ThreadManager::threadStopped(PROGRAM_STATES nextState){
@@ -138,6 +139,7 @@ void ThreadManager::fsmSetupStateMachine(){
     state_transitions tmp[] = {
     
         {ST_STARTED_UP, EV_GO_IDLE, ST_IDLE, &ThreadManager::fsmGoIdle},
+        {ST_STARTED_UP, EV_ERROR, ST_ERROR, &ThreadManager::fsmPermanentError},
         
         {ST_IDLE, EV_START, ST_IDLE, &ThreadManager::fsmGoIdle},
         {ST_IDLE, EV_CALIBRATE, ST_CALIBRATING, &ThreadManager::fsmStopIdle},

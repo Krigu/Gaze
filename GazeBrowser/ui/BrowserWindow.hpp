@@ -12,6 +12,8 @@
 
 #include "threads/ThreadManager.hpp"
 #include "ImageWindow.hpp"
+#include "GazePointer.hpp"
+
 
 class ActionManager;
 class ImageWindow;
@@ -111,6 +113,7 @@ private:
     ActionManager *actionManager;
     ImageWindow *imageWindow;
     int cameraChannel;
+    GazePointer *gazePointer;
 
     void calibrate();
     void setupMenus();
