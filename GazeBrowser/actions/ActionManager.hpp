@@ -25,6 +25,10 @@ public:
 
     void clearActions();
     void setMode(int mode);
+    
+    
+    void pause();
+    void resume();   
 
 public slots:
     void estimatedPoint(cv::Point p);
@@ -32,6 +36,7 @@ public slots:
 private:
     std::map<int, std::vector<GazeAction*> > actionMap;
     int mode;
+    int running;
 };
 
 #endif	/* ACTIONMANAGER_HPP */

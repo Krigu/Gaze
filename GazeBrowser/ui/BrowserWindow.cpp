@@ -47,15 +47,11 @@ void BrowserWindow::init() {
     jQuery = file.readAll();
     file.close();
 
-    progress = 0;
     isCalibrating = false;
 
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     view = new QWebView(this);
-
-    connect(view, SIGNAL(titleChanged(QString)), SLOT(adjustTitle()));
-    connect(view, SIGNAL(loadProgress(int)), SLOT(setProgress(int)));
     connect(view, SIGNAL(loadFinished(bool)), SLOT(finishLoading(bool)));
 
     // add our own webpage to control the user-agent
@@ -75,7 +71,7 @@ void BrowserWindow::init() {
     settingsWin->setWindowModality(Qt::WindowModal);
     settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
 
-   // setUpLinkWindow();
+    // setUpLinkWindow();
 
     setUpNavigation();
 
@@ -96,7 +92,7 @@ void BrowserWindow::init() {
     imageWindow->setVisible(false);
     // Let the browser know when the image window closes, to change the tracked actions
     connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));
-    
+
     // add the pointer of the users gaze to the layout
     gazePointer = new GazePointer(window, Qt::WindowStaysOnTopHint);
     gazePointer->hide();
@@ -183,6 +179,10 @@ void BrowserWindow::setUpGazeActions() {
     GazeAction *actLinkWindowForward = createGazeAction("forward", Rect(w, 0, 500, h), &BrowserWindow::nextPageCallback);
     linkWindowActions.push_back(actLinkWindowForward);
 
+    // Close image window (action is placed above the screen)
+    GazeAction *actCloseLinkWindow = createGazeAction("Image window", Rect(0, -500, w, 500), &BrowserWindow::closeLinkWindow);
+    linkWindowActions.push_back(actCloseLinkWindow);
+
     // TODO: dynamic? & memory stuff
     typedef map<int, vector< GazeAction* > > GazeMap;
     GazeMap m;
@@ -196,13 +196,13 @@ void BrowserWindow::setUpGazeActions() {
 
 void BrowserWindow::setUpLinkWindow() {
 
-/*    imageWindow = new ImageWindow(view);
-    imageWindow->setWindowModality(Qt::WindowModal);
-    imageWindow->setAttribute(Qt::WA_DeleteOnClose, false);
-    imageWindow->resize(screenSize.width(), screenSize.height());
-    imageWindow->setVisible(false);
-    // Let the browser know when the image window closes, to change the tracked actions
-    connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));*/
+    /*    imageWindow = new ImageWindow(view);
+        imageWindow->setWindowModality(Qt::WindowModal);
+        imageWindow->setAttribute(Qt::WA_DeleteOnClose, false);
+        imageWindow->resize(screenSize.width(), screenSize.height());
+        imageWindow->setVisible(false);
+        // Let the browser know when the image window closes, to change the tracked actions
+        connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));*/
 
 }
 
@@ -335,30 +335,7 @@ void BrowserWindow::setUpCamera() {
 
 }
 
-/*
- * Methods handling the Website-Loading:
- *  - adjustTitle()
- *  - setProgress()
- *  - finishLoading()
- *  - goToPage()
- */
-void BrowserWindow::adjustTitle() {
-    if (progress <= 0 || progress >= 100)
-        setWindowTitle(view->title());
-
-    else
-        setWindowTitle(QString("%1 (%2%)").arg(view->title()).arg(progress));
-}
-
-void BrowserWindow::setProgress(int p) {
-
-    progress = p;
-    adjustTitle();
-}
-
 void BrowserWindow::finishLoading(bool) {
-    progress = 100;
-    adjustTitle();
     view->page()->mainFrame()->evaluateJavaScript(jQuery);
 
     // TODO: cleanup code and don't check for every site
@@ -396,6 +373,8 @@ void BrowserWindow::finishLoading(bool) {
         actionManager->setMode(0);
     }
 
+    actionManager->resume();
+
     if (isCalibrating)
         this->calibrate();
 
@@ -416,6 +395,8 @@ void BrowserWindow::goToPage() {
 }
 
 void BrowserWindow::openLinkCallback(cv::Point p) {
+    // stop tracking
+    actionManager->pause();
     // get index from link    
     int index = (p.y / (screenSize.height() / 3) * 3) + p.x / (screenSize.width() / 3);
 
@@ -432,6 +413,7 @@ void BrowserWindow::showLinks() {
 
     imageWindow->clearLinks();
     // Change back to normal tracking mode
+    actionManager->pause();
     actionManager->setMode(2);
 
     QWebElementCollection linkElements = view->page()->mainFrame()->findAllElements("a");
@@ -486,38 +468,45 @@ void BrowserWindow::showLinks() {
     }
     // TODO release of memory from window
     imageWindow->show();
-
+    actionManager->resume();
 }
 
 void BrowserWindow::previousLinkPageCallback(cv::Point p) {
-    // TODO p is unused
-    imageWindow->back(p);
+    Q_UNUSED(p);
+    imageWindow->back();
 }
 
 void BrowserWindow::nextPageCallback(cv::Point p) {
-    // TODO p is unused
-    imageWindow->forward(p);
+    Q_UNUSED(p);
+    imageWindow->forward();
+}
+
+void BrowserWindow::closeLinkWindow(cv::Point p) {
+    Q_UNUSED(p);
+    imageWindow->close();
+
 }
 
 void BrowserWindow::selectLinkPageCallback(cv::Point p) {
-
     imageWindow->openLink(p);
 }
 
 void BrowserWindow::showLinksCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->showLinks();
 }
 
 void BrowserWindow::scrollUp() {
-
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() - $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
 void BrowserWindow::scrollUpCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->scrollUp();
+    actionManager->resume();
 }
 
 void BrowserWindow::scrollDown() {
@@ -528,16 +517,18 @@ void BrowserWindow::scrollDown() {
 
 void BrowserWindow::scrollDownCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->scrollDown();
+    actionManager->resume();
 }
 
 void BrowserWindow::forward() {
-
     view->forward();
 }
 
 void BrowserWindow::forwardCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->forward();
 }
 
@@ -548,6 +539,7 @@ void BrowserWindow::back() {
 
 void BrowserWindow::backCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->back();
 }
 
@@ -561,7 +553,9 @@ void BrowserWindow::zoomIn() {
 void BrowserWindow::zoomOut() {
 
     qreal zoomFactor = view->zoomFactor();
-    zoomFactor--;
+    if (zoomFactor > 1)
+        zoomFactor--;
+
     view->setZoomFactor(zoomFactor);
 
 }
@@ -647,6 +641,7 @@ void BrowserWindow::showBookmarkPage() {
 
 void BrowserWindow::showBookmarkPageCallback(cv::Point p) {
     Q_UNUSED(p);
+    actionManager->pause();
     this->showBookmarkPage();
 }
 

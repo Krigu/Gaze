@@ -14,7 +14,7 @@
 
 using namespace std;
 
-ActionManager::ActionManager(std::map<int, std::vector<GazeAction*> > actionMap) : actionMap(actionMap), mode(0) {
+ActionManager::ActionManager(std::map<int, std::vector<GazeAction*> > actionMap) : actionMap(actionMap), mode(0), running(false) {
 }
 
 ActionManager::~ActionManager() {
@@ -29,15 +29,17 @@ void ActionManager::setMode(int actionMode) {
 }
 
 void ActionManager::estimatedPoint(cv::Point p) {
+    if (!running)
+        return;
+
     cout << "ActionManager Point: " << p << "Mode: " << mode << endl;
-    
-    
+
     // TODO check memory stuff (copy too much?)
     map<int, vector<GazeAction*> >::iterator mapIter = actionMap.find(mode);
     if (mapIter != actionMap.end()) {
 
         vector< GazeAction* > actions = mapIter->second;
-        
+
         std::vector<GazeAction*>::iterator iter;
         for (iter = actions.begin(); iter != actions.end(); iter++) {
             cv::Rect r = (*iter)->getRegion();
@@ -53,4 +55,12 @@ void ActionManager::estimatedPoint(cv::Point p) {
 
 void ActionManager::clearActions() {
     actionMap.clear();
+}
+
+void ActionManager::pause() {
+    this->running = false;
+}
+
+void ActionManager::resume() {
+    this->running = true;
 }

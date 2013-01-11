@@ -44,6 +44,13 @@ void ImageWindow::addLink(Link link) {
 }
 
 void ImageWindow::clearLinks() {
+    QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
+
+    QList<ImageLinkLabel* >::iterator it;
+    for (it = list.begin(); it != list.end(); it++) {
+        (*it)->setPixmap(NULL);
+    }
+ 
     links.clear();
 }
 
@@ -94,17 +101,15 @@ void ImageWindow::imageLabelClicked(QString href) {
     close();
 }
 
+void ImageWindow::forward() {
 
-void ImageWindow::forward(cv::Point p) {
-    Q_UNUSED(p);
-    
     int maxPages = (links.size() + imagesPerPage - 1) / imagesPerPage;
     page = min(page + 1, maxPages - 1);
     displayLinks();
 }
 
-void ImageWindow::back(cv::Point p) {
-    Q_UNUSED(p);
+void ImageWindow::back() {
+
     page = max(0, page - 1);
     displayLinks();
 }
