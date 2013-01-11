@@ -38,16 +38,16 @@ void GazeTracker::initializeCalibration() {
     Point2f glintCenter;
     vector<cv::Point> glints;
 
+    bool continueSearching = true;
     do {
         // Endless search for eye region
-        findEyeRegion(frame, glintCenter, true);
+        continueSearching = findEyeRegion(frame, glintCenter, true);
 
-    } while (!glintFinder.findGlints(frame, glints, glintCenter));
+    } while (!glintFinder.findGlints(frame, glints, glintCenter) && continueSearching);
 
-    // TODO more output
 }
 
-void GazeTracker::findEyeRegion(Mat & frame,
+bool GazeTracker::findEyeRegion(Mat & frame,
         Point2f& frameCenter, bool calibrationMode) {
 
     bool foundEye = false;
@@ -64,13 +64,15 @@ void GazeTracker::findEyeRegion(Mat & frame,
                 Mat fullFrame = frame.clone();
                 rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
                 if(!tracker_callback->imageProcessed(fullFrame))
-                    return;
+                    return false;
             }
         }
 
         // No eye region found
         if (!calibrationMode && tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)
             throw EyeRegionNotFoundException();
+        
+        return true;
     }
 
     frameCenter = calcRectBarycenter(frameRegion);
