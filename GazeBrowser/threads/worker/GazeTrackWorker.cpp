@@ -115,6 +115,8 @@ bool GazeTrackWorker::calibrate() {
 
     tracker->initializeCalibration();
 
+    int retryNum = 0;
+    
     for (unsigned short i = 0; i < 3 && running; i++) {
         for (unsigned short j = 0; j < 3 && running; j++) {
             int point_x = width / 2 * j + x_offset;
@@ -130,7 +132,20 @@ bool GazeTrackWorker::calibrate() {
 
             Point2f p(point_x, point_y);
             measurements.clear();
-            tracker->track(5);
+            
+            try {
+                tracker->track(5);
+            } catch(GazeException &e){
+                retryNum++;
+                if(retryNum > 5)
+                    throw e;
+                emit info("Could not find Eye. Please hold on.");
+                tracker->initializeCalibration();
+                j--;
+                continue;
+            }
+            
+            
             CalibrationData data(p, measurements);
             calibration->addCalibrationData(data);
             cout << "Point: " << p << "Vector: " << data.getMeasuredMedianVector() << endl;
