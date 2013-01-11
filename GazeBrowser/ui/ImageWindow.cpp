@@ -44,6 +44,13 @@ void ImageWindow::addLink(Link link) {
 }
 
 void ImageWindow::clearLinks() {
+    QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
+
+    QList<ImageLinkLabel* >::iterator it;
+    for (it = list.begin(); it != list.end(); it++) {
+        (*it)->setPixmap(NULL);
+    }
+ 
     links.clear();
 }
 
@@ -93,7 +100,6 @@ void ImageWindow::imageLabelClicked(QString href) {
 
     close();
 }
-
 
 void ImageWindow::forward() {
 
