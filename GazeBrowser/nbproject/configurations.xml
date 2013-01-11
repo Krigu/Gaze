@@ -64,8 +64,8 @@
         <itemPath>ui/MessageWindow.hpp</itemPath>
         <itemPath>ui/SettingsWindow.cpp</itemPath>
         <itemPath>ui/SettingsWindow.hpp</itemPath>
+        <itemPath>ui/UIConstants.hpp</itemPath>
       </logicalFolder>
-      <itemPath>ui/UIConstants.hpp</itemPath>
       <itemPath>main.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"

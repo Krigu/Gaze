@@ -8,6 +8,7 @@
 #include <QtGui/qlabel.h>
 #include <QtCore/qdatetime.h>
 
+#include "UIConstants.hpp"
 #include "BrowserWindow.hpp"
 #include "video/LiveSource.hpp"
 #include "video/VideoSource.hpp"
@@ -189,7 +190,7 @@ void BrowserWindow::setupMenus() {
     // Add the Slot to the quit button
     // on mac this will be showed in the unified menu bar
 
-    menuBar()->resize(screenSize.width(), 25);
+    menuBar()->resize(screenSize.width(), MENUBAR_HEIGHT);
     QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QAction *quitAction = new QAction(tr("Quit Browser"), this);
     quitAction->setMenuRole(QAction::QuitRole);
@@ -449,8 +450,14 @@ void BrowserWindow::showLinks() {
         }
     }
 
-    // TODO release of memory from window
-    imageWindow->showFullScreen();
+    if (imageWindow->linkSize() == 0) {
+        alertInfo(tr("No links in the viewport!"), true);
+        actionManager->setMode(0);
+    } else {
+        // TODO release of memory from window
+        imageWindow->showFullScreen();
+        
+    }
     actionManager->resume();
 }
 
@@ -619,7 +626,7 @@ void BrowserWindow::alertError(QString message) {
 void BrowserWindow::alertInfo(QString message, bool autohide) {
 
     MessageWindow m;
-    m.showInfo(message, autohide, 4);
+    m.showInfo(message, autohide, 3);
 }
 
 void BrowserWindow::preferences() {
