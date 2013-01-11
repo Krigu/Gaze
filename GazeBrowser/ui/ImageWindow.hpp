@@ -29,8 +29,8 @@ public:
     void addLink(Link link);
     void clearLinks();
 
-    void forward(cv::Point);
-    void back(cv::Point = cv::Point());
+    void forward();
+    void back();
     void openLink(cv::Point);
 public slots:
     void imageLabelClicked(QString str);

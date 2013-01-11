@@ -72,8 +72,6 @@ protected:
 protected slots:
 
     void showEvent(QShowEvent *event);
-    void adjustTitle();
-    void setProgress(int p);
     void finishLoading(bool);
 
     // Browser actions
@@ -115,7 +113,6 @@ private:
     ThreadManager *tManager;
     SettingsWindow *settingsWin;
     ImageSource *source;
-    int progress;
     QSettings * settings;
     bool isCalibrating;
     QWidget *navigationWidget;

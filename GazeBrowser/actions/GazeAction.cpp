@@ -18,8 +18,6 @@ using namespace std;
 
 GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer) : actionName(name), region(region), prepareHits(prepareHits), commitHits(commitHits), hitCounter(0), browserWindow(browserWindow), actionCallback(callback), gazePointer(gazePointer) {
 
-    cout << "Region: " << region.x << "/" << region.y << "-" << region.width << " - " << region.height << endl;
-
     barycenter = calcRectBarycenter(region);
 }
 

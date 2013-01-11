@@ -95,16 +95,15 @@ void ImageWindow::imageLabelClicked(QString href) {
 }
 
 
-void ImageWindow::forward(cv::Point p) {
-    Q_UNUSED(p);
-    
+void ImageWindow::forward() {
+
     int maxPages = (links.size() + imagesPerPage - 1) / imagesPerPage;
     page = min(page + 1, maxPages - 1);
     displayLinks();
 }
 
-void ImageWindow::back(cv::Point p) {
-    Q_UNUSED(p);
+void ImageWindow::back() {
+
     page = max(0, page - 1);
     displayLinks();
 }
