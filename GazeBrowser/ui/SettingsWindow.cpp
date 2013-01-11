@@ -37,7 +37,7 @@ SettingsWindow::SettingsWindow() {
 
     generalLayout->addLayout(eyeBox, 0, 0);
 
-    QLabel *detectionLabel = new QLabel(tr("Detect"));
+    /*QLabel *detectionLabel = new QLabel(tr("Detect"));
     rPupil = new QRadioButton(tr("Pupil"));
     connect(rPupil, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
     rPupil->setAutoExclusive(false);
@@ -58,7 +58,7 @@ SettingsWindow::SettingsWindow() {
 
     QButtonGroup *btnGroupDetection = new QButtonGroup(eyeBox);
     btnGroupDetection->addButton(rPupil);
-    btnGroupDetection->addButton(rIris);
+    btnGroupDetection->addButton(rIris);*/
 
     generalGroup->setLayout(generalLayout);
 
@@ -153,13 +153,6 @@ void SettingsWindow::onEyeSelectionToggled() {
         GazeConfig::DETECT_LEFT_EYE = true;
     else
         GazeConfig::DETECT_LEFT_EYE = false;
-}
-
-void SettingsWindow::onStarburstSelectionToggled() {
-    if (rIris->isChecked())
-        GazeConfig::DETECT_PUPIL = false;
-    else
-        GazeConfig::DETECT_PUPIL = true;    
 }
 
 SettingsWindow::~SettingsWindow() {

@@ -115,47 +115,22 @@ bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point,
     //smooth_vector(profile);
 
     int vectorSize = profile.size();
-    bool onEdge=false;
-
-    //short edgeNum=0;
+    
     if (vectorSize > 5) {
-        vector<Point2f> edgesInCurrentProfile;
         for (int i = 5; i < vectorSize; i++) {
             unsigned char current = profile.at(i);
             unsigned char last = profile.at(i - 5);
 
             if (current > (last + edge_threshold)) {
 
-                if(onEdge)
-                    continue;
-
                 float x = start_point.x + i * dx;
                 float y = start_point.y + i * dy;
-                Point2f p = Point2f(x, y);
-                edgesInCurrentProfile.push_back(p);
-                onEdge=true;
-                //break;
+                edgePoint.x = x;
+                edgePoint.y = y;
+                edgeFound = true;
+                break;
 
-            } else {
-                onEdge = false;
             }
-        }
-
-        if(!edgesInCurrentProfile.empty()){
-            vector<Point2f>::iterator edge;
-            
-            if(GazeConfig::DETECT_PUPIL){
-                // the pupil is the first edge
-                edge = edgesInCurrentProfile.begin();
-            } else {
-                if(edgesInCurrentProfile.size()>=2)
-                    edge = edgesInCurrentProfile.begin()+1;
-                else
-                    edge = edgesInCurrentProfile.begin();
-            }  
-            edgePoint.x = edge->x;
-            edgePoint.y = edge->y;
-            edgeFound = true;
         }
     }
     
@@ -184,8 +159,8 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
     const int LINE_LENGTH=150;
     
-    //TODO performance issue here?
-    int threshold = (GazeConfig::DETECT_PUPIL) ? 30 : 15;
+    //TODO hardcoded?
+    int threshold = 30;
     
 	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
 
@@ -235,7 +210,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			LOG_D("no mean calculated!");
             //mean_x = -1;
             //mean_y = -1;
-			break;;
+			break;
 		}
 
 		if ((fabs(mean_x - start_point.x) + fabs(mean_y - start_point.y)) < 4) {

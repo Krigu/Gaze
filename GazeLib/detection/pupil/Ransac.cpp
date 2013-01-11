@@ -23,7 +23,7 @@
 bool Ransac::ransac(float * x, float * y, float * radius,
 		std::vector<cv::Point2f> points) {
 	// N: num of iterations
-	const int N = 1000;
+	const int N = 400;
 	// T: distance in which
 	const float T = 2;
 
