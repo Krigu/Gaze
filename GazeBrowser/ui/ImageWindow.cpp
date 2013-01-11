@@ -44,7 +44,8 @@ void ImageWindow::addLink(Link link) {
 }
 
 void ImageWindow::clearLinks() {
-    QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
+     
+   QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
 
     QList<ImageLinkLabel* >::iterator it;
     for (it = list.begin(); it != list.end(); it++) {
@@ -52,12 +53,13 @@ void ImageWindow::clearLinks() {
     }
  
     links.clear();
+    page = 0;
 }
 
 void ImageWindow::showEvent(QShowEvent* event) {
 
     QWidget::showEvent(event);
-        
+
     displayLinks();
     
 }
