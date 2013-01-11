@@ -179,6 +179,10 @@ void BrowserWindow::setUpGazeActions() {
     GazeAction *actLinkWindowForward = createGazeAction("forward", Rect(w, 0, 500, h), &BrowserWindow::nextPageCallback);
     linkWindowActions.push_back(actLinkWindowForward);
 
+    // Close image window (action is placed above the screen)
+    GazeAction *actCloseLinkWindow = createGazeAction("Image window", Rect(0, -500, w, 500), &BrowserWindow::closeLinkWindow);
+    linkWindowActions.push_back(actCloseLinkWindow);
+
     // TODO: dynamic? & memory stuff
     typedef map<int, vector< GazeAction* > > GazeMap;
     GazeMap m;
@@ -477,6 +481,12 @@ void BrowserWindow::nextPageCallback(cv::Point p) {
     imageWindow->forward();
 }
 
+void BrowserWindow::closeLinkWindow(cv::Point p) {
+    Q_UNUSED(p);
+    imageWindow->close();
+
+}
+
 void BrowserWindow::selectLinkPageCallback(cv::Point p) {
     imageWindow->openLink(p);
 }
@@ -545,7 +555,7 @@ void BrowserWindow::zoomOut() {
     qreal zoomFactor = view->zoomFactor();
     if (zoomFactor > 1)
         zoomFactor--;
-    
+
     view->setZoomFactor(zoomFactor);
 
 }

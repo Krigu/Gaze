@@ -66,6 +66,7 @@ protected:
     void previousLinkPageCallback(cv::Point p);
     void nextPageCallback(cv::Point p);
     void selectLinkPageCallback(cv::Point p);
+    void closeLinkWindow(cv::Point p);
 
 
 
