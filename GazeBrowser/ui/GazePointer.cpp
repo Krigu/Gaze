@@ -25,6 +25,7 @@ GazePointer::~GazePointer() {
 void GazePointer::commitAction(cv::Point p){
     Q_UNUSED(p);
     hide();
+    repaint();
 }
 
 void GazePointer::prepareAction(cv::Point p,int percentage){
@@ -32,13 +33,17 @@ void GazePointer::prepareAction(cv::Point p,int percentage){
     this->percentage = percentage;
     percentage = percentage % 100;
     
-    move(p.x,p.y);
+    int x = p.x - this->size().width() / 2;
+    int y = p.y - this->size().height() / 2;
+    
+    move(x,y);
     show();
     repaint();
 }
 
 void GazePointer::abortAction(){
     hide();
+    repaint();
 }
 
  void GazePointer::paintEvent(QPaintEvent *)

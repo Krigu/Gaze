@@ -21,7 +21,7 @@
 using namespace std;
 
 BrowserWindow::BrowserWindow(const int cameraChannel) : cameraChannel(cameraChannel) {
-    
+
     init();
     showBookmarkPage();
 
@@ -75,7 +75,7 @@ void BrowserWindow::init() {
     settingsWin->setWindowModality(Qt::WindowModal);
     settingsWin->setAttribute(Qt::WA_DeleteOnClose, false);
 
-    setUpLinkWindow();
+   // setUpLinkWindow();
 
     setUpNavigation();
 
@@ -88,15 +88,21 @@ void BrowserWindow::init() {
     // Set layout in QWidget
     QWidget *window = new QWidget();
     window->setLayout(hLayout);
+
+    imageWindow = new ImageWindow(window, view, Qt::WindowStaysOnTopHint);
+    //imageWindow->setWindowModality(Qt::WindowModal);
+    //imageWindow->setAttribute(Qt::WA_DeleteOnClose, false);
+    imageWindow->resize(screenSize.width(), screenSize.height());
+    imageWindow->setVisible(false);
+    // Let the browser know when the image window closes, to change the tracked actions
+    connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));
     
     // add the pointer of the users gaze to the layout
     gazePointer = new GazePointer(window, Qt::WindowStaysOnTopHint);
     gazePointer->hide();
-    
+
     setupMenus();
     setCentralWidget(window);
-    
-    setUpGazeActions();
 
     setUpGazeActions();
 
@@ -111,52 +117,35 @@ void BrowserWindow::setUpGazeActions() {
     int wFourth = screenSize.width() / 4;
     int hThird = screenSize.height() / 3;
 
-    int prepareHits = 20;
-    int commitHits = 30;
-
     // Screen bottom left
-    Rect buttonBack(0, h - 150, wFourth, 150);
-    GazeAction *actBack = new GazeAction("Back", buttonBack, prepareHits, commitHits);
-    connect(actBack, SIGNAL(commitAction(cv::Point)), SLOT(back(cv::Point)));
+    GazeAction *actBack = createGazeAction("Back", Rect(0, h - 150, wFourth, 150), &BrowserWindow::backCallback);
 
     // Screen bottom left center
-    Rect buttonLinks(wFourth, h - 150, wFourth, 150);
-    GazeAction *actLinks = new GazeAction("Links", buttonLinks, prepareHits, commitHits);
-    connect(actLinks, SIGNAL(commitAction(cv::Point)), SLOT(showLinks(cv::Point)));
-
+    GazeAction *actLinks = createGazeAction("Link", Rect(wFourth, h - 150, wFourth, 150), &BrowserWindow::showLinksCallback);
     // Screen bottom left right
-    Rect buttonBookmarks(wFourth * 2, h - 150, wFourth, 150);
-    GazeAction *actBookmarks = new GazeAction("Bookmarks", buttonBookmarks, prepareHits, commitHits);
-    connect(actBookmarks, SIGNAL(commitAction(cv::Point)), SLOT(showBookmarkPage(cv::Point)));
+    GazeAction *actBookmarks = createGazeAction("Bookmarks", Rect(wFourth * 2, h - 150, wFourth, 150), &BrowserWindow::showBookmarkPageCallback);
 
     // Screen bottom right
-    Rect buttonForward(wFourth * 3, h - 150, wFourth, 150);
-    GazeAction *actForward = new GazeAction("Forward", buttonForward, prepareHits, commitHits);
-    connect(actForward, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
+    GazeAction *actForward = createGazeAction("Forward", Rect(wFourth * 3, h - 150, wFourth, 150), &BrowserWindow::forwardCallback);
 
     // Above Screen
-    Rect scrollUp(0, -500, w, 500);
-    GazeAction *actScrollUp = new GazeAction("Up", scrollUp, prepareHits, commitHits);
-    connect(actScrollUp, SIGNAL(commitAction(cv::Point)), SLOT(scrollUp(cv::Point)));
+    GazeAction *actScrollUp = createGazeAction("Up", Rect(0, -500, w, 500), &BrowserWindow::scrollUpCallback);
 
     // Bellow screen
-    Rect scrollDown(0, h, w, 500);
-    GazeAction *actScrollDown = new GazeAction("Down", scrollDown, prepareHits, commitHits);
-    connect(actScrollDown, SIGNAL(commitAction(cv::Point)), SLOT(scrollDown(cv::Point)));
+    GazeAction *actScrollDown = createGazeAction("Down", Rect(0, h, w, 500), &BrowserWindow::scrollDownCallback);
 
-    // Left of screen
-    Rect scrollLeft(-500, 0, 500, h);
-    GazeAction *actLinksBack = new GazeAction("Left", scrollLeft, prepareHits, commitHits);
-    connect(actLinksBack, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
-
-    // Right of screen
-    Rect scrollRight(w, 0, 500, h);
-    GazeAction *actLinksForward = new GazeAction("Right", scrollRight, prepareHits, commitHits);
-    connect(actLinksForward, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
+    //    // Left of screen    
+    //    GazeAction *actLinksBack = createGazeAction("Left", Rect(-500, 0, 500, h));
+    //    connect(actLinksBack, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
+    //
+    //    // Right of screen
+    //    GazeAction *actLinksForward = createGazeAction("Right", Rect(w, 0, 500, h));
+    //    connect(actLinksForward, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
 
     vector<GazeAction*> browserWindowActions;
     browserWindowActions.push_back(actBack);
     browserWindowActions.push_back(actLinks);
+    browserWindowActions.push_back(actBookmarks);
     browserWindowActions.push_back(actForward);
     browserWindowActions.push_back(actScrollDown);
     browserWindowActions.push_back(actScrollUp);
@@ -170,12 +159,7 @@ void BrowserWindow::setUpGazeActions() {
             int x = wThird * j;
             int y = hThird * i;
 
-            Rect linkRect(x, y, wThird, hThird);
-            GazeAction *actOpenLink = new GazeAction("Open Link", linkRect, prepareHits, commitHits);
-            connect(actOpenLink, SIGNAL(commitAction(cv::Point)), SLOT(openLink(cv::Point)));
-            connect(actOpenLink, SIGNAL(commitAction(cv::Point)), gazePointer, SLOT(commitAction(cv::Point)));
-            connect(actOpenLink, SIGNAL(prepareAction(cv::Point,int)), gazePointer, SLOT(prepareAction(cv::Point,int)));
-            connect(actOpenLink, SIGNAL(abortAction()), gazePointer, SLOT(abortAction()));
+            GazeAction *actOpenLink = createGazeAction("Open Link", Rect(x, y, wThird, hThird), &BrowserWindow::openLinkCallback);
             bookmarkWindowActions.push_back(actOpenLink);
         }
     }
@@ -187,22 +171,16 @@ void BrowserWindow::setUpGazeActions() {
             int x = wFourth * j;
             int y = hThird * i;
 
-            Rect linkRect(x, y, wThird, hThird);
-            GazeAction *actOpenLink = new GazeAction("Open Link", linkRect, prepareHits, commitHits);
-            connect(actOpenLink, SIGNAL(commitAction(cv::Point)), imageWindow, SLOT(openLink(cv::Point)));
+            GazeAction *actOpenLink = createGazeAction("Open Link", Rect(x, y, wThird, hThird), &BrowserWindow::selectLinkPageCallback);
             linkWindowActions.push_back(actOpenLink);
         }
     }
     // Left of screen
-    Rect previousPage(-500, 0, 500, h);
-    GazeAction *actLinkWindowBack = new GazeAction("back", previousPage, prepareHits, commitHits);
-    connect(actLinksBack, SIGNAL(commitAction(cv::Point)), imageWindow, SLOT(back(cv::Point)));
+    GazeAction *actLinkWindowBack = createGazeAction("back", Rect(-500, 0, 500, h), &BrowserWindow::previousLinkPageCallback);
     linkWindowActions.push_back(actLinkWindowBack);
 
     // Right of screen
-    Rect nexPage(w, 0, 500, h);
-    GazeAction *actLinkWindowForward = new GazeAction("forward", nexPage, prepareHits, commitHits);
-    connect(actLinksForward, SIGNAL(commitAction(cv::Point)), imageWindow, SLOT(forward(cv::Point)));
+    GazeAction *actLinkWindowForward = createGazeAction("forward", Rect(w, 0, 500, h), &BrowserWindow::nextPageCallback);
     linkWindowActions.push_back(actLinkWindowForward);
 
     // TODO: dynamic? & memory stuff
@@ -218,13 +196,13 @@ void BrowserWindow::setUpGazeActions() {
 
 void BrowserWindow::setUpLinkWindow() {
 
-    imageWindow = new ImageWindow(view);
+/*    imageWindow = new ImageWindow(view);
     imageWindow->setWindowModality(Qt::WindowModal);
     imageWindow->setAttribute(Qt::WA_DeleteOnClose, false);
     imageWindow->resize(screenSize.width(), screenSize.height());
     imageWindow->setVisible(false);
     // Let the browser know when the image window closes, to change the tracked actions
-    connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));
+    connect(imageWindow, SIGNAL(hideWindow()), this, SLOT(hideImageWindowEvent()));*/
 
 }
 
@@ -341,7 +319,7 @@ void BrowserWindow::showEvent(QShowEvent *event) {
 
     Q_UNUSED(event);
     QTimer::singleShot(1000, this, SLOT(setUpCamera()));
-    
+
 }
 
 /**
@@ -354,7 +332,7 @@ void BrowserWindow::setUpCamera() {
     //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
     tManager->goIdle();
-    
+
 }
 
 /*
@@ -437,7 +415,7 @@ void BrowserWindow::goToPage() {
     }
 }
 
-void BrowserWindow::openLink(cv::Point p) {
+void BrowserWindow::openLinkCallback(cv::Point p) {
     // get index from link    
     int index = (p.y / (screenSize.height() / 3) * 3) + p.x / (screenSize.width() / 3);
 
@@ -486,7 +464,7 @@ void BrowserWindow::showLinks() {
             r.setY(max(0, y - vp.y() - 30));
             r.setWidth(element.geometry().width() + 60);
             r.setHeight(element.geometry().height() + 60);
-                        
+
             view->page()->mainFrame()->render(painter, r);
             painter->end();
 
@@ -497,7 +475,7 @@ void BrowserWindow::showLinks() {
                 q = q.scaledToWidth(screenSize.width() / 4);
             if (q.height() > (screenSize.height() / 3))
                 q = q.scaledToHeight(screenSize.height() / 3);
-   
+
             Link l;
             l.image = q;
             l.href = element.attribute("href");
@@ -511,7 +489,22 @@ void BrowserWindow::showLinks() {
 
 }
 
-void BrowserWindow::showLinks(cv::Point p) {
+void BrowserWindow::previousLinkPageCallback(cv::Point p) {
+    // TODO p is unused
+    imageWindow->back(p);
+}
+
+void BrowserWindow::nextPageCallback(cv::Point p) {
+    // TODO p is unused
+    imageWindow->forward(p);
+}
+
+void BrowserWindow::selectLinkPageCallback(cv::Point p) {
+
+    imageWindow->openLink(p);
+}
+
+void BrowserWindow::showLinksCallback(cv::Point p) {
     Q_UNUSED(p);
     this->showLinks();
 }
@@ -522,7 +515,7 @@ void BrowserWindow::scrollUp() {
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void BrowserWindow::scrollUp(cv::Point p) {
+void BrowserWindow::scrollUpCallback(cv::Point p) {
     Q_UNUSED(p);
     this->scrollUp();
 }
@@ -533,7 +526,7 @@ void BrowserWindow::scrollDown() {
     view->page()->mainFrame()->evaluateJavaScript(code);
 }
 
-void BrowserWindow::scrollDown(cv::Point p) {
+void BrowserWindow::scrollDownCallback(cv::Point p) {
     Q_UNUSED(p);
     this->scrollDown();
 }
@@ -543,7 +536,7 @@ void BrowserWindow::forward() {
     view->forward();
 }
 
-void BrowserWindow::forward(cv::Point p) {
+void BrowserWindow::forwardCallback(cv::Point p) {
     Q_UNUSED(p);
     this->forward();
 }
@@ -553,7 +546,7 @@ void BrowserWindow::back() {
     view->back();
 }
 
-void BrowserWindow::back(cv::Point p) {
+void BrowserWindow::backCallback(cv::Point p) {
     Q_UNUSED(p);
     this->back();
 }
@@ -652,7 +645,7 @@ void BrowserWindow::showBookmarkPage() {
     view->load(QUrl("qrc:/bookmarks.html"));
 }
 
-void BrowserWindow::showBookmarkPage(cv::Point p) {
+void BrowserWindow::showBookmarkPageCallback(cv::Point p) {
     Q_UNUSED(p);
     this->showBookmarkPage();
 }
@@ -684,3 +677,11 @@ void BrowserWindow::showNavigationWidget() {
 void BrowserWindow::hideNavigationWidget() {
     navigationWidget->setVisible(false);
 }
+
+GazeAction* BrowserWindow::createGazeAction(string name, cv::Rect rect, commitAction callback) {
+
+    GazeAction* action = new GazeAction(name, rect, 20, 30, this, callback, gazePointer);
+
+    return action;
+}
+
