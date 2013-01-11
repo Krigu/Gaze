@@ -38,12 +38,7 @@ void IdleWorker::displayCamera(void){
     
     while(running){
         cv::Mat frame;
-        if(live->nextGrayFrame(frame)){
-#ifdef __APPLE__
-            // openCV on OSX does not block when capturing a frame. without this
-            // we would emit 4000 frames a second and block the whole UI
-            Sleeper::msleep(33);
-#endif   
+        if(live->nextGrayFrame(frame)){  
             emit cvImage(new cv::Mat(frame));
         } else {
             emit error(tr("Could not read an image from camera"));

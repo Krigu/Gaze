@@ -23,16 +23,17 @@ class ImageWindow : public QWidget {
     Q_OBJECT
 
 public:
-    ImageWindow(QWebView* webview);
+    ImageWindow(QWidget* parent, QWebView* webview, Qt::WindowFlags f);
     virtual ~ImageWindow();
 
     void addLink(Link link);
     void clearLinks();
-public slots:
-    void imageLabelClicked(QString str);
+
     void forward(cv::Point);
     void back(cv::Point = cv::Point());
     void openLink(cv::Point);
+public slots:
+    void imageLabelClicked(QString str);
     void closeWindow(cv::Point);
 
 
@@ -43,12 +44,12 @@ signals:
 protected:
     void showEvent(QShowEvent* event);
     void hideEvent(QHideEvent* event);
-    void displayLinks();   
+    void displayLinks();
 private:
     QWebView* webview;
     int imagesPerPage;
     int page;
-    
+
     std::vector<Link> links;
 
 };

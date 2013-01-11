@@ -119,8 +119,8 @@ void ThreadManager::info(QString message){
 }
 
 void ThreadManager::calibrationFinished(){
-    fsmProcessEvent(EV_CALIBRATION_FINISHED);
     this->parent->showBookmarkPage();
+    fsmProcessEvent(EV_CALIBRATION_FINISHED);    
 }
 
 void ThreadManager::threadStopped(PROGRAM_STATES nextState){
@@ -208,6 +208,7 @@ void ThreadManager::fsmStopIdle(PROGRAM_STATES nextState){
 }
 
 void ThreadManager::fsmStopGazeTracking(PROGRAM_STATES nextState){
+    parent->trackingStatus(false, isCalibrated());
     QMetaObject::invokeMethod(gazeTracker, "stop", Qt::DirectConnection, Q_ARG(PROGRAM_STATES, nextState));
 }
 

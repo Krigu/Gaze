@@ -13,11 +13,18 @@
 #include <opencv2/core/core.hpp>
 #include <QtCore>
 
+
+
+class GazePointer;
+class BrowserWindow;
+
+typedef void (BrowserWindow::*commitAction)(cv::Point);
+
 class GazeAction : public QObject {
     Q_OBJECT
 
 public:
-    GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits);
+    GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer);
     virtual ~GazeAction();
 
     std::string getActionName() const;
@@ -25,17 +32,17 @@ public:
 
     void focus();
     void unfocus();
-signals:
-    void commitAction(cv::Point);
-    void prepareAction(cv::Point,int);
-    void abortAction();
 
 private:
     std::string actionName;
-    cv::Rect region;    
+    cv::Rect region;
     int prepareHits;
     int commitHits;
     int hitCounter;
+    BrowserWindow *browserWindow;
+    commitAction actionCallback;
+    GazePointer *gazePointer;
+    cv::Point barycenter;
 
 };
 

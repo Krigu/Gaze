@@ -14,7 +14,10 @@
 
 using namespace std;
 
-ImageWindow::ImageWindow(QWebView* webview) : webview(webview), imagesPerPage(12), page(0) {
+ImageWindow::ImageWindow(QWidget* parent, QWebView* webview, Qt::WindowFlags f) : QWidget(parent, f), webview(webview), imagesPerPage(12), page(0) {
+    
+    QWidget *background = new QWidget(parent, f);
+    background->setStyleSheet("background-color: darkgray;");
     
     QGridLayout *generalLayout = new QGridLayout;
    
@@ -26,7 +29,10 @@ ImageWindow::ImageWindow(QWebView* webview) : webview(webview), imagesPerPage(12
         generalLayout->addWidget(myLabel, i / 4, i % 4, Qt::AlignCenter);
     }    
     
-    setLayout(generalLayout);
+    background->setLayout(generalLayout);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->addWidget(background);
+    setLayout(layout);
 
 }
 
@@ -108,7 +114,7 @@ void ImageWindow::openLink(cv::Point p) {
     int h = size().height();
 
     // get link from point    
-    unsigned int index = page * imagesPerPage + (p.y / (h / 3) * 3) + p.x / (w / 4);
+    unsigned int index = page * imagesPerPage + (p.y / (h / 3) * 4) + p.x / (w / 4);
 
     if (index < links.size())
         imageLabelClicked(links.at(index).href);

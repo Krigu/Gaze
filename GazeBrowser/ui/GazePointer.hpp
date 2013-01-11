@@ -11,27 +11,25 @@
 #include <QtGui>
 #include <opencv2/core/core.hpp>
 
-class GazePointer : public QWidget{
-
-Q_OBJECT
+class GazePointer : public QWidget {
+    Q_OBJECT
 
 public:
-    GazePointer(QWidget *parent=0, Qt::WindowFlags f=0);
+    GazePointer(QWidget *parent = 0, Qt::WindowFlags f = 0);
     GazePointer(const GazePointer& orig);
     QSize sizeHint() const;
     virtual ~GazePointer();
 
-public slots:
     void commitAction(cv::Point p);
-    void prepareAction(cv::Point p,int percentage);
+    void prepareAction(cv::Point p, int percentage);
     void abortAction();
 
-    protected:      
-        void paintEvent(QPaintEvent *event);
-        void resizeEvent(QResizeEvent *event);
-    
-    private:
-        int percentage;
+protected:
+    void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
+
+private:
+    int percentage;
 
 };
 

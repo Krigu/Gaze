@@ -11,12 +11,16 @@
 #include "utils/geometry.hpp"
 
 #include "GazeAction.hpp"
+#include "ui/GazePointer.hpp"
+#include "ui/BrowserWindow.hpp"
 
 using namespace std;
 
-GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits) : actionName(name), region(region), prepareHits(prepareHits), commitHits(commitHits), hitCounter(0) {
+GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer) : actionName(name), region(region), prepareHits(prepareHits), commitHits(commitHits), hitCounter(0), browserWindow(browserWindow), actionCallback(callback), gazePointer(gazePointer) {
 
     cout << "Region: " << region.x << "/" << region.y << "-" << region.width << " - " << region.height << endl;
+
+    barycenter = calcRectBarycenter(region);
 }
 
 GazeAction::~GazeAction() {
@@ -33,15 +37,15 @@ cv::Rect GazeAction::getRegion() const {
 void GazeAction::focus() {
     hitCounter++;
     if (hitCounter >= commitHits) {
-        //cout << actionName << " commitAction " << endl;        
-        emit commitAction(calcRectBarycenter(region));
+        //cout << actionName << " commitAction " << endl;  
+        gazePointer->commitAction(barycenter);
+        (browserWindow ->*actionCallback) (barycenter);
         hitCounter = 0;
         return;
     }
     if (hitCounter >= prepareHits) {
-        //cout << actionName << " prepareAction " << endl;
         int percentage = 100 / (commitHits - prepareHits) * (commitHits - hitCounter);
-        emit prepareAction(calcRectBarycenter(region), percentage);
+        gazePointer->prepareAction(barycenter, percentage);
         return;
     }
 
@@ -50,7 +54,7 @@ void GazeAction::focus() {
 void GazeAction::unfocus() {
     if (hitCounter >= prepareHits) {
         //cout << actionName << " abortAction " << endl;
-        emit abortAction();
+        gazePointer->abortAction();
     }
     hitCounter = 0;
 }

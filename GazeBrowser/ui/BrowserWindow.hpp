@@ -13,6 +13,7 @@
 #include "threads/ThreadManager.hpp"
 #include "ImageWindow.hpp"
 #include "GazePointer.hpp"
+#include "actions/GazeAction.hpp"
 
 
 class ActionManager;
@@ -52,6 +53,22 @@ signals:
     void isTracking(bool);
     void canResumeTracking(bool);
 
+protected:
+    // Overloaded methods for the gaze action callbacks
+    void showLinksCallback(cv::Point p);
+    void scrollUpCallback(cv::Point p);
+    void scrollDownCallback(cv::Point p);
+    void backCallback(cv::Point p);
+    void forwardCallback(cv::Point p);
+    void openLinkCallback(cv::Point p);
+    void showBookmarkPageCallback(cv::Point p);
+
+    void previousLinkPageCallback(cv::Point p);
+    void nextPageCallback(cv::Point p);
+    void selectLinkPageCallback(cv::Point p);
+
+
+
 protected slots:
 
     void showEvent(QShowEvent *event);
@@ -66,14 +83,7 @@ protected slots:
     void back();
     void forward();
     void showBookmarkPage();
-    // Overloaded methods for the gaze action callbacks
-    void showLinks(cv::Point p);
-    void scrollUp(cv::Point p);
-    void scrollDown(cv::Point p);
-    void back(cv::Point p);
-    void forward(cv::Point p);
-    void openLink(cv::Point p);
-    void showBookmarkPage(cv::Point p);
+
 
     void show_eye_widget();
     void start_calibration();
@@ -83,7 +93,7 @@ protected slots:
     void quit_gazebrowser();
     void preferences();
     void bookmarks();
-    
+
     void hideImageWindowEvent();
 
     // View actions
@@ -124,6 +134,7 @@ private:
     void setUpGazeActions();
     void setUpLinkWindow();
 
+    GazeAction *createGazeAction(string name, cv::Rect rect, commitAction callback);
 private slots:
     void setUpCamera();
 
