@@ -490,10 +490,6 @@ void BrowserWindow::scrollLeft() {
     QString code = "$('html, body').animate({ scrollLeft: $('body').scrollLeft() - $(window).width() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
     
-        for (int i = 0; i < 200; i++){
-        actionManager->estimatedPoint(cv::Point(150, 150));
-        Sleeper::msleep(30);
-    }
 }
 
 void BrowserWindow::scrollLeftCallback(cv::Point p) {
