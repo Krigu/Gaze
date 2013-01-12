@@ -72,6 +72,7 @@ void ImageWindow::showEvent(QShowEvent* event) {
 }
 
 void ImageWindow::hideEvent( QHideEvent * event ){
+    Q_UNUSED(event);
     emit hideWindow();
 }
 

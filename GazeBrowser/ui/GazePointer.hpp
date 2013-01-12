@@ -16,7 +16,6 @@ class GazePointer : public QWidget {
 
 public:
     GazePointer(QWidget *parent = 0, Qt::WindowFlags f = 0);
-    GazePointer(const GazePointer& orig);
     QSize sizeHint() const;
     virtual ~GazePointer();
 

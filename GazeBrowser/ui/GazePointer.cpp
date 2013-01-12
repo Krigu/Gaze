@@ -14,10 +14,6 @@ GazePointer::GazePointer(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f
     resize(75, 75);
 }
 
-GazePointer::GazePointer(const GazePointer& orig) : QWidget() {
-
-}
-
 GazePointer::~GazePointer() {
 }
 
@@ -47,7 +43,6 @@ void GazePointer::abortAction() {
 
 void GazePointer::paintEvent(QPaintEvent *) {
     QColor color(0, 127, 127, 191);
-    int side = qMin(width(), height());
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
