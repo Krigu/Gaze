@@ -20,8 +20,6 @@ GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int c
 
     barycenter = calcRectBarycenter(region);
     timer = NULL;
-    
-    cout << name << " " << barycenter << endl;
 }
 
 GazeAction::~GazeAction() {
