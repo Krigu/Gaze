@@ -28,7 +28,6 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
         b.centerY = m.m01 / m.m00;
         b.size = m.m00;
 
-        //TODO: check if good idea
         if (b.centerX > 0 && b.centerY > 0 && b.size > 0)
             blobs.push_back(b);
     }
@@ -38,7 +37,6 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
  * Returns a vector with all blob centers
  */
 void Blobs::blobCenters(std::vector<cv::Point> & points) {
-    // TODO: check if ok
     points.clear();
 
     std::vector<Blob>::iterator iter;

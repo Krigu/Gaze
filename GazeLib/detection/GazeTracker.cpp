@@ -31,7 +31,6 @@ void GazeTracker::getNextFrame(Mat& frame) {
 }
 
 void GazeTracker::initializeCalibration() {
-    // TODO possiblilty to exit method
     Mat frame;
     // Copy for displaying image
     Mat fullFrame;
@@ -64,7 +63,7 @@ bool GazeTracker::findEyeRegion(Mat & frame,
                 Mat fullFrame = frame.clone();
                 rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
                 if(!tracker_callback->imageProcessed(fullFrame))
-                    return false;
+                    return false; // abort processing
             }
         }
 
@@ -72,11 +71,13 @@ bool GazeTracker::findEyeRegion(Mat & frame,
         if (!calibrationMode && tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)
             throw EyeRegionNotFoundException();
         
-        return true;
     }
 
     frameCenter = calcRectBarycenter(frameRegion);
     frame = frame(frameRegion);
+    
+    // continue the processing
+    return true;
 }
 
 void GazeTracker::adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion) {
@@ -131,7 +132,6 @@ void GazeTracker::track(unsigned int duration) {
 
 #endif     
 
-        // TODO: extract to method
         if ((frameRegion.x + frameRegion.width) > currentFrame.cols)
             frameRegion.x = currentFrame.cols - frameRegion.width;
 
@@ -198,7 +198,7 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
     } else {
         return FINDGLINT_FAILED;
     }
-    // TODO: necessary?
+
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);

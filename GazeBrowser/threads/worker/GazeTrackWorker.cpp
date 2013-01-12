@@ -36,19 +36,19 @@ void GazeTrackWorker::startCalibration() {
     running = true;
     tracking = false;
 
-    // is this a recalibration?
-    if (calibration != NULL) {
-        delete calibration;
-        calibration = NULL;
-    }
+    // maybe a recalibration?
+    delete calibration;
+    calibration = NULL;
 
     try {
         bool calibrated = false;
         while (!calibrated && running) {
             calibration = new Calibration;
             calibrated = calibrate();
-            if (!calibrated)
+            if (!calibrated){
                 delete calibration;
+                calibration = NULL;
+            }
         }
 
         cameraLock->unlock();
@@ -105,6 +105,9 @@ void GazeTrackWorker::startTracking() {
 
     cameraLock->unlock();
 
+    // notify the threadmanager about the stop
+    emit hasStopped(nextStateAfterStop);
+    
 }
 
 bool GazeTrackWorker::calibrate() {
@@ -162,11 +165,17 @@ bool GazeTrackWorker::calibrate() {
 }
 
 bool GazeTrackWorker::imageProcessed(Mat& resultImage) {
+#ifdef __APPLE__
+    Sleeper::msleep(33);
+#endif
     emit cvImage(new Mat(resultImage));
     return running;
 }
 
 bool GazeTrackWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector) {
+#ifdef __APPLE__
+    Sleeper::msleep(33);
+#endif
     if (result == MEASURE_OK) {
         if (tracking) {
             emit estimatedPoint(calibration->calcCoordinates(gazeVector));
