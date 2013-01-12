@@ -98,6 +98,7 @@
         <defs>
           <Elem>QMAKE_CFLAGS_X86_64 += -mmacosx-version-min=10.8</Elem>
           <Elem>QMAKE_CXXFLAGS_X86_64 = $$QMAKE_CFLAGS_X86_64</Elem>
+          <Elem>QMAKE_CXXFLAGS += -Wall</Elem>
         </defs>
       </qt>
       <compileType>

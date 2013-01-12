@@ -64,7 +64,7 @@ bool GazeTracker::findEyeRegion(Mat & frame,
                 Mat fullFrame = frame.clone();
                 rectangle(fullFrame, frameRegion, Scalar(255, 255, 255), 3);
                 if(!tracker_callback->imageProcessed(fullFrame))
-                    return false;
+                    return false; // abort processing
             }
         }
 
@@ -72,11 +72,13 @@ bool GazeTracker::findEyeRegion(Mat & frame,
         if (!calibrationMode && tries > GazeConfig::HAAR_FINDREGION_MAX_TRIES)
             throw EyeRegionNotFoundException();
         
-        return true;
     }
 
     frameCenter = calcRectBarycenter(frameRegion);
     frame = frame(frameRegion);
+    
+    // continue the processing
+    return true;
 }
 
 void GazeTracker::adjustRect(cv::Point2f& currentCenter, cv::Rect& frameRegion) {

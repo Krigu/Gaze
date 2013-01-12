@@ -36,19 +36,19 @@ void GazeTrackWorker::startCalibration() {
     running = true;
     tracking = false;
 
-    // is this a recalibration?
-    if (calibration != NULL) {
-        delete calibration;
-        calibration = NULL;
-    }
+    // maybe a recalibration?
+    delete calibration;
+    calibration = NULL;
 
     try {
         bool calibrated = false;
         while (!calibrated && running) {
             calibration = new Calibration;
             calibrated = calibrate();
-            if (!calibrated)
+            if (!calibrated){
                 delete calibration;
+                calibration = NULL;
+            }
         }
 
         cameraLock->unlock();
