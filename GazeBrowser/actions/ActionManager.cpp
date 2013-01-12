@@ -21,7 +21,7 @@ ActionManager::~ActionManager() {
 }
 
 void ActionManager::setMode(int actionMode) {
-    if (actionMode >= actionMap.size()) {
+    if ((unsigned)actionMode >= actionMap.size()) {
         mode = 0;
     } else {
         mode = actionMode;

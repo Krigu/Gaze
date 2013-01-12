@@ -81,7 +81,7 @@ void GazeTrackWorker::startTracking() {
     }
 
     // Wait with begining of tracking until bookmark page is loaded
-    Sleeper::msleep(2000);
+    Sleeper::msleep(4000);
 
     running = true;
     tracking = true;

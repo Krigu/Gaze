@@ -489,11 +489,13 @@ void BrowserWindow::scrollLeft() {
 
     QString code = "$('html, body').animate({ scrollLeft: $('body').scrollLeft() - $(window).width() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
+    
 }
 
 void BrowserWindow::scrollLeftCallback(cv::Point p) {
+    
     Q_UNUSED(p);
-    this->scrollLeft();
+    this->scrollLeft();   
 }
 
 void BrowserWindow::scrollRight() {
@@ -522,13 +524,6 @@ void BrowserWindow::scrollUpCallback(cv::Point p) {
 }
 
 void BrowserWindow::scrollDown() {
-
-    for (int i = 0; i < 30; i++) {
-
-        Sleeper::sleep(2);
-        gazePointer->prepareAction(cv::Point(240, 150), 99);
-
-    }
 
     QString code = "$('html, body').animate({ scrollTop: $('body').scrollTop() + $(window).height() }, 800);";
     view->page()->mainFrame()->evaluateJavaScript(code);
@@ -707,7 +702,7 @@ void BrowserWindow::hideNavigationWidget() {
 
 GazeAction* BrowserWindow::createGazeAction(string name, cv::Rect rect, commitAction callback) {
 
-    GazeAction* action = new GazeAction(name, rect, 20, 30, this, callback, gazePointer);
+    GazeAction* action = new GazeAction(name, rect, 2000, 4000, this, callback, gazePointer);
 
     return action;
 }
