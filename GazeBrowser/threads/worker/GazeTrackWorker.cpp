@@ -105,6 +105,9 @@ void GazeTrackWorker::startTracking() {
 
     cameraLock->unlock();
 
+    // notify the threadmanager about the stop
+    emit hasStopped(nextStateAfterStop);
+    
 }
 
 bool GazeTrackWorker::calibrate() {
