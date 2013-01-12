@@ -27,7 +27,7 @@ public:
     CalibrationData(cv::Point point, std::vector<cv::Point2f> & vectors);
     cv::Point2f const& getMeasuredMedianVector() const;
     cv::Point const& getActualPoint() const;
-    int const getDistance() const;
+    int getDistance() const;
 
     friend bool operator<(const CalibrationData& d1, const CalibrationData& d2);
 };

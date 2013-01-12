@@ -45,7 +45,7 @@ glints(glints) {
 /**
  * Returns the distance from the glints to the last known glint center
  */
-int const GlintCluster::averageDistanceToCenter() const {
+int GlintCluster::averageDistanceToCenter() const {
     return distanceToLastMeasurement;
 
 }
@@ -69,7 +69,7 @@ cv::Point2f GlintCluster::centerPoint() {
     return cv::Point2f(x, y);
 }
 
-int const GlintCluster::width() const {
+int GlintCluster::width() const {
     return clusterWidth;
 }
 

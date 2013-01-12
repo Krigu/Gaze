@@ -20,10 +20,10 @@ private:
 public:
 	GlintCluster(std::vector<cv::Point> & glints, cv::Point lastMeasurement);
 
-	int const averageDistanceToCenter() const;
-        int const width() const;
+	int averageDistanceToCenter() const;
+    int width() const;
 	cv::Point2f centerPoint();
-	// TODO: Unserstand const?
+
 	std::vector<cv::Point> const& glintsInCluster() const;
 
 };

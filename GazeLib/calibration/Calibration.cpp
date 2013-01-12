@@ -32,7 +32,7 @@ const cv::Point& CalibrationData::getActualPoint() const {
     return actualPoint;
 }
 
-const int CalibrationData::getDistance() const {
+int CalibrationData::getDistance() const {
     return distance;
 }
 
