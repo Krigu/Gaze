@@ -16,10 +16,12 @@ using namespace std;
 
 ImageWindow::ImageWindow(QWidget* parent, QWebView* webview, Qt::WindowFlags f) : QWidget(parent, f), webview(webview), imagesPerPage(12), page(0) {
     
+    
     QWidget *background = new QWidget(parent, f);
     background->setStyleSheet("background-color: darkgray;");
     
     QGridLayout *generalLayout = new QGridLayout;
+    generalLayout->setMargin(0);
    
     for (int i = 0; i < imagesPerPage; i++) {
 
@@ -31,6 +33,7 @@ ImageWindow::ImageWindow(QWidget* parent, QWebView* webview, Qt::WindowFlags f) 
     
     background->setLayout(generalLayout);
     QVBoxLayout *layout = new QVBoxLayout;
+    layout->setMargin(0);
     layout->addWidget(background);
     setLayout(layout);
 
@@ -43,8 +46,13 @@ void ImageWindow::addLink(Link link) {
     links.push_back(link);
 }
 
+int ImageWindow::linkSize(){
+    return links.size();
+}
+
 void ImageWindow::clearLinks() {
-    QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
+     
+   QList<ImageLinkLabel *> list = this->findChildren<ImageLinkLabel *> ();
 
     QList<ImageLinkLabel* >::iterator it;
     for (it = list.begin(); it != list.end(); it++) {
@@ -52,12 +60,13 @@ void ImageWindow::clearLinks() {
     }
  
     links.clear();
+    page = 0;
 }
 
 void ImageWindow::showEvent(QShowEvent* event) {
 
     QWidget::showEvent(event);
-        
+    
     displayLinks();
     
 }

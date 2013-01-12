@@ -28,6 +28,7 @@ public:
 
     void addLink(Link link);
     void clearLinks();
+    int linkSize();
 
     void forward();
     void back();
