@@ -47,7 +47,7 @@ bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 	Point2f startpoint(glintcenter.x,glintcenter.y);
 
 	remove_glints(working_frame, glint_centers, GazeConfig::GLINT_RADIUS);
-	medianBlur(working_frame, working_frame, 3);
+	medianBlur(working_frame, working_frame, 5);
 	found = starburst(working_frame, startpoint, radius, 20);
 
 	// display the center on the source image
@@ -63,7 +63,7 @@ bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
 }
 
 /**
- * removes each glint using the interpolatin of the average
+ * removes each glint using the interpolation of the average
  * perimeter intensity and the perimeter pixel for each angle
  * this
  */
@@ -184,7 +184,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
                 while(new_angle < target_angle){
                     Point2f new_edge;
                     bool success = followRay(gray, edgePoint, new_angle, 
-                                    new_edge, LINE_LENGTH, threshold);
+                                    new_edge, LINE_LENGTH / 4, threshold);
                     
                     if(success)
                         points.push_back(new_edge);
