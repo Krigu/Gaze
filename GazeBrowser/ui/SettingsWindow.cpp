@@ -11,6 +11,7 @@
 #include "AutoSaveSpinbox.hpp"
 
 // TODO: Adjust titles of constants. p.E. glint angle tolerance
+
 SettingsWindow::SettingsWindow() {
 
     QGroupBox *generalGroup = new QGroupBox(tr("General configuration"));
@@ -63,12 +64,14 @@ SettingsWindow::SettingsWindow() {
     generalGroup->setLayout(generalLayout);
 
     QGroupBox *glintGroup = new QGroupBox(tr("Glints Configuration"));
-    QLabel *lGlintThreshold = new QLabel(tr("threshold for binarization"));
+    QLabel *lGlintThreshold = new QLabel(tr("Threshold for binarization"));
     QSpinBox *sGlintThreshold = setUpSpinBox(0, 255, 1, GazeConfig::GLINT_THRESHOLD);
     QLabel *lGlintDistanceTolerance = new QLabel(tr("Distance tolerance for glints"));
     QSpinBox *sGlintMinDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_DISTANCE_TOLERANCE);
     QLabel *lGlintMaxDistance = new QLabel(tr("Max blob distance"));
     QSpinBox *sGlintMaxDistance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_DISTANCE);
+    QLabel *lGlintAngleTolerance = new QLabel(tr("Angle tolerance"));
+    QSpinBox *sGlintAngleTolerance = setUpSpinBox(0, 100, 1, GazeConfig::GLINT_ANGLE_TOLERANCE);
 
 
     QGridLayout *glintLayout = new QGridLayout;
@@ -79,6 +82,8 @@ SettingsWindow::SettingsWindow() {
     glintLayout->addWidget(sGlintMinDistance, 1, 1);
     glintLayout->addWidget(lGlintMaxDistance, 2, 0);
     glintLayout->addWidget(sGlintMaxDistance, 2, 1);
+    glintLayout->addWidget(lGlintAngleTolerance, 3, 0);
+    glintLayout->addWidget(sGlintAngleTolerance, 3, 1);
 
     glintGroup->setLayout(glintLayout);
 
@@ -97,26 +102,6 @@ SettingsWindow::SettingsWindow() {
     QSpinBox *sHaarEyeRegMinWidth = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYEREGION_MIN_WIDTH);
     haarLayout->addWidget(lHaarEyeRegMinWidth, 1, 0);
     haarLayout->addWidget(sHaarEyeRegMinWidth, 1, 1);
-
-    QLabel *lHaarEyeMinHeight = new QLabel(tr("Min eye height"));
-    QSpinBox *sHaarEyeMinHeight = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYE_MIN_HEIGHT);
-    haarLayout->addWidget(lHaarEyeMinHeight, 2, 0);
-    haarLayout->addWidget(sHaarEyeMinHeight, 2, 1);
-
-    QLabel *lHaarEyeMinWidth = new QLabel(tr("Min eye width"));
-    QSpinBox *sHaarEyeMinWidth = setUpSpinBox(0, 1000, 1, GazeConfig::HAAR_EYE_MIN_WIDTH);
-    haarLayout->addWidget(lHaarEyeMinWidth, 3, 0);
-    haarLayout->addWidget(sHaarEyeMinWidth, 3, 1);
-
-    QLabel *lHaarEyeMaxHeight = new QLabel(tr("Max eye height"));
-    QSpinBox *sHaarEyeMaxHeight = setUpSpinBox(0, 1280, 1, GazeConfig::HAAR_EYE_MAX_HEIGHT);
-    haarLayout->addWidget(lHaarEyeMaxHeight, 4, 0);
-    haarLayout->addWidget(sHaarEyeMaxHeight, 4, 1);
-
-    QLabel *lHaarEyeMaxWidth = new QLabel(tr("Max eye width"));
-    QSpinBox *sHaarEyeMaxWidth = setUpSpinBox(0, 1280, 1, GazeConfig::HAAR_EYE_MAX_WIDTH);
-    haarLayout->addWidget(lHaarEyeMaxWidth, 5, 0);
-    haarLayout->addWidget(sHaarEyeMaxWidth, 5, 1);
 
     QLabel *lHaarMaxTries = new QLabel(tr("Max tries to find eye region"));
     QSpinBox *sHaarMaxTries = setUpSpinBox(0, 100, 1, GazeConfig::HAAR_FINDREGION_MAX_TRIES);
@@ -143,8 +128,8 @@ QSpinBox * SettingsWindow::setUpSpinBox(int min, int max, int step, int& default
     spinBox->setValue(default_value);
 
     connect(spinBox, SIGNAL(valueChanged(int)),
-             spinBox, SLOT(adjustGazeValue(int)));
-    
+            spinBox, SLOT(adjustGazeValue(int)));
+
     return spinBox;
 }
 

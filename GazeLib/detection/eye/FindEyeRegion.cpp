@@ -67,9 +67,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
         return false;
     }
 
-    // TODO: What to do with multiple detections?
     Rect eyeRegion = faces.at(0);
-    // TODO: necessary?
     rectangle(image, faces.at(0), Scalar(255, 255, 255), 3);
 
     // Extract right or left part of eye region
@@ -77,12 +75,12 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
 
     vector<Rect> eyes;
     Mat region = image(eyeRegion);
-    eye_classifier.detectMultiScale(region, eyes, 1.2, 2,
+    eye_classifier.detectMultiScale(region, eyes, 1.2, 1,
             0 | CV_HAAR_SCALE_IMAGE,
-            Size(GazeConfig::HAAR_EYE_MIN_WIDTH,
-            GazeConfig::HAAR_EYE_MIN_HEIGHT),
-            Size(GazeConfig::HAAR_EYE_MAX_WIDTH,
-            GazeConfig::HAAR_EYE_MAX_HEIGHT));
+            Size(region.rows / 2,
+            region.rows / 2) ,
+            Size(region.rows ,
+            region.rows ));
 
     LOG_D("Eyes detected before filter: " << eyes.size());
     // removes all rects with no glints in it
@@ -92,8 +90,7 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     // No eye detected
     if (eyes.empty()) {
         return false;
-    }// One eye detected
-    // TODO: more than one result
+    }// One or multiple eye detected
     else if (eyes.size() > 0) {
         eyeRect = eyes.at(0);
     }
@@ -116,9 +113,9 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     vector<cv::Point> glints;
     Point2f glintCenter;
     Mat img = image(eyeRect);
+
     return findGlints.findGlints(img, glints, glintCenter);
 }
-
 
 /**
  * Removes all eye regions with no glints in it
@@ -133,6 +130,7 @@ void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     for (iter = regions.begin(); iter != regions.end();) {
         if (!hasGlintsInRect(image, *iter))
             iter = regions.erase(iter);
+
         else
             ++iter;
     }
@@ -145,6 +143,7 @@ void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
  * @return 
  */
 bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
+
     return findEye(image, eyeRect, rightEyeRegionClipper);
 }
 
@@ -155,6 +154,7 @@ bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
  * @return 
  */
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
+
     return findEye(image, eyeRect, leftEyeRegionClipper);
 }
 

@@ -19,12 +19,11 @@ public:
 
     // Amounts of glints (per eye)
     static const char GLINT_COUNT = 4;
-
+    // Max amount of ransac iterations
     static const unsigned int MAX_RANSAC_ITERATIONS = 10;
-
     // how many frames should we use to smooth the signal?
     static const unsigned int NUM_OF_SMOOTHING_FRAMES = 5;
-
+    // Estimated size ot glint radius
     static const int GLINT_RADIUS = 8;
 
     //
@@ -48,14 +47,6 @@ public:
     static int HAAR_EYEREGION_MIN_HEIGHT;
     // Max width of eyeregion
     static int HAAR_EYEREGION_MIN_WIDTH;
-    // Max height of eye
-    static int HAAR_EYE_MIN_HEIGHT;
-    // Max width of eye
-    static int HAAR_EYE_MIN_WIDTH;
-    // Max height of eye
-    static int HAAR_EYE_MAX_HEIGHT;
-    // Max width of eye
-    static int HAAR_EYE_MAX_WIDTH;
     // Max amount of tries to find eye region
     static int HAAR_FINDREGION_MAX_TRIES;
 
@@ -88,10 +79,6 @@ public:
         //
         GazeConfig::HAAR_EYEREGION_MIN_HEIGHT = 200;
         GazeConfig::HAAR_EYEREGION_MIN_WIDTH = 600;
-        GazeConfig::HAAR_EYE_MIN_HEIGHT = 100;
-        GazeConfig::HAAR_EYE_MIN_WIDTH = 150;
-        GazeConfig::HAAR_EYE_MAX_HEIGHT = 500;
-        GazeConfig::HAAR_EYE_MAX_WIDTH = 700;
         GazeConfig::HAAR_FINDREGION_MAX_TRIES = 10;
 
         // General Settings
