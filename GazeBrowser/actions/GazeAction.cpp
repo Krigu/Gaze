@@ -16,9 +16,10 @@
 
 using namespace std;
 
-GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer) : actionName(name), region(region), prepareHits(prepareHits), commitHits(commitHits), hitCounter(0), browserWindow(browserWindow), actionCallback(callback), gazePointer(gazePointer) {
+GazeAction::GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer) : actionName(name), region(region), prepareTime(prepareHits), commitTime(commitHits), browserWindow(browserWindow), actionCallback(callback), gazePointer(gazePointer) {
 
     barycenter = calcRectBarycenter(region);
+    timer = NULL;
     
     cout << name << " " << barycenter << endl;
 }
@@ -35,16 +36,24 @@ cv::Rect GazeAction::getRegion() const {
 }
 
 void GazeAction::focus() {
-    hitCounter++;
-    if (hitCounter >= commitHits) {
+    if (timer == NULL){
+        timer = new QTime();
+        timer->start();
+    }
+    
+    int elapsed = timer->elapsed();
+    
+    if (elapsed >= commitTime) {
         //cout << actionName << " commitAction " << endl;  
         gazePointer->commitAction(barycenter);
         (browserWindow ->*actionCallback) (barycenter);
-        hitCounter = 0;
+        delete timer;
+        timer = NULL;
         return;
     }
-    if (hitCounter >= prepareHits) {
-        int percentage = 100 / (commitHits - prepareHits) * (commitHits - hitCounter);
+    
+    if (elapsed >= prepareTime) {
+        int percentage = (double)(elapsed - prepareTime) / (commitTime - prepareTime) * 100;
         gazePointer->prepareAction(barycenter, percentage);
         return;
     }
@@ -52,9 +61,13 @@ void GazeAction::focus() {
 }
 
 void GazeAction::unfocus() {
-    if (hitCounter >= prepareHits) {
+    if (timer == NULL)
+        return;
+    
+    if (timer->elapsed() >= prepareTime) {
         //cout << actionName << " abortAction " << endl;
         gazePointer->abortAction();
     }
-    hitCounter = 0;
+    delete timer;
+    timer = NULL;    
 }

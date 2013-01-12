@@ -24,7 +24,7 @@ class GazeAction : public QObject {
     Q_OBJECT
 
 public:
-    GazeAction(std::string name, cv::Rect region, int prepareHits, int commitHits, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer);
+    GazeAction(std::string name, cv::Rect region, int prepareTimeInMillis, int commitTimeInMillis, BrowserWindow *browserWindow, commitAction callback, GazePointer *gazePointer);
     virtual ~GazeAction();
 
     std::string getActionName() const;
@@ -36,13 +36,13 @@ public:
 private:
     std::string actionName;
     cv::Rect region;
-    int prepareHits;
-    int commitHits;
-    int hitCounter;
+    int prepareTime;
+    int commitTime;
     BrowserWindow *browserWindow;
     commitAction actionCallback;
     GazePointer *gazePointer;
     cv::Point barycenter;
+    QTime * timer;
 
 };
 
