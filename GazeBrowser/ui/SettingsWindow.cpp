@@ -36,31 +36,12 @@ SettingsWindow::SettingsWindow() {
     btnGroupEye->addButton(rLeftEye);
     btnGroupEye->addButton(rRightEye);
 
-    generalLayout->addLayout(eyeBox, 0, 0);
-
-    /*QLabel *detectionLabel = new QLabel(tr("Detect"));
-    rPupil = new QRadioButton(tr("Pupil"));
-    connect(rPupil, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
-    rPupil->setAutoExclusive(false);
-    rIris = new QRadioButton(tr("Iris"));
-    connect(rIris, SIGNAL(toggled(bool)), this, SLOT(onStarburstSelectionToggled()));
+    QGridLayout *starburst = new QGridLayout();
+    starburst->addWidget(new QLabel("Starburst Edge Threshold"));
+    starburst->addWidget(setUpSpinBox(0, 255, 1, GazeConfig::STARBURST_EDGE_THRESHOLD));
+    eyeBox->addLayout(starburst);
     
-    rPupil->setChecked(GazeConfig::DETECT_PUPIL);
-    rPupil->setAutoExclusive(true);
-    rIris->setChecked(!GazeConfig::DETECT_PUPIL);
-    rIris->setAutoExclusive(true);
-
-    QVBoxLayout *detectionBox = new QVBoxLayout;
-    detectionBox->addWidget(detectionLabel);
-    detectionBox->addWidget(rPupil);
-    detectionBox->addWidget(rIris);
-    detectionBox->addStretch(1);
-    generalLayout->addLayout(detectionBox, 1, 0);
-
-    QButtonGroup *btnGroupDetection = new QButtonGroup(eyeBox);
-    btnGroupDetection->addButton(rPupil);
-    btnGroupDetection->addButton(rIris);*/
-
+    generalLayout->addLayout(eyeBox, 0, 0);
     generalGroup->setLayout(generalLayout);
 
     QGroupBox *glintGroup = new QGroupBox(tr("Glints Configuration"));

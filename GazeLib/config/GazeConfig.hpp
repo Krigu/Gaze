@@ -27,6 +27,11 @@ public:
     static const int GLINT_RADIUS = 8;
 
     //
+    // Starburst 
+    //
+    static int STARBURST_EDGE_THRESHOLD;
+    
+    //
     // Glints Configuration
     //
 
@@ -64,12 +69,17 @@ public:
     void initConiguration() {
 
         //
+        // Starburst
+        //
+        GazeConfig::STARBURST_EDGE_THRESHOLD = 30;
+        
+        //
         // Glints Configuration
         //
 
-        GazeConfig::GLINT_THRESHOLD = 240;
+        GazeConfig::GLINT_THRESHOLD = 220;
         GazeConfig::GLINT_DISTANCE_TOLERANCE = 20;
-        GazeConfig::GLINT_DISTANCE = 30;
+        GazeConfig::GLINT_DISTANCE = 25;
 
         // TODO: Implement in settings window
         GazeConfig::GLINT_ANGLE_TOLERANCE = 10;

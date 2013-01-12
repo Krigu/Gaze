@@ -12,7 +12,10 @@
 
 using namespace std;
 
-
+//
+// Starburst Threshold
+//
+int GazeConfig::STARBURST_EDGE_THRESHOLD;
 
 //
 // Glints Configuration

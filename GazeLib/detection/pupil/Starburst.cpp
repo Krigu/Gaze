@@ -159,9 +159,6 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
     const int LINE_LENGTH=150;
     
-    //TODO hardcoded?
-    int threshold = 30;
-    
 	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
 
 		points.clear();
@@ -172,7 +169,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 			const double current_angle = angle * angleNum;
             
             Point2f edgePoint;
-            bool success = followRay(gray, start_point, current_angle, edgePoint, LINE_LENGTH, threshold);
+            bool success = followRay(gray, start_point, current_angle, edgePoint, LINE_LENGTH, GazeConfig::STARBURST_EDGE_THRESHOLD);
             
             if(success){
                 points.push_back(edgePoint);
@@ -184,7 +181,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
                 while(new_angle < target_angle){
                     Point2f new_edge;
                     bool success = followRay(gray, edgePoint, new_angle, 
-                                    new_edge, LINE_LENGTH / 4, threshold);
+                                    new_edge, LINE_LENGTH / 4, GazeConfig::STARBURST_EDGE_THRESHOLD);
                     
                     if(success)
                         points.push_back(new_edge);
