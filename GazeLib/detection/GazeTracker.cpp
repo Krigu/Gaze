@@ -188,9 +188,14 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
 
     if (glintFinder.findGlints(frame, glints, glintCenter)) {
 
+        
+        
         if (!starburst.processImage(frame, glints, glintCenter,
                 pupilCenter, radius)) {
+            cross(frame, glintCenter, 10);
             return FINDPUPIL_FAILED;
+        } else {
+            cross(frame, glintCenter, 10);
         }
 
         adjustRect(glintCenter, frameRegion);
@@ -200,7 +205,6 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
     }
 
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
-    cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);
 
     // now calculate the gaze vector
