@@ -31,7 +31,6 @@ void GazeTracker::getNextFrame(Mat& frame) {
 }
 
 void GazeTracker::initializeCalibration() {
-    // TODO possiblilty to exit method
     Mat frame;
     // Copy for displaying image
     Mat fullFrame;
@@ -133,7 +132,6 @@ void GazeTracker::track(unsigned int duration) {
 
 #endif     
 
-        // TODO: extract to method
         if ((frameRegion.x + frameRegion.width) > currentFrame.cols)
             frameRegion.x = currentFrame.cols - frameRegion.width;
 
@@ -200,7 +198,7 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
     } else {
         return FINDGLINT_FAILED;
     }
-    // TODO: necessary?
+
     circle(frame, pupilCenter, radius, Scalar(255, 255, 255));
     cross(frame, glintCenter, 10);
     cross(frame, pupilCenter, 5);
