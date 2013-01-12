@@ -60,6 +60,8 @@ protected:
     void scrollDownCallback(cv::Point p);
     void backCallback(cv::Point p);
     void forwardCallback(cv::Point p);
+    void scrollLeftCallback(cv::Point p);
+    void scrollRightCallback(cv::Point p);
     void openLinkCallback(cv::Point p);
     void showBookmarkPageCallback(cv::Point p);
 
@@ -79,6 +81,8 @@ protected slots:
     void showLinks();
     void scrollUp();
     void scrollDown();
+    void scrollLeft();
+    void scrollRight();
     void back();
     void forward();
     void showBookmarkPage();

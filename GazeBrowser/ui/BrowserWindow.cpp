@@ -118,25 +118,15 @@ void BrowserWindow::setUpGazeActions() {
     int wFourth = screenSize.width() / 4;
     int hThird = (screenSize.height() - yOrigin) / 3;
 
-
     vector<GazeAction*> browserWindowActions;
     browserWindowActions.push_back(createGazeAction("Back", Rect(0, h - 150, wFourth, 150), &BrowserWindow::backCallback));
     browserWindowActions.push_back(createGazeAction("Link", Rect(wFourth, h - 150, wFourth, 150), &BrowserWindow::showLinksCallback));
     browserWindowActions.push_back(createGazeAction("Bookmarks", Rect(wFourth * 2, h - 150, wFourth, 150), &BrowserWindow::showBookmarkPageCallback));
     browserWindowActions.push_back(createGazeAction("Forward", Rect(wFourth * 3, h - 150, wFourth, 150), &BrowserWindow::forwardCallback));
-    browserWindowActions.push_back(createGazeAction("Up", Rect(0, -500, w, 500), &BrowserWindow::scrollUpCallback));
-    browserWindowActions.push_back(createGazeAction("Down", Rect(0, h, w, 500), &BrowserWindow::scrollDownCallback));
-
-    // TODO: left and right
-    //    // Left of screen    
-    //    GazeAction *actLinksBack = createGazeAction("Left", Rect(-500, 0, 500, h));
-    //    connect(actLinksBack, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
-    //
-    //    // Right of screen
-    //    GazeAction *actLinksForward = createGazeAction("Right", Rect(w, 0, 500, h));
-    //    connect(actLinksForward, SIGNAL(commitAction(cv::Point)), SLOT(forward(cv::Point)));
-    //    browserWindowActions.push_back(actScrollRight);
-    //    browserWindowActions.push_back(actScrollLeft);
+    browserWindowActions.push_back(createGazeAction("Scroll up", Rect(0, -500, w, 500), &BrowserWindow::scrollUpCallback));
+    browserWindowActions.push_back(createGazeAction("Scroll down", Rect(0, h, w, 500), &BrowserWindow::scrollDownCallback));
+    browserWindowActions.push_back(createGazeAction("Scroll left", Rect(-500, 0, 500, h), &BrowserWindow::scrollLeftCallback));
+    browserWindowActions.push_back(createGazeAction("Scroll right", Rect(w, 0, 500, h), &BrowserWindow::scrollRightCallback));
 
     vector<GazeAction*> bookmarkWindowActions;
     // First link
@@ -207,6 +197,9 @@ void BrowserWindow::setupMenus() {
     navMenu->addSeparator();
     navMenu->addAction(tr("Scroll Up"), this, SLOT(scrollUp()));
     navMenu->addAction(tr("Scroll Down"), this, SLOT(scrollDown()));
+    navMenu->addSeparator();
+    navMenu->addAction(tr("Scroll Left"), this, SLOT(scrollLeft()));
+    navMenu->addAction(tr("Scroll Right"), this, SLOT(scrollRight()));
     navMenu->addSeparator();
     navMenu->addAction(tr("Go to page"), this, SLOT(goToPage()));
     navMenu->addAction(tr("Show Bookmarks"), this, SLOT(showBookmarkPage()));
@@ -456,7 +449,7 @@ void BrowserWindow::showLinks() {
     } else {
         // TODO release of memory from window
         imageWindow->showFullScreen();
-        
+
     }
     actionManager->resume();
 }
@@ -490,6 +483,28 @@ void BrowserWindow::showLinksCallback(cv::Point p) {
     Q_UNUSED(p);
     actionManager->pause();
     this->showLinks();
+}
+
+void BrowserWindow::scrollLeft() {
+
+    QString code = "$('html, body').animate({ scrollLeft: $('body').scrollLeft() - $(window).width() }, 800);";
+    view->page()->mainFrame()->evaluateJavaScript(code);
+}
+
+void BrowserWindow::scrollLeftCallback(cv::Point p) {
+    Q_UNUSED(p);
+    this->scrollLeft();
+}
+
+void BrowserWindow::scrollRight() {
+
+    QString code = "$('html, body').animate({ scrollLeft: $('body').scrollLeft() + $(window).width() }, 800);";
+    view->page()->mainFrame()->evaluateJavaScript(code);
+}
+
+void BrowserWindow::scrollRightCallback(cv::Point p) {
+    Q_UNUSED(p);
+    this->scrollRight();
 }
 
 void BrowserWindow::scrollUp() {
