@@ -216,7 +216,6 @@ bool FindGlints::findRectangularCluster(vector<cv::Point>& glints) {
         comb[i] = i;
 
     // Try first combination
-    // TODO: Improve code and maybe not use two vectors or add in such a strange way
     vector<cv::Point> quadruple;
     quadruple.push_back(glints.at(comb[0]));
     quadruple.push_back(glints.at(comb[1]));
