@@ -9,6 +9,7 @@
 #include "video/LiveSource.hpp"
 #include "exception/GazeExceptions.hpp"
 #include "../Sleeper.hpp"
+#include "../../ui/UIConstants.hpp"
 
 using namespace std;
 
@@ -124,13 +125,15 @@ bool GazeTrackWorker::calibrate() {
 
             cout << "Calibration Point: " << point_x << "/" << point_y << endl;
 
+            // Move the calibration point to the position inside the webview
             QString code = QString("calibrationCircle.move(%1,%2);")
                     .arg(point_x).arg(point_y);
 
             emit jsCommand(code);
             Sleeper::msleep(3000);
 
-            Point2f p(point_x, point_y);
+            // calculate the absolute screen point (webview + Menubar)
+            Point2f p(point_x, point_y + MENUBAR_HEIGHT);
             measurements.clear();
             
             try {
