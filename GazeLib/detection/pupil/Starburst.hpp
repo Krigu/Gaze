@@ -20,7 +20,7 @@ private:
 
 public:
 	Starburst();
-	bool processImage(cv::Mat & image, std::vector<cv::Point> glint_centers,
+	bool findPupil(cv::Mat & image, std::vector<cv::Point> glint_centers,
 			cv::Point2f startpoint, cv::Point2f & pupil_center, float & radius);
 
 private:

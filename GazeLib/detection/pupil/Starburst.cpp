@@ -39,7 +39,7 @@ Starburst::Starburst() {
  * - use starburst to find the pupil and its center
  * 
  */
-bool Starburst::processImage(cv::Mat& frame, vector<cv::Point> glint_centers,
+bool Starburst::findPupil(cv::Mat& frame, vector<cv::Point> glint_centers,
 		cv::Point2f glintcenter, cv::Point2f &pupil_center, float & radius) {
 
 	Mat working_frame = frame.clone();
