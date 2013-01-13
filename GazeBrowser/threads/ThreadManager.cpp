@@ -198,7 +198,7 @@ void ThreadManager::fsmCalibrate(PROGRAM_STATES nextState){
 }
 
 void ThreadManager::fsmTrack(PROGRAM_STATES nextState){
-    parent->trackingStatus(true, false);
+    parent->trackingStatus(true, true);
     this->state = nextState;
     QMetaObject::invokeMethod(gazeTracker, "startTracking", Qt::QueuedConnection);
 }

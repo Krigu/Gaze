@@ -38,9 +38,9 @@ void IdleWorker::displayCamera(void){
     
     while(running){
         cv::Mat frame;
-#ifdef __APPLE__
-        Sleeper::msleep(33);
-#endif
+//#ifdef __APPLE__
+//        Sleeper::msleep(33);
+//#endif
         if(live->nextGrayFrame(frame)){  
             emit cvImage(new cv::Mat(frame));
         } else {

@@ -165,17 +165,17 @@ bool GazeTrackWorker::calibrate() {
 }
 
 bool GazeTrackWorker::imageProcessed(Mat& resultImage) {
-#ifdef __APPLE__
-    Sleeper::msleep(33);
-#endif
+//#ifdef __APPLE__
+//    Sleeper::msleep(33);
+//#endif
     emit cvImage(new Mat(resultImage));
     return running;
 }
 
 bool GazeTrackWorker::imageProcessed(Mat& resultImage, MeasureResult &result, Point2f &gazeVector) {
-#ifdef __APPLE__
-    Sleeper::msleep(33);
-#endif
+//#ifdef __APPLE__
+//    Sleeper::msleep(33);
+//#endif
     if (result == MEASURE_OK) {
         if (tracking) {
             emit estimatedPoint(calibration->calcCoordinates(gazeVector));
