@@ -702,7 +702,7 @@ void BrowserWindow::hideNavigationWidget() {
 
 GazeAction* BrowserWindow::createGazeAction(string name, cv::Rect rect, commitAction callback) {
 
-    GazeAction* action = new GazeAction(name, rect, 2000, 4000, this, callback, gazePointer);
+    GazeAction* action = new GazeAction(name, rect, GAZE_ACTION_PREPARE_TIME, GAZE_ACTION_COMMIT_TIME, this, callback, gazePointer);
 
     return action;
 }
