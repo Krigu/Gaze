@@ -1,10 +1,3 @@
-/*
- * GazeConstants.cpp
- *
- *  Created on: Nov 9, 2012
- *      Author: fri
- */
-
 #include "GazeConfig.hpp"
 
 #include <stdlib.h>

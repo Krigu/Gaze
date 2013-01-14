@@ -1,10 +1,3 @@
-/*
- * LiveSource.cpp
- *
- *  Created on: Dec 2, 2012
- *      Author: krigu
- */
-
 #include "LiveSource.hpp"
 
 #include <iostream>
