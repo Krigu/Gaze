@@ -1,10 +1,3 @@
-/*
- * gui.cpp
- *
- *  Created on: Nov 9, 2012
- *      Author: krigu
- */
-
 #include "gui.hpp"
 
 cv::Rect createRect(cv::Mat &frame, cv::Point &position, int width,

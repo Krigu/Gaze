@@ -1,10 +1,3 @@
-/*
- * geometry.cpp
- *
- *  Created on: Nov 9, 2012
- *      Author: krigu
- */
-
 #include <vector>
 #include <iostream>
 
@@ -108,7 +101,7 @@ cv::Point2f calcMedianPoint(cv::Point2f reference, std::vector< cv::Point2f > sc
 }
 
 bool isRectangle(vector<cv::Point> points, int tolerance) {
-
+    
     orientateFourPoints(points);
 
     // TODO: optimize
