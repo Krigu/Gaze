@@ -190,7 +190,7 @@ MeasureResult GazeTracker::measureFrame(Mat &frame, Point2f &gazeVector, Point2f
 
         
         
-        if (!starburst.processImage(frame, glints, glintCenter,
+        if (!starburst.findPupil(frame, glints, glintCenter,
                 pupilCenter, radius)) {
             cross(frame, glintCenter, 10);
             return FINDPUPIL_FAILED;
