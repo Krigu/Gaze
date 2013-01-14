@@ -23,7 +23,7 @@
 bool Ransac::ransac(float * x, float * y, float * radius,
 		std::vector<cv::Point2f> points) {
 	// N: num of iterations
-	const int N = 400;
+	const int N = GazeConfig::RANSAC_ITERATIONS;
 	// T: distance in which
 	const float T = 2;
 

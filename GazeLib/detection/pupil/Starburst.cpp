@@ -159,7 +159,7 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 
     const int LINE_LENGTH=150;
     
-	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_RANSAC_ITERATIONS; ++iterations){
+	for(unsigned short iterations = 0; iterations < GazeConfig::MAX_STARBURST_ITERATIONS; ++iterations){
 
 		points.clear();
         
