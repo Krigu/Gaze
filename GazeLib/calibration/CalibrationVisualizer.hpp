@@ -1,10 +1,3 @@
-/* 
- * File:   CalibrationVisualizer.hpp
- * Author: krigu
- *
- * Created on December 30, 2012, 3:34 PM
- */
-
 #ifndef CALIBRATIONVISUALIZER_HPP
 #define	CALIBRATIONVISUALIZER_HPP
 

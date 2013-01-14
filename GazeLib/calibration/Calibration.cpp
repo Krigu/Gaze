@@ -1,10 +1,3 @@
-/*
- * Calibration.cpp
- *
- *  Created on: Nov 29, 2012
- *      Author: krigu
- */
-
 #include <iostream>
 
 #include "../utils/gui.hpp"
@@ -51,7 +44,7 @@ Calibration::~Calibration() {
 
 }
 
-void Calibration::calcCoefficients(int accuracyThreshold) {
+void Calibration::calcCoefficients() {
     int matSize = calibrationData.size();
 
     if (matSize == 0) {
@@ -175,7 +168,7 @@ bool Calibration::calibrate(int accuracyThreshold, int maxExceedence) {
         return false;
 
     // Otherwise consider only those measurements smaller than threshold
-    calcCoefficients(accuracyThreshold);
+    calcCoefficients();
     LOG_D(" Calibration actual point: " << calibrationData.at(0).getActualPoint()
             << " Measured point " << calcCoordinates(calibrationData.at(0).getMeasuredMedianVector()));
     

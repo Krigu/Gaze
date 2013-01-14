@@ -1,9 +1,21 @@
-/*
- * GazeTracker.cpp
+/*! \mainpage GazeLib API Documentation
  *
- *  Created on: Nov 24, 2012
- *      Author: krigu
+ * \section intro_sec Introduction
+ *
+ * This is the API Documentation of the GazeLib
+ *
+ * \section About GazeLib
+ * GazeLib is an OpenCV based image processing library for building a Remote Gaze Tracker.
+ * 
+ * \subsection Algorithms
+ * This Libraray contains algorithms for detecting the pupil (Starburst) and finding the glints inside the eye (FindGlints)<br/>
+ * There are also classes for making a Gaze Tracking calibration and for calculating the point where
+ * a user is looking at (Calibration).
+ *  
+ * \subsection Examples
+ * The GazeLib is used in the proof of concept application Gaze-Browser. This applications allows webbrowsing with eye movements.
  */
+
 
 #include "GazeTracker.hpp"
 #include "../utils/geometry.hpp"

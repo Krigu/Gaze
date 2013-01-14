@@ -91,9 +91,6 @@ void GazeTrackWorker::startTracking() {
 
             tracker->track();
 
-        } catch (FaceRegionNotFoundException &e) {
-            emit info(tr("No Face detected - Please hold your head still!"));
-            tracker->initializeCalibration();
         } catch (EyeRegionNotFoundException &e) {
             emit info(tr("No Eye detected - Please hold your head still!"));
             tracker->initializeCalibration();

@@ -1,10 +1,3 @@
-/*
- * Calibration.hpp
- *
- *  Created on: Nov 29, 2012
- *      Author: krigu
- */
-
 #ifndef CALIBRATION_HPP_
 #define CALIBRATION_HPP_
 
@@ -32,6 +25,12 @@ public:
     friend bool operator<(const CalibrationData& d1, const CalibrationData& d2);
 };
 
+/**
+ * The Calibration class provides methods to calculate the Gaze Tracking calibration.
+ * This class must be used to initially calibrate the Gaze Tracking System. After the 
+ * calibration a call to calcCoordinates() will calculate the point on the screen 
+ * where a user is looking at.
+ */
 class Calibration {
     friend class CalibrationVisualizer; // For debugging and visualizing
 private:   
@@ -41,9 +40,25 @@ protected:
     cv::Mat coefficientsY;    
     cv::vector<CalibrationData> calibrationData;
     
-    void calcCoefficients(int accuracyThreshold = 0);
+    /**
+     * solves the equation system for the calibration coefficients
+     */
+    void calcCoefficients();
+    
+    /**
+     * calculates the distance between each calibration-point (should) 
+     * and the measured point (is)
+     */
     void calcCalibrationDataDistance();
+    
+    /**
+     * calculats the average deviation of all calibration data members
+     */
     int calcAverageDeviation();
+    
+    /**
+     * removes the worst calibratondata entry
+     */
     void removeWorstCalibrationData();
 public:
     Calibration();

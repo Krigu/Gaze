@@ -1,10 +1,3 @@
-/* 
- * File:   CalibrationVisualizer.cpp
- * Author: krigu
- * 
- * Created on December 30, 2012, 3:34 PM
- */
-
 #include <iostream>
 
 #include "../utils/gui.hpp"
