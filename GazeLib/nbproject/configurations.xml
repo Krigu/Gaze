@@ -19,12 +19,6 @@
         <itemPath>calibration/CalibrationVisualizer.cpp</itemPath>
         <itemPath>calibration/CalibrationVisualizer.hpp</itemPath>
       </logicalFolder>
-      <logicalFolder name="cattin" displayName="cattin" projectFiles="true">
-        <itemPath>cattin/IplClipLineToImage.cpp</itemPath>
-        <itemPath>cattin/IplClipLineToImage.h</itemPath>
-        <itemPath>cattin/IplExtractProfile.cpp</itemPath>
-        <itemPath>cattin/IplExtractProfile.h</itemPath>
-      </logicalFolder>
       <logicalFolder name="f1" displayName="config" projectFiles="true">
         <itemPath>config/GazeConfig.cpp</itemPath>
         <itemPath>config/GazeConfig.hpp</itemPath>
@@ -56,6 +50,10 @@
         <itemPath>exception/GazeExceptions.hpp</itemPath>
       </logicalFolder>
       <logicalFolder name="utils" displayName="utils" projectFiles="true">
+        <itemPath>utils/IplClipLineToImage.cpp</itemPath>
+        <itemPath>utils/IplClipLineToImage.h</itemPath>
+        <itemPath>utils/IplExtractProfile.cpp</itemPath>
+        <itemPath>utils/IplExtractProfile.h</itemPath>
         <itemPath>utils/geometry.cpp</itemPath>
         <itemPath>utils/geometry.hpp</itemPath>
         <itemPath>utils/gui.cpp</itemPath>

@@ -3,7 +3,7 @@
 #include "../../config/GazeConfig.hpp"
 #include "Starburst.hpp"
 
-#include "../../cattin/IplExtractProfile.h"
+#include "../../utils/IplExtractProfile.h"
 
 #include "../../utils/log.hpp"
 #include "../../utils/geometry.hpp"
