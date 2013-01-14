@@ -44,19 +44,7 @@ bool operator<(const CalibrationData& d1, const CalibrationData& d2) {
 }
 
 Calibration::Calibration() {
-    // TODO: remove, only for debugging
-    coefficientsX = Mat(1, 4, CV_32F);
-    coefficientsY = Mat(1, 4, CV_32F);
 
-    coefficientsX.at<float>(0, 0) = 208.83293;
-    coefficientsX.at<float>(0, 1) = 61.582436;
-    coefficientsX.at<float>(0, 2) = 10.489847;
-    coefficientsX.at<float>(0, 3) = -0.26797113;
-
-    coefficientsY.at<float>(0, 0) = 788.78058;
-    coefficientsY.at<float>(0, 1) = -1.6516321;
-    coefficientsY.at<float>(0, 2) = -69.358757;
-    coefficientsY.at<float>(0, 3) = 0.20553038;
 }
 
 Calibration::~Calibration() {
@@ -162,13 +150,15 @@ void Calibration::removeWorstCalibrationData() {
 
 bool Calibration::calibrate(int accuracyThreshold, int maxExceedence) {
 
+
+    
     // Calculate the coordinate
     calcCoefficients();
     LOG_D(" Calibration actual point: " << calibrationData.at(0).getActualPoint()
             << " Measured point " << calcCoordinates(calibrationData.at(0).getMeasuredMedianVector()));
     calcCalibrationDataDistance();
     LOG_D("Average deviation: " << calcAverageDeviation());
-
+    
     int errors = 0;
     // Check how many distances are greater than threshold and remove them   
     vector<CalibrationData>::iterator it;
@@ -188,6 +178,7 @@ bool Calibration::calibrate(int accuracyThreshold, int maxExceedence) {
     calcCoefficients(accuracyThreshold);
     LOG_D(" Calibration actual point: " << calibrationData.at(0).getActualPoint()
             << " Measured point " << calcCoordinates(calibrationData.at(0).getMeasuredMedianVector()));
+    
 
     return true;
 }

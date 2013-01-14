@@ -35,8 +35,6 @@ void CalibrationVisualizer::printCalibration(std::vector<cv::Point2f> points) {
 
         // calulated point
         Point calcPoint = calib->calcCoordinates(*it);
-        calcPoint.x /= 2;
-        calcPoint.y /= 2;
         cross(display, calcPoint, 5, color);
     }
 
@@ -47,22 +45,18 @@ void CalibrationVisualizer::printCalibration(std::vector<cv::Point2f> points) {
 void CalibrationVisualizer::printCalibration() {
 
     // TODO: Give resolution as parameter
-    display = Mat::zeros(Size(720, 450), CV_8UC3);
+    display = Mat::zeros(Size(1440, 900), CV_8UC3);
 
     vector<CalibrationData> calibrationData = calib->calibrationData;
-    
+
     for (vector<CalibrationData>::iterator it = calibrationData.begin();
             it != calibrationData.end(); ++it) {
 
         // calulated point
         Point calcPoint = calib->calcCoordinates(it->getMeasuredMedianVector());
-        calcPoint.x /= 2;
-        calcPoint.y /= 2;
         cout << "Calculated Point: " << calcPoint << endl;
         cross(display, calcPoint, 5, Scalar(0, 0, 255));
         Point actualPoint = it->getActualPoint();
-        actualPoint.x = actualPoint.x / 2;
-        actualPoint.y = actualPoint.y / 2;
         cout << "Actual Point: " << actualPoint << endl;
         cross(display, actualPoint, 5, Scalar(0, 255, 0));
     }
@@ -71,9 +65,9 @@ void CalibrationVisualizer::printCalibration() {
 
 }
 
-void CalibrationVisualizer::printCoefficients(){
+void CalibrationVisualizer::printCoefficients() {
     cout << "X: " << endl << calib->coefficientsX << endl;
     cout << "Y: " << endl << calib->coefficientsY << endl;
-    
+
 }
 
