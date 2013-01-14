@@ -11,9 +11,6 @@ using namespace cv;
 CalibrationVisualizer::CalibrationVisualizer(Calibration* calibration) : calib(calibration), rng(RNG(12345)) {
 }
 
-CalibrationVisualizer::CalibrationVisualizer(const CalibrationVisualizer& orig) {
-}
-
 CalibrationVisualizer::~CalibrationVisualizer() {
 }
 

@@ -13,8 +13,9 @@
 #include "../../utils/gui.hpp"
 #include "../../config/GazeConfig.hpp"
 
-// TODO: remove, its only for debugging
+#if __DEBUG_FINDGLINTS == 1
 #include "opencv2/highgui/highgui.hpp"
+#endif
 
 using namespace std;
 using namespace cv;

@@ -6,6 +6,9 @@
 
 #include "Ransac.hpp"
 
+/**
+ * Implementation of the Startburst algorithm
+ */
 class Starburst {
 private:
 	cv::Rect search_area;
