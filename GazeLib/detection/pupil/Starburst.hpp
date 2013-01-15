@@ -23,6 +23,18 @@ private:
 
 public:
 	Starburst();
+    
+    /**
+     * finds the pupil center and radius using the starburst algorithm
+     * @see GazeConfig::STARBURST_EDGE_THRESHOLD
+     * 
+     * @param image the image to search the pupil (MUST BE A GRAYSCALE IMAGE)
+     * @param glint_centers the centers of the glints inside the image (if any)
+     * @param startpoint the point where the search should be started
+     * @param pupil_center the center of the pupil (if found)
+     * @param radius the radius of the pupil (if found)
+     * @return true if the puil has been found
+     */
 	bool findPupil(cv::Mat & image, std::vector<cv::Point> glint_centers,
 			cv::Point2f startpoint, cv::Point2f & pupil_center, float & radius);
 

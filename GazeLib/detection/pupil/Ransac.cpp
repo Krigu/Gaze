@@ -1,4 +1,3 @@
-
 #if __DEBUG_STARBURST == 1
 #include <opencv2/highgui/highgui.hpp>
 #endif

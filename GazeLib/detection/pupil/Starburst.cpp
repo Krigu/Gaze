@@ -35,7 +35,7 @@ Starburst::Starburst() {
 /*
  * idea: only use the precalculated rectangle.
  * - remove the glints, 
- * - use min to find a point in the pupil
+ * - blur the image a little
  * - use starburst to find the pupil and its center
  * 
  */
@@ -99,6 +99,18 @@ void Starburst::remove_glints(cv::Mat &gray, vector<cv::Point> glint_centers,
 	}
 }
 
+/**
+ * follows a starburst ray in the direction "current_angle". this method 
+ * searches for an edge exceeding the edge_threshold.
+ * 
+ * @param gray the grayscale image to search in
+ * @param start_point the start point of the search
+ * @param current_angle the direction / angle of the line
+ * @param edgePoint the edgePoint (if found)
+ * @param line_length the length of the lines that should be checked
+ * @param edge_threshold the threshold for the intensity
+ * @return true if an edge has been found
+ */
 bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point, 
             const double current_angle, Point2f &edgePoint, 
             const int line_length, const int edge_threshold){
@@ -138,12 +150,12 @@ bool Starburst::followRay(cv::Mat &gray, const Point2f &start_point,
 }
 
 /**
- * 
- * @param gray a grayscale image of the eye
- * @param start a starting point for the algorithm inside the pupil
- * @param num_of_lines the number of lines to draw (5 degrees = 72 lines)
- * @param distance_growth how fast should the lines grow? smaller = exacter
- * @return the center of the pupil
+ * applies the starburst algorithm to the given gray-image
+ * @param gray the image
+ * @param center the startpoint for the first iteration and the center of the pupil (if found)
+ * @param radius the radius of the pupil (if found)
+ * @param num_of_lines the number of lines the algorithm should use
+ * @return true if the pupil has been found
  */
 bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		int num_of_lines) {

@@ -1,9 +1,3 @@
-/* 
- * File:   Ransac.hpp
- * Author: fri
- *
- */
-
 #ifndef RANSAC_HPP
 #define	RANSAC_HPP
 
