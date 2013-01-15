@@ -3,8 +3,6 @@
 #include "config/GazeConfig.hpp"
 #include "AutoSaveSpinbox.hpp"
 
-// TODO: Adjust titles of constants. p.E. glint angle tolerance
-
 SettingsWindow::SettingsWindow() {
 
     QGroupBox *generalGroup = new QGroupBox(tr("General configuration"));

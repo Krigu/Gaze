@@ -151,7 +151,7 @@ void GazeTracker::track(unsigned int duration) {
 
             case FINDGLINT_FAILED:
                 noGlints++;
-                if (noGlints > 20) { //TODO mach mau e konstante
+                if (noGlints > 20) { //TODO should be a constant
                     LOG_W("no glints found. need to reinitialize");
                     findEyeRegion(currentFrame, glintCenter);
 

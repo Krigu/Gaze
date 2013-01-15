@@ -17,7 +17,6 @@ void GazePointer::commitAction(cv::Point p) {
 }
 
 void GazePointer::prepareAction(cv::Point p, int percentage) {
-    //TODO: calculate percentage
     this->percentage = percentage;
     percentage = percentage % 100;
 

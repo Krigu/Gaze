@@ -31,7 +31,6 @@ BrowserWindow::BrowserWindow(const int cameraChannel) : cameraChannel(cameraChan
 }
 
 BrowserWindow::~BrowserWindow() {
-    // TODO which objects to free?
     delete imageWindow;
     delete settingsWin;
 }
@@ -59,7 +58,6 @@ void BrowserWindow::init() {
     webpage = new GazeWebPage;
     view->setPage(webpage);
 
-    // TODO introduce setUpEyeWidget, setUpBookmarksWin, etc.?
     eye_widget = new CVWidget;
     eye_widget->setWindowModality(Qt::WindowModal);
     eye_widget->setAttribute(Qt::WA_DeleteOnClose, false); //only hide the widget
@@ -152,7 +150,6 @@ void BrowserWindow::setUpGazeActions() {
     // Close image window (action is placed above the screen)
     linkWindowActions.push_back(createGazeAction("Image window close", Rect(0, -500, w, 500), &BrowserWindow::closeLinkWindow));
 
-    // TODO: dynamic? & memory stuff
     typedef map<int, vector< GazeAction* > > GazeMap;
     GazeMap m;
     m.insert(GazeMap::value_type(0, browserWindowActions));
@@ -302,7 +299,6 @@ void BrowserWindow::showEvent(QShowEvent *event) {
 void BrowserWindow::setUpCamera() {
 
     source = new LiveSource(cameraChannel);
-    //TODO document this, the UI must have been loaded before we start this
     tManager = new ThreadManager(this);
     tManager->goIdle();
 
@@ -311,7 +307,6 @@ void BrowserWindow::setUpCamera() {
 void BrowserWindow::finishLoading(bool) {
     view->page()->mainFrame()->evaluateJavaScript(jQuery);
 
-    // TODO: cleanup code and don't check for every site
     if (view->page()->mainFrame()->url().toString() == "qrc:/bookmarks.html") {
         QString html = "$('#%1').append("
                 "\"<a href='%2'><img src='http://gaze.frickler.ch/screenshot/?screenshot_url=%3' alt=''></a>"
@@ -446,7 +441,6 @@ void BrowserWindow::showLinks() {
         alertInfo(tr("No links in the viewport!"), true);
         actionManager->setMode(0);
     } else {
-        // TODO release of memory from window
         imageWindow->showFullScreen();
 
     }

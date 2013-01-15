@@ -27,7 +27,6 @@ void ActionManager::estimatedPoint(cv::Point p) {
 
     cout << "ActionManager Point: " << p << "Mode: " << mode << endl;
 
-    // TODO check memory stuff (copy too much?)
     map<int, vector<GazeAction*> >::iterator mapIter = actionMap.find(mode);
     if (mapIter != actionMap.end()) {
 

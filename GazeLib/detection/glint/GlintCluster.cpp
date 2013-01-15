@@ -14,7 +14,6 @@ GlintCluster::GlintCluster(std::vector<cv::Point> & glints,
         cv::Point lastMeasurement) :
 glints(glints) {
 
-    // TODO: Specify what to do. Exception?
     if (glints.empty())
         return;
 

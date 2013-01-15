@@ -217,8 +217,8 @@ bool Starburst::starburst(cv::Mat &gray, Point2f &center, float &radius,
 		} else {
             //TODO report error?
 			LOG_D("no mean calculated!");
-            //mean_x = -1;
-            //mean_y = -1;
+            //mean_x = 0;
+            //mean_y = 0;
 			break;
 		}
 
