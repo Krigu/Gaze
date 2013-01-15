@@ -1,10 +1,3 @@
-/* 
- * File:   SettingsWindow.cpp
- * Author: fri
- * 
- * Created on December 9, 2012, 7:27 PM
- */
-
 #include <QtGui>
 #include "SettingsWindow.hpp"
 #include "config/GazeConfig.hpp"

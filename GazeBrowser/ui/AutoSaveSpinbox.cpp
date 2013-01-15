@@ -1,9 +1,3 @@
-/* 
- * File:   AutoSaveSpinbox.cpp
- * Author: krigu
- * 
- * Created on December 12, 2012, 1:14 PM
- */
 #include <iostream>
 
 #include "AutoSaveSpinbox.hpp"

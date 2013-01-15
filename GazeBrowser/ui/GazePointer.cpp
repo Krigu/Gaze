@@ -1,10 +1,3 @@
-/* 
- * File:   GazePointer.cpp
- * Author: fri
- * 
- * Created on January 10, 2013, 3:36 PM
- */
-
 #include <iostream>
 #include <QtGui/qwidget.h>
 

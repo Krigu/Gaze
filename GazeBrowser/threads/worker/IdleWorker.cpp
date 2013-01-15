@@ -1,10 +1,3 @@
-/* 
- * File:   IdleThread.cpp
- * Author: fri
- * 
- * Created on January 2, 2013, 5:33 PM
- */
-
 #include "IdleWorker.hpp"
 #include "video/LiveSource.hpp"
 #include "../Sleeper.hpp"

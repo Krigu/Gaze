@@ -6,6 +6,11 @@
 #include <QtOpenGL>
 #include <opencv2/core/core.hpp>
 
+/**
+ * a qt OpenGL widget that converts a cv::Mat to a QImage
+ * this code has been found here: 
+ * http://www.qtforum.de/forum/viewtopic.php?f=3&t=14591
+ */
 class CVWidget : public QGLWidget
 {
     Q_OBJECT

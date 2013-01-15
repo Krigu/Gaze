@@ -1,10 +1,3 @@
-/* 
- * File:   GazeAction.hpp
- * Author: krigu
- *
- * Created on January 2, 2013, 1:07 PM
- */
-
 #ifndef GAZEACTION_HPP
 #define	GAZEACTION_HPP
 

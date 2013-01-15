@@ -1,10 +1,3 @@
-/* 
- * File:   ThreadManager.cpp
- * Author: fri
- * 
- * Created on January 2, 2013, 11:45 AM
- */
-
 #include <opencv2/core/core.hpp>
 
 #include "ThreadManager.hpp"

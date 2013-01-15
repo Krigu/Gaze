@@ -1,10 +1,3 @@
-/* 
- * File:   ImageWindow.cpp
- * Author: krigu
- * 
- * Created on January 2, 2013, 4:53 PM
- */
-
 #include <algorithm>
 #include <QtGui>
 #include <QtWebKit>

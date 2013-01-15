@@ -1,10 +1,3 @@
-/* 
- * File:   ImageLinkLabel.h
- * Author: krigu
- *
- * Created on January 2, 2013, 7:28 PM
- */
-
 #ifndef IMAGELINKLABEL_H
 #define	IMAGELINKLABEL_H
 
@@ -15,6 +8,9 @@ struct Link {
     QString href;
 };
 
+/**
+ * the ImageLinkLabel displays a link and the region around it in an image
+ */
 class ImageLinkLabel : public QLabel {
     Q_OBJECT
 public:

@@ -1,4 +1,3 @@
-
 #include <QtGui>
 #include "ui/BrowserWindow.hpp"
 #include <string>

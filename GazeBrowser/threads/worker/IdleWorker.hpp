@@ -1,10 +1,3 @@
-/* 
- * File:   IdleThread.hpp
- * Author: fri
- *
- * Created on January 2, 2013, 5:33 PM
- */
-
 #ifndef IDLETHREAD_HPP
 #define	IDLETHREAD_HPP
 

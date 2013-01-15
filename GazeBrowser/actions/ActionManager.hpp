@@ -1,10 +1,3 @@
-/* 
- * File:   ActionManager.hpp
- * Author: fri
- *
- * Created on December 30, 2012, 7:38 PM
- */
-
 #ifndef ACTIONMANAGER_HPP
 #define	ACTIONMANAGER_HPP
 

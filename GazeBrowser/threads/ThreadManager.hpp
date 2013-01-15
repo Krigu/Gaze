@@ -1,10 +1,3 @@
-/* 
- * File:   ThreadManager.hpp
- * Author: fri
- *
- * Created on January 2, 2013, 11:45 AM
- */
-
 #ifndef THREADMANAGER_HPP
 #define	THREADMANAGER_HPP
 

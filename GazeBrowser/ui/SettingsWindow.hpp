@@ -1,10 +1,3 @@
-/* 
- * File:   SettingsWindow.hpp
- * Author: fri
- *
- * Created on December 9, 2012, 7:27 PM
- */
-
 #ifndef SETTINGSWINDOW_HPP
 #define	SETTINGSWINDOW_HPP
 
@@ -15,6 +8,9 @@ class QLabel;
 class QSpinBox;
 class QRadioButton;
 
+/**
+ * the SettingsWindow shows a popup to configure the GazeConfig settings
+ */
 class SettingsWindow : public QWidget {
     Q_OBJECT
 

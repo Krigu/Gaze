@@ -1,10 +1,3 @@
-/* 
- * File:   BookmarksWindow.hpp
- * Author: krigu
- *
- * Created on December 22, 2012, 3:54 PM
- */
-
 #ifndef BOOKMARKSWINDOW_HPP
 #define	BOOKMARKSWINDOW_HPP
 
@@ -16,6 +9,9 @@ class QLabel;
 class QLineEdit;
 class QDialogButtonBox;
 
+/**
+ * The BookmarksWindow can be used to set the Browser Favorites
+ */
 class BookmarksWindow : public QWidget {
     Q_OBJECT
 public:

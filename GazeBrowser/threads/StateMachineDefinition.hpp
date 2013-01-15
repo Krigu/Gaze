@@ -1,10 +1,3 @@
-/* 
- * File:   StateMachineDefinition.hpp
- * Author: fri
- *
- * Created on January 4, 2013, 10:38 AM
- */
-
 #ifndef STATEMACHINEDEFINITION_HPP
 #define	STATEMACHINEDEFINITION_HPP
 

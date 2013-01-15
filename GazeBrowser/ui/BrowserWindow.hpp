@@ -1,4 +1,3 @@
-
 #include <QtGui>
 #include <QtWebKit>
 #include <QSettings>
@@ -19,6 +18,10 @@
 class ActionManager;
 class ImageWindow;
 
+/**
+ * the GazeWebPage sets the GazeBrowsers user agent 
+ * and controls the page caching
+ */
 class GazeWebPage : public QWebPage {
 public:
 
@@ -34,6 +37,11 @@ public:
     }
 };
 
+
+/**
+ * The BrowserWindow class is the EntryPoint of the Application. this class 
+ * instantiates all managers and sets up the user interface.
+ */
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
@@ -46,7 +54,16 @@ public:
     ~BrowserWindow();
 
 public slots:
+    /**
+     * executes the given javascript command inside the website
+     * @param command a valid javascript command
+     */
     void execJsCommand(QString command);
+    
+    /**
+     * display the given OpenCV Image in an OpenGL Window
+     * @param mat
+     */
     void showCvImage(cv::Mat *mat);
 
 signals:

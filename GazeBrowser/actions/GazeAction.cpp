@@ -1,11 +1,3 @@
-/* 
- * File:   GazeAction.cpp
- * Author: krigu
- * 
- * Created on January 2, 2013, 1:07 PM
- */
-
-
 #include <iostream>
 
 #include "utils/geometry.hpp"

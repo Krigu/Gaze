@@ -1,10 +1,3 @@
-/* 
- * File:   BookmarksWindow.cpp
- * Author: krigu
- * 
- * Created on December 22, 2012, 3:54 PM
- */
-
 #include <QtGui>
 
 #include "BookmarksWindow.hpp"

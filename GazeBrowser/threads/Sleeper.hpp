@@ -1,10 +1,3 @@
-/* 
- * File:   Sleeper.hpp
- * Author: fri
- *
- * Created on December 30, 2012, 9:05 PM
- */
-
 #ifndef SLEEPER_HPP
 #define	SLEEPER_HPP
 
