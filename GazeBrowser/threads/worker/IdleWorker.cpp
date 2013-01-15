@@ -9,11 +9,6 @@ IdleWorker::IdleWorker(ImageSource *camera, QMutex *cameraLock) : camera(camera)
 IdleWorker::~IdleWorker() {
 }
 
-/**
- * reads images directly from the camera and emits them to be displayed in 
- * the eye_widget. this method only works wit LiveSource (real webcams). 
- * when started with a VideoSource (movie files) an error is displayed.
- */
 void IdleWorker::displayCamera(void){
     if(!cameraLock->tryLock()){
         emit error(tr("Idle-Thread: is the camera in use?"));

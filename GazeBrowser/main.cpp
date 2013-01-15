@@ -2,6 +2,20 @@
 #include "ui/BrowserWindow.hpp"
 #include <string>
 
+/*! \mainpage GazeBrowser API Documentation
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the API Documentation of the GazeBrowser
+ *
+ * \section About GazeBrowser
+ * GazeBrowser is an Application for browsing the internet with your eye movements. 
+ * <br/> GazeBrowser uses the GazeLib (developed by the same authors) to measure the Gaze Tracking signals.
+ * This application makes heavy use of Qt, OpenCV and the GazeLib API
+ *
+ * \subsection Usage
+ * Start the Browser, Calibrate the System and use your eyes!
+ */
 int main(int argc, char * argv[]) {
     QApplication app(argc, argv);
 

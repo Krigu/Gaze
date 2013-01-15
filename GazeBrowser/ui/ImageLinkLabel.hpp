@@ -3,6 +3,9 @@
 
 #include <QtGui>
 
+/**
+ * the structure that represents a link inside a website
+ */
 struct Link {
     QImage image;
     QString href;

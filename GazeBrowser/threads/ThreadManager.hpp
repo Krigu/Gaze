@@ -10,15 +10,35 @@ class GazeTrackWorker;
 class BrowserWindow;
 class IdleWorker;
 
+/**
+ * the ThreadManager controls the GazeTrack and Idle Thread and implements the GazeBrowsers StateMachine
+ */
 class ThreadManager : public QObject {
     Q_OBJECT
 
 public:
     ThreadManager(BrowserWindow *parent);
     virtual ~ThreadManager();
+    
+    /**
+     * executes the EV_CALIBRATE event and starts the calibration (if IDLE)
+     */
     void calibrate();
+    
+    /**
+     * stops the tracking and goes IDLE
+     */
     void goIdle();
+    
+    /**
+     * continues a tracking (if the system is calibrated)
+     */
     void resumeTracking();
+    
+    /**
+     * obvious...
+     * @return true if calibrated
+     */
     bool isCalibrated();
 
 public slots:
