@@ -1,17 +1,13 @@
-Gaze
+Gaze-Browser
 ====
 
-Better Gaze Tracker
+this repository contains the sourcecode for the bachelor thesis 2012/2013 Gaze-Browser at the berne university of applied sciences
 
-Every subfolder is a netbeans (and eclipse cdt) project. Available Projects:
+Directory-Structure:
+ - doc/         > contains the Bachelor Thesis documentation
+   doc/cpp/     > contains the Doxygen C++ API documentation 
 
- - GazeLib (static Library with our algorithms and constants)
- - GazeBrowser (our User Interface and endproduct)
- - StaticImageStarburst (a project that runs the starburst on an image)
- - VideoStarburst (a project that runs the starburst on a video)
- - FindGlints (project to find 4 glints)
- - GazeTracker (a project to test our GazeLib algorithms)
- - bestFitCircle (a ccpunit testproject for the best fit circle function)
- 
+ - GazeLib/     > contains the source code of the gaze tracking library
+ - GazeBrowser/ > contains the source code of our gaze controlled webbrowser
 
-You probably want to use GazeLib or GazeBrowser
+(C) 2013 Feuz, Rindisbacher
