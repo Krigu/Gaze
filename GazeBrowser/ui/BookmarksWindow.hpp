@@ -26,8 +26,8 @@ private:
     QSettings* settings;
     
 protected slots:
-     void accept();
-     void reject();    
+     void save();
+     void cancel();    
 
 };
 

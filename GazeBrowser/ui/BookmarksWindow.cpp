@@ -58,13 +58,13 @@ QDialogButtonBox * BookmarksWindow::createButtonGroup() {
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
             | QDialogButtonBox::Cancel);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttonBox, SIGNAL(accepted()), this, SLOT(save()));
+    connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 
     return buttonBox;
 }
 
-void BookmarksWindow::accept() {
+void BookmarksWindow::save() {
     QList<QLineEdit *> list = this->findChildren<QLineEdit *> ();
 
     settings->beginGroup("BOOKMARKS");
@@ -81,7 +81,7 @@ void BookmarksWindow::accept() {
     this->close();
 }
 
-void BookmarksWindow::reject() {
+void BookmarksWindow::cancel() {
     this->close();
 }
 
