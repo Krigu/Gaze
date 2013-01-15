@@ -20,10 +20,6 @@
 using namespace std;
 using namespace cv;
 
-/**
- * Gets the center of the glints and attaches the center of the glintcluster
- * to the variable lastMeasurement
- */
 bool FindGlints::findGlints(cv::Mat& frame, vector<cv::Point>& glintCenters,
         cv::Point2f& lastMeasurement) {
 

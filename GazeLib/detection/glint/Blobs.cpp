@@ -1,10 +1,3 @@
-/*
- * Blobs.cpp
- *
- *  Created on: Nov 11, 2012
- *      Author: krigu
- */
-
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d/features2d.hpp>
@@ -33,9 +26,6 @@ Blobs::Blobs(std::vector<std::vector<cv::Point> > & contours) {
     }
 }
 
-/**
- * Returns a vector with all blob centers
- */
 void Blobs::blobCenters(std::vector<cv::Point> & points) {
     points.clear();
 

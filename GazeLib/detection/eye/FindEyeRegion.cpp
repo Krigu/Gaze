@@ -14,21 +14,10 @@
 using namespace std;
 using namespace cv;
 
-/**
- * Adjusts the width and takes only the left side
- * 
- * @param r2 Eyeregion
- */
 void takeLeftEye(Rect* r2) {
     r2->width = (r2->width / 2);
 }
 
-/**
- * Adjusts the widht and the x-coordinate and takes only 
- * the right part of the provided rect
- * 
- * @param r2 Eyeregion
- */
 void takeRightEye(Rect* r2) {
     r2->x += (r2->width / 2);
     r2->width = (r2->width / 2);
@@ -102,13 +91,6 @@ bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect,
     return true;
 }
 
-/**
- * Checks if a region has glints in it
- * 
- * @param image
- * @param eyeRect
- * @return 
- */
 bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     vector<cv::Point> glints;
     Point2f glintCenter;
@@ -117,13 +99,6 @@ bool FindEyeRegion::hasGlintsInRect(Mat &image, Rect& eyeRect) {
     return findGlints.findGlints(img, glints, glintCenter);
 }
 
-/**
- * Removes all eye regions with no glints in it
- * 
- * @param image
- * @param regions
- * @return 
- */
 void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     std::vector<Rect>::iterator iter;
 
@@ -136,34 +111,16 @@ void FindEyeRegion::removeInvalidRects(Mat& image, vector<Rect>& regions) {
     }
 }
 
-/**
- * 
- * @param image
- * @param eyeRect
- * @return 
- */
 bool FindEyeRegion::findRightEye(Mat &image, Rect& eyeRect) {
 
     return findEye(image, eyeRect, rightEyeRegionClipper);
 }
 
-/**
- * 
- * @param image
- * @param eyeRect
- * @return 
- */
 bool FindEyeRegion::findLeftEye(Mat &image, Rect& eyeRect) {
 
     return findEye(image, eyeRect, leftEyeRegionClipper);
 }
 
-/**
- * 
- * @param image
- * @param eyeRect
- * @return 
- */
 bool FindEyeRegion::findEye(Mat &image, Rect& eyeRect) {
     if (GazeConfig::DETECT_LEFT_EYE)
         return findLeftEye(image, eyeRect);

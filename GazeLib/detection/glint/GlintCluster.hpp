@@ -1,10 +1,3 @@
-/*
- * GlintCluster.hpp
- *
- *  Created on: Nov 13, 2012
- *      Author: krigu
- */
-
 #ifndef GLINTCLUSTER_HPP_
 #define GLINTCLUSTER_HPP_
 

@@ -1,10 +1,3 @@
-/*
- * GlintCluster.cpp
- *
- *  Created on: Nov 13, 2012
- *      Author: krigu
- */
-
 #include <iostream>
 #include "GlintCluster.hpp"
 #include "../../utils/geometry.hpp"
@@ -42,17 +35,11 @@ glints(glints) {
     clusterWidth = right - left;
 }
 
-/**
- * Returns the distance from the glints to the last known glint center
- */
 int GlintCluster::averageDistanceToCenter() const {
     return distanceToLastMeasurement;
 
 }
 
-/**
- * Calculates the center of the glint cluster
- */
 cv::Point2f GlintCluster::centerPoint() {
     int amount = glints.size();
     int sumX = 0;
