@@ -134,12 +134,12 @@ void BrowserWindow::setUpGazeActions() {
     }
 
     vector<GazeAction*> linkWindowActions;
-    for (int i = 0; i < 4; i++) { // rows
-        for (int j = 0; j < 3; j++) { // cols
+    for (int i = 0; i < 3; i++) { // 3 rows
+        for (int j = 0; j < 4; j++) { // 4 cols
 
             int x = wFourth * j;
             int y = hThird * i + yOrigin;
-
+            
             linkWindowActions.push_back(createGazeAction("Open Link", Rect(x, y, wFourth, hThird), &BrowserWindow::selectLinkPageCallback));
         }
     }
